@@ -10,7 +10,7 @@ vertices = PackedVector2Array(377, 552, 621.406, 589.141, 221.102, 554.828, 337,
 polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3), PackedInt32Array(4, 5, 6, 7), PackedInt32Array(8, 9, 10, 11), PackedInt32Array(11, 10, 12, 13), PackedInt32Array(13, 12, 14, 2), PackedInt32Array(3, 2, 14, 15), PackedInt32Array(15, 14, 16, 17), PackedInt32Array(18, 19, 20, 21), PackedInt32Array(18, 21, 22, 5), PackedInt32Array(23, 6, 5, 22), PackedInt32Array(0, 17, 16, 1), PackedInt32Array(24, 1, 16, 25), PackedInt32Array(24, 25, 4, 26), PackedInt32Array(26, 4, 7, 27), PackedInt32Array(22, 26, 27, 23)])
 outlines = Array[PackedVector2Array]([PackedVector2Array(38, 614, 41, 34, 307, 40, 313, 477, 556, 477, 556, 54, 846, 31, 834, 460, 1033, 460, 1030, 63, 1127, 72, 1133, 618, 739, 606, 741, 106, 650, 113, 631, 600, 211, 564, 216, 113, 115, 104, 114, 602)])
 
-[node name="World" type="Node2D" node_paths=PackedStringArray("enemy_instance") groups=["attractions"]]
+[node name="World" type="Node2D" node_paths=PackedStringArray("enemy_instance")]
 script = ExtResource("1_2dftf")
 enemy_instance = NodePath("NavigationRegion2D/Enemy")
 
@@ -38,3 +38,12 @@ position = Vector2(301, 538)
 
 [node name="Attraction3" parent="." groups=["attractions"] instance=ExtResource("4_js7pq")]
 position = Vector2(249, 333)
+
+[node name="SimSpeedSlider" type="HSlider" parent="."]
+offset_right = 560.0
+offset_bottom = 26.0
+max_value = 10.0
+step = 0.05
+
+[connection signal="changed" from="SimSpeedSlider" to="." method="_on_sim_speed_slider_changed"]
+[connection signal="value_changed" from="SimSpeedSlider" to="." method="_on_sim_speed_slider_value_changed"]

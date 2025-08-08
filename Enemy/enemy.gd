@@ -58,8 +58,27 @@ func start_visiting():
 	await get_tree().create_timer(2.0).timeout
 	print("Done visiting:", current_attraction.name)
 
-	current_attraction = null
+	#current_attraction = null
 	is_visiting = false
+	_pick_and_go_to_next_attraction()
+
+	
+func _pick_and_go_to_next_attraction() -> void:
+	var all := get_tree().get_nodes_in_group("attractions")
+	if all.is_empty():
+		print("no attractions")
+		return
+
+	# Avoid picking the same one twice in a row if possible
+	var candidates := []
+	for a in all:
+		if a != current_attraction:
+			candidates.append(a)
+
+	var choice = all[randi() % all.size()] if candidates.is_empty() else candidates[randi() % candidates.size()]
+	visit_attraction(choice)
+
+
 
 
 	
