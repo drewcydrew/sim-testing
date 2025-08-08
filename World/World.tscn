@@ -1,0 +1,40 @@
+[gd_scene load_steps=6 format=3 uid="uid://bkjo27tus16cr"]
+
+[ext_resource type="Script" uid="uid://ci23ngthgce8j" path="res://World/world.gd" id="1_2dftf"]
+[ext_resource type="PackedScene" uid="uid://dl1vcfb7hqylb" path="res://Enemy/Enemy.tscn" id="1_c6gwx"]
+[ext_resource type="PackedScene" uid="uid://bvw455jm0ejqy" path="res://Barrier/Barrier.tscn" id="3_bcbcq"]
+[ext_resource type="PackedScene" uid="uid://f621ws6wfyog" path="res://Attraction/attraction.tscn" id="4_js7pq"]
+
+[sub_resource type="NavigationPolygon" id="NavigationPolygon_cmany"]
+vertices = PackedVector2Array(377, 552, 621.406, 589.141, 221.102, 554.828, 337, 552, 835.68, 41.8516, 823.719, 470, 801, 289, 801, 249, 104.008, 593.438, 48.0625, 602.281, 50.9375, 44.2188, 105.023, 93.0703, 297.133, 49.7813, 226.102, 103.859, 303.141, 487, 337, 512, 566, 487, 377, 512, 1043.08, 470, 1040.08, 73.9766, 1117.09, 81.1172, 1122.88, 607.68, 749.031, 596.289, 761, 289, 640.352, 103.711, 566, 63.2266, 751.039, 95.2031, 761, 249)
+polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3), PackedInt32Array(4, 5, 6, 7), PackedInt32Array(8, 9, 10, 11), PackedInt32Array(11, 10, 12, 13), PackedInt32Array(13, 12, 14, 2), PackedInt32Array(3, 2, 14, 15), PackedInt32Array(15, 14, 16, 17), PackedInt32Array(18, 19, 20, 21), PackedInt32Array(18, 21, 22, 5), PackedInt32Array(23, 6, 5, 22), PackedInt32Array(0, 17, 16, 1), PackedInt32Array(24, 1, 16, 25), PackedInt32Array(24, 25, 4, 26), PackedInt32Array(26, 4, 7, 27), PackedInt32Array(22, 26, 27, 23)])
+outlines = Array[PackedVector2Array]([PackedVector2Array(38, 614, 41, 34, 307, 40, 313, 477, 556, 477, 556, 54, 846, 31, 834, 460, 1033, 460, 1030, 63, 1127, 72, 1133, 618, 739, 606, 741, 106, 650, 113, 631, 600, 211, 564, 216, 113, 115, 104, 114, 602)])
+
+[node name="World" type="Node2D" node_paths=PackedStringArray("enemy_instance") groups=["attractions"]]
+script = ExtResource("1_2dftf")
+enemy_instance = NodePath("NavigationRegion2D/Enemy")
+
+[node name="NavigationRegion2D" type="NavigationRegion2D" parent="."]
+navigation_polygon = SubResource("NavigationPolygon_cmany")
+
+[node name="Barrier2" parent="NavigationRegion2D" instance=ExtResource("3_bcbcq")]
+position = Vector2(357, 532)
+
+[node name="Barrier" parent="NavigationRegion2D" instance=ExtResource("3_bcbcq")]
+position = Vector2(781, 269)
+
+[node name="Enemy" parent="NavigationRegion2D" node_paths=PackedStringArray("movement_target") instance=ExtResource("1_c6gwx")]
+position = Vector2(246, 465)
+movement_target = NodePath("../../NavTarget")
+
+[node name="NavTarget" type="Marker2D" parent="."]
+position = Vector2(907, 507)
+
+[node name="Attraction" parent="." groups=["attractions"] instance=ExtResource("4_js7pq")]
+position = Vector2(1085, 464)
+
+[node name="Attraction2" parent="." groups=["attractions"] instance=ExtResource("4_js7pq")]
+position = Vector2(301, 538)
+
+[node name="Attraction3" parent="." groups=["attractions"] instance=ExtResource("4_js7pq")]
+position = Vector2(249, 333)

@@ -1,0 +1,14 @@
+ea4bc82a6ad023ab7ee23ee620429895
+::res://::1754620414
+icon.svg::CompressedTexture2D/CompressedTexture2D::457793113566246707::1754576984::1754576989::1::::<><><>0<>0<>2e025eefda863fe8fd7e372699ed1cee<>res://.godot/imported/icon.svg-218a8f2b3041327d8a5756f3a245f83b.ctex::
+::res://Attraction/::1754620288
+attraction.gd::GDScript/GDScript::1399984101969421448::1754619581::0::1::::<>Area2D<><>0<>0<><>::
+attraction.tscn::PackedScene/PackedScene::416626902770541738::1754620084::0::1::::<><><>0<>0<><>::uid://gr01yi85bi1x::::res://icon.svg<>uid://t7fse4mstp33::::res://Attraction/attraction.gd
+::res://Barrier/::1754620288
+Barrier.tscn::PackedScene::3907618667471016268::1754619881::0::1::::<><><>0<>0<><>::uid://gr01yi85bi1x::::res://icon.svg
+::res://Enemy/::1754620288
+enemy.gd::GDScript/GDScript::8272626420838983773::1754620002::0::1::::<>CharacterBody2D<><>0<>0<><>::
+Enemy.tscn::PackedScene/PackedScene::7986292046764619143::1754620112::0::1::::<><><>0<>0<><>::uid://dp4k7iqb4y56x::::res://Enemy/enemy.gd<>uid://gr01yi85bi1x::::res://icon.svg
+::res://World/::1754620288
+world.gd::GDScript/GDScript::5391813951785834891::1754619598::0::1::::<>Node2D<><>0<>0<><>::
+World.tscn::PackedScene::3107788485226434433::1754620116::0::1::::<><><>0<>0<><>::uid://ci23ngthgce8j::::res://World/world.gd<>uid://dl1vcfb7hqylb::::res://Enemy/Enemy.tscn<>uid://bvw455jm0ejqy::::res://Barrier/Barrier.tscn<>uid://f621ws6wfyog::::res://Attraction/attraction.tscn
