@@ -1,9 +1,10 @@
-[gd_scene load_steps=6 format=3 uid="uid://bkjo27tus16cr"]
+[gd_scene load_steps=7 format=3 uid="uid://bkjo27tus16cr"]
 
 [ext_resource type="Script" uid="uid://ci23ngthgce8j" path="res://World/world.gd" id="1_2dftf"]
 [ext_resource type="PackedScene" uid="uid://dl1vcfb7hqylb" path="res://Enemy/Enemy.tscn" id="1_c6gwx"]
 [ext_resource type="PackedScene" uid="uid://bvw455jm0ejqy" path="res://Barrier/Barrier.tscn" id="3_bcbcq"]
 [ext_resource type="PackedScene" uid="uid://f621ws6wfyog" path="res://Attraction/attraction.tscn" id="4_js7pq"]
+[ext_resource type="Script" uid="uid://ynrmgagcnycy" path="res://World/gantt_chart.gd" id="5_o14yy"]
 
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_cmany"]
 vertices = PackedVector2Array(377, 552, 621.406, 589.141, 221.102, 554.828, 337, 552, 835.68, 41.8516, 823.719, 470, 801, 289, 801, 249, 104.008, 593.438, 48.0625, 602.281, 50.9375, 44.2188, 105.023, 93.0703, 297.133, 49.7813, 226.102, 103.859, 303.141, 487, 337, 512, 566, 487, 377, 512, 1043.08, 470, 1040.08, 73.9766, 1117.09, 81.1172, 1122.88, 607.68, 749.031, 596.289, 761, 289, 640.352, 103.711, 566, 63.2266, 751.039, 95.2031, 761, 249)
@@ -12,38 +13,68 @@ outlines = Array[PackedVector2Array]([PackedVector2Array(38, 614, 41, 34, 307, 4
 
 [node name="World" type="Node2D" node_paths=PackedStringArray("enemy_instance")]
 script = ExtResource("1_2dftf")
-enemy_instance = NodePath("NavigationRegion2D/Enemy")
+enemy_instance = NodePath("TabContainer/Environment/NavigationRegion2D/Enemy")
 
-[node name="NavigationRegion2D" type="NavigationRegion2D" parent="."]
+[node name="TabContainer" type="TabContainer" parent="."]
+offset_left = -3.0
+offset_right = 1150.0
+offset_bottom = 642.0
+current_tab = 2
+all_tabs_in_front = true
+
+[node name="Environment" type="Control" parent="TabContainer"]
+visible = false
+layout_mode = 2
+metadata/_tab_index = 0
+
+[node name="NavigationRegion2D" type="NavigationRegion2D" parent="TabContainer/Environment"]
 navigation_polygon = SubResource("NavigationPolygon_cmany")
 
-[node name="Barrier2" parent="NavigationRegion2D" instance=ExtResource("3_bcbcq")]
+[node name="Barrier2" parent="TabContainer/Environment/NavigationRegion2D" instance=ExtResource("3_bcbcq")]
 position = Vector2(357, 532)
 
-[node name="Barrier" parent="NavigationRegion2D" instance=ExtResource("3_bcbcq")]
+[node name="Barrier" parent="TabContainer/Environment/NavigationRegion2D" instance=ExtResource("3_bcbcq")]
 position = Vector2(781, 269)
 
-[node name="Enemy" parent="NavigationRegion2D" node_paths=PackedStringArray("movement_target") instance=ExtResource("1_c6gwx")]
+[node name="Enemy" parent="TabContainer/Environment/NavigationRegion2D" node_paths=PackedStringArray("movement_target") instance=ExtResource("1_c6gwx")]
 position = Vector2(246, 465)
 movement_target = NodePath("../../NavTarget")
 
-[node name="NavTarget" type="Marker2D" parent="."]
+[node name="NavTarget" type="Marker2D" parent="TabContainer/Environment"]
 position = Vector2(907, 507)
 
-[node name="Attraction" parent="." groups=["attractions"] instance=ExtResource("4_js7pq")]
+[node name="Attraction" parent="TabContainer/Environment" groups=["attractions"] instance=ExtResource("4_js7pq")]
 position = Vector2(1085, 464)
 
-[node name="Attraction2" parent="." groups=["attractions"] instance=ExtResource("4_js7pq")]
+[node name="Attraction2" parent="TabContainer/Environment" groups=["attractions"] instance=ExtResource("4_js7pq")]
 position = Vector2(301, 538)
 
-[node name="Attraction3" parent="." groups=["attractions"] instance=ExtResource("4_js7pq")]
+[node name="Attraction3" parent="TabContainer/Environment" groups=["attractions"] instance=ExtResource("4_js7pq")]
 position = Vector2(249, 333)
 
-[node name="SimSpeedSlider" type="HSlider" parent="."]
-offset_right = 560.0
-offset_bottom = 26.0
+[node name="SimSpeedSlider" type="HSlider" parent="TabContainer/Environment"]
+layout_mode = 0
+offset_left = 70.0
+offset_top = 15.0
+offset_right = 630.0
+offset_bottom = 41.0
 max_value = 10.0
 step = 0.05
 
-[connection signal="changed" from="SimSpeedSlider" to="." method="_on_sim_speed_slider_changed"]
-[connection signal="value_changed" from="SimSpeedSlider" to="." method="_on_sim_speed_slider_value_changed"]
+[node name="Configuration" type="Control" parent="TabContainer"]
+visible = false
+layout_mode = 2
+metadata/_tab_index = 1
+
+[node name="Data" type="Control" parent="TabContainer"]
+layout_mode = 2
+metadata/_tab_index = 2
+
+[node name="GanttChart" type="Control" parent="TabContainer/Data" groups=["gantt"]]
+anchors_preset = 0
+offset_right = 1132.0
+offset_bottom = 590.0
+script = ExtResource("5_o14yy")
+
+[connection signal="changed" from="TabContainer/Environment/SimSpeedSlider" to="." method="_on_sim_speed_slider_changed"]
+[connection signal="value_changed" from="TabContainer/Environment/SimSpeedSlider" to="." method="_on_sim_speed_slider_value_changed"]

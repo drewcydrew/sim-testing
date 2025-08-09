@@ -2,7 +2,8 @@ extends Node2D
 
 @export var enemy_instance: Node2D
 
-@onready var time_slider: HSlider = $SimSpeedSlider
+@onready var time_slider: HSlider = $TabContainer/Environment/SimSpeedSlider
+@onready var gantt_chart: Control = $TabContainer/Data/GanttChart
 
 func _ready() -> void:
 	# Connect all attractions
