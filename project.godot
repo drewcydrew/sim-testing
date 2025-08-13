@@ -15,6 +15,10 @@ run/main_scene="uid://bkjo27tus16cr"
 config/features=PackedStringArray("4.4", "GL Compatibility")
 config/icon="res://icon.svg"
 
+[autoload]
+
+GanttHub="*res://Singletons/GanttHub.gd"
+
 [rendering]
 
 renderer/rendering_method="gl_compatibility"

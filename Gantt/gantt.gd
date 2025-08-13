@@ -8,6 +8,10 @@ class_name BasicGantt
 #   set_time_window(start_time: float, end_time: float)
 #   record_event(label: String, start_time: float, end_time: float, row: int = 0, color: Color = Color(0.5, 0.8, 1.0, 1.0))
 
+
+
+
+
 # Typed inner class for events (avoids Variant dictionaries)
 class Event:
 	var row: int
@@ -28,6 +32,15 @@ var _start_time: float = 0.0
 var _end_time: float = 30.0
 
 var _events: Array[Event] = []
+
+
+func _ready() -> void:
+	GanttHub.set_chart(self)
+
+func _exit_tree() -> void:
+	# avoid dangling reference if scene is closed
+	if GanttHub.chart == self:
+		GanttHub.clear_chart()
 
 func set_time_window(start_time: float, end_time: float) -> void:
 	_start_time = start_time

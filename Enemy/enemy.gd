@@ -21,10 +21,6 @@ func _ready():
 	call_deferred("actor_setup")
 	_pick_and_go_to_next_attraction()
 	
-func _get_gantt() -> BasicGantt:
-	return get_tree().get_first_node_in_group("gantt") as BasicGantt
-
-	
 	
 func actor_setup():
 	pass
@@ -67,9 +63,8 @@ func start_visiting():
 	is_visiting = true
 	velocity = Vector2.ZERO
 	travelFinish = Time.get_ticks_msec() / 1000
-	var chart := _get_gantt()
-	if chart:
-		chart.record_event("Travelling", travelStart, travelFinish, 0) # row 0 for now
+	GanttHub.record("Travelling", travelStart, travelFinish, 0)
+
 	
 	print("Visiting attraction:", current_attraction.name)
 	var t1: float = Time.get_ticks_msec() / 1000
@@ -77,8 +72,8 @@ func start_visiting():
 	await get_tree().create_timer(2.0).timeout
 	
 	var t2: float = Time.get_ticks_msec() / 1000
-	if chart:
-		chart.record_event(current_attraction.name, t1, t2, 0) # row 0 for now
+	GanttHub.record(current_attraction.name, t1, t2, 0)
+
 
 	print("Done visiting:", current_attraction.name)
 
