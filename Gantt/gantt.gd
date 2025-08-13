@@ -1,117 +1,112 @@
 extends Control
 class_name BasicGantt
 
-# Minimal Gantt: accepts completed events and draws rectangles.
-# Strongly typed to avoid Variant inference errors in Godot 4.
-#
-# API:
-#   set_time_window(start_time: float, end_time: float)
-#   record_event(label: String, start_time: float, end_time: float, row: int = 0, color: Color = Color(0.5, 0.8, 1.0, 1.0))
+# Minimal, node-based Gantt:
+# - set_time_window(start, end)
+# - record_event(label, start, end, row?, color?)
+# Creates GanttBar nodes and positions/sizes them based on the time window.
 
-
-
-
-
-# Typed inner class for events (avoids Variant dictionaries)
-class Event:
-	var row: int
-	var label: String
-	var start: float
-	var end: float
-	var color: Color
-
+# Layout
 @export var left_margin: float = 80.0
+@export var right_margin: float = 16.0
 @export var top_margin: float = 24.0
+@export var bottom_margin: float = 24.0
 @export var row_height: float = 18.0
 @export var row_gap: float = 6.0
-@export var background_color: Color = Color(0.12, 0.12, 0.14)
-@export var default_bar_color: Color = Color(0.50, 0.80, 1.00, 1.0)
-@export var text_color: Color = Color(0.92, 0.92, 0.96, 0.95)
 
+# Bar prefab (adjust path as needed)
+@export var bar_scene: PackedScene = preload("res://GanttBar/GanttBar.tscn")
+@export var _plot: Control
+
+# Time window
 var _start_time: float = 0.0
 var _end_time: float = 30.0
 
-var _events: Array[Event] = []
-
+# Runtime
+var _bar_nodes: Array[Dictionary] = []  # {bar, start, end, row, label, color}
 
 func _ready() -> void:
-	GanttHub.set_chart(self)
+	if typeof(GanttHub) != TYPE_NIL:
+		GanttHub.set_chart(self)
+	resized.connect(_relayout_bars)
 
 func _exit_tree() -> void:
-	# avoid dangling reference if scene is closed
-	if GanttHub.chart == self:
+	if typeof(GanttHub) != TYPE_NIL and GanttHub.chart == self:
 		GanttHub.clear_chart()
+
+
+# --- Public API ---------------------------------------------------------------
 
 func set_time_window(start_time: float, end_time: float) -> void:
 	_start_time = start_time
 	_end_time = maxf(end_time, start_time + 0.001)
-	queue_redraw()
+	_relayout_bars()
 
 func record_event(label: String, start_time: float, end_time: float, row: int = 0, color: Color = Color(0.5, 0.8, 1.0, 1.0)) -> void:
-	if end_time < start_time:
-		var tmp: float = start_time
-		start_time = end_time
-		end_time = tmp
-	var ev := Event.new()
-	ev.row = max(0, row)
-	ev.label = label
-	ev.start = start_time
-	ev.end = end_time
-	ev.color = color
-	_events.append(ev)
-	queue_redraw()
+	var s: float = min(start_time, end_time)
+	var e: float = max(start_time, end_time)
+
+	# Create/attach bar node
+	var bar: Control = bar_scene.instantiate()
+	_plot.add_child(bar)
+	if bar.has_method("set_data"):
+		bar.call("set_data", label, s, e, row, color)
+
+	# Track for layout
+	_bar_nodes.append({
+		"bar": bar,
+		"start": s,
+		"end": e,
+		"row": row,
+		"label": label,
+		"color": color
+	})
+
+	# Expand time window as events arrive (optional but handy)
+	if _bar_nodes.size() == 1:
+		_start_time = s
+		_end_time = maxf(e, s + 0.001)
+	else:
+		_start_time = min(_start_time, s)
+		_end_time = max(_end_time, e)
+
+	_relayout_bars()
 
 func clear() -> void:
-	_events.clear()
-	queue_redraw()
+	for d in _bar_nodes:
+		if is_instance_valid(d.bar):
+			d.bar.queue_free()
+	_bar_nodes.clear()
 
-func _draw() -> void:
-	# Background
-	draw_rect(Rect2(Vector2.ZERO, size), background_color)
+# --- Layout helpers -----------------------------------------------------------
 
-	var visible_span: float = _end_time - _start_time
-	if visible_span <= 0.0:
+func _map_time_to_x(t: float, plot: Rect2) -> float:
+	if _end_time <= _start_time:
+		return plot.position.x
+	var u: float = (t - _start_time) / (_end_time - _start_time)
+	return plot.position.x + clamp(u, 0.0, 1.0) * plot.size.x
+
+func _relayout_bars() -> void:
+	if _bar_nodes.is_empty():
 		return
 
-	var content_x0: float = left_margin
-	var content_x1: float = size.x - 8.0
-	var content_w: float = maxf(1.0, content_x1 - content_x0)
+	var x0: float = left_margin
+	var x1: float = size.x - right_margin
+	var y0: float = top_margin
+	var plot_w: float = max(1.0, x1 - x0)
+	var plot_h: float = max(1.0, size.y - top_margin - bottom_margin)
+	var plot_rect := Rect2(Vector2(x0, y0), Vector2(plot_w, plot_h))
 
-	# Draw events
-	var max_row: int = 0
-	for ev: Event in _events:
-		max_row = max(max_row, ev.row)
-		var x1: float = content_x0 + content_w * ((ev.start - _start_time) / visible_span)
-		var x2: float = content_x0 + content_w * ((ev.end   - _start_time) / visible_span)
-		if x2 <= content_x0 or x1 >= content_x1:
-			continue # fully outside
-		x1 = clampf(x1, content_x0, content_x1)
-		x2 = clampf(x2, content_x0, content_x1)
+	for d in _bar_nodes:
+		var bar: Control = d.bar
+		var s: float = d.start
+		var e: float = d.end
+		var row: int = d.row
 
-		var y: float = _row_to_y(ev.row)
-		var rect: Rect2 = Rect2(Vector2(x1, y + 2.0), Vector2(maxf(1.0, x2 - x1), row_height - 4.0))
-		draw_rect(rect, ev.color)
+		var px_start: float = _map_time_to_x(s, plot_rect)
+		var px_end: float = _map_time_to_x(e, plot_rect)
+		var w: float = max(1.0, px_end - px_start)
+		var row_y: float = y0 + float(row) * (row_height + row_gap)
 
-		# Label (only if it fits)
-		var font := get_theme_default_font()
-		var fs: int = get_theme_default_font_size()
-		if ev.label != "" and font:
-			var text_size: Vector2 = font.get_string_size(ev.label, fs)
-			if text_size.x + 8.0 <= rect.size.x:
-				draw_string(font, rect.position + Vector2(4.0, row_height * 0.7), ev.label, HORIZONTAL_ALIGNMENT_LEFT, -1.0, fs, Color(0,0,0,0.8))
-
-	# Row labels (very simple: "Row N")
-	var font2 := get_theme_default_font()
-	var fs2: int = get_theme_default_font_size()
-	for r in range(max_row + 1):
-		draw_string(font2, Vector2(8.0, _row_to_y(r) + row_height * 0.7), "Row %d" % r, HORIZONTAL_ALIGNMENT_LEFT, -1.0, fs2, text_color)
-
-func _row_to_y(row_index: int) -> float:
-	return top_margin + float(row_index) * (row_height + row_gap)
-
-func _get_minimum_size() -> Vector2:
-	var max_row: int = 0
-	for ev: Event in _events:
-		max_row = max(max_row, ev.row)
-	var h: float = top_margin + float(max_row + 1) * (row_height + row_gap) + 8.0
-	return Vector2(320.0, h)
+		bar.position = Vector2(px_start, row_y)
+		bar.size = Vector2(w, row_height)

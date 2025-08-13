@@ -1,0 +1,24 @@
+[gd_scene load_steps=2 format=3 uid="uid://daiavh36vxvpm"]
+
+[ext_resource type="Script" uid="uid://din5v4exb5ikl" path="res://GanttBar/GanttBar.gd" id="1_bar"]
+
+[node name="GanttBar" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+mouse_filter = 1
+script = ExtResource("1_bar")
+
+[node name="Panel" type="Panel" parent="."]
+layout_mode = 0
+offset_right = 200.0
+offset_bottom = 41.0
+
+[node name="Label" type="Label" parent="Panel"]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 6.0
+offset_top = 2.0
+offset_right = -6.0
+offset_bottom = -2.0
+text = "Task"
