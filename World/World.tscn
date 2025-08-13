@@ -4,7 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://dl1vcfb7hqylb" path="res://Enemy/Enemy.tscn" id="1_c6gwx"]
 [ext_resource type="PackedScene" uid="uid://bvw455jm0ejqy" path="res://Barrier/Barrier.tscn" id="3_bcbcq"]
 [ext_resource type="PackedScene" uid="uid://f621ws6wfyog" path="res://Attraction/attraction.tscn" id="4_js7pq"]
-[ext_resource type="Script" uid="uid://ynrmgagcnycy" path="res://World/gantt_chart.gd" id="5_o14yy"]
+[ext_resource type="PackedScene" uid="uid://co5uy51mo4xql" path="res://Gantt/gantt.tscn" id="6_04mge"]
 
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_cmany"]
 vertices = PackedVector2Array(377, 552, 621.406, 589.141, 221.102, 554.828, 337, 552, 835.68, 41.8516, 823.719, 470, 801, 289, 801, 249, 104.008, 593.438, 48.0625, 602.281, 50.9375, 44.2188, 105.023, 93.0703, 297.133, 49.7813, 226.102, 103.859, 303.141, 487, 337, 512, 566, 487, 377, 512, 1043.08, 470, 1040.08, 73.9766, 1117.09, 81.1172, 1122.88, 607.68, 749.031, 596.289, 761, 289, 640.352, 103.711, 566, 63.2266, 751.039, 95.2031, 761, 249)
@@ -70,11 +70,10 @@ metadata/_tab_index = 1
 layout_mode = 2
 metadata/_tab_index = 2
 
-[node name="GanttChart" type="Control" parent="TabContainer/Data" groups=["gantt"]]
-anchors_preset = 0
-offset_right = 1132.0
-offset_bottom = 590.0
-script = ExtResource("5_o14yy")
+[node name="GanttNew" parent="TabContainer/Data" groups=["gantt"] instance=ExtResource("6_04mge")]
+offset_left = 7.0
+offset_top = 4.0
+offset_bottom = 612.0
 
 [connection signal="changed" from="TabContainer/Environment/SimSpeedSlider" to="." method="_on_sim_speed_slider_changed"]
 [connection signal="value_changed" from="TabContainer/Environment/SimSpeedSlider" to="." method="_on_sim_speed_slider_value_changed"]
