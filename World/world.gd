@@ -2,9 +2,6 @@ extends Node2D
 
 @export var enemy_instance: Node2D
 
-@onready var time_slider: HSlider = $TabContainer/Environment/SimSpeedSlider
-@onready var gantt_chart_new: Control = $TabContainer/Data/GanttNew
-
 func _ready() -> void:
 	# Connect all attractions
 	for attraction in get_tree().get_nodes_in_group("attractions"):
@@ -28,12 +25,8 @@ func _unhandled_input(event):
 				clicked_attraction = attraction
 				break
 
-		#if clicked_attraction:
-			#_on_attraction_selected(clicked_attraction)
 
-
-
-func _on_sim_speed_slider_value_changed(value: float) -> void:
+func _on_simulation_controls_sim_speed_changed(value: float) -> void:
 	print("Updating sim time")
 	Engine.time_scale = value
 	#_update_time_label(new_value)
