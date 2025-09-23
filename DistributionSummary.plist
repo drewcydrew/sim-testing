@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>pathfindingnew.ipa</key>
+	<array>
+		<dict>
+			<key>architectures</key>
+			<array>
+				<string>arm64</string>
+			</array>
+			<key>buildNumber</key>
+			<string>1.0.0</string>
+			<key>certificate</key>
+			<dict>
+				<key>SHA1</key>
+				<string>29A5A5FF04ABB945C22E016FBF7693138025DE74</string>
+				<key>dateExpires</key>
+				<string>23/09/2026</string>
+				<key>type</key>
+				<string>Apple Development</string>
+			</dict>
+			<key>entitlements</key>
+			<dict>
+				<key>application-identifier</key>
+				<string>R9JLM23S24.com.drew92.logisticssim</string>
+				<key>com.apple.developer.team-identifier</key>
+				<string>R9JLM23S24</string>
+				<key>get-task-allow</key>
+				<true/>
+			</dict>
+			<key>name</key>
+			<string>pathfindingnew.app</string>
+			<key>profile</key>
+			<dict>
+				<key>UUID</key>
+				<string>d94b38bb-823b-4e30-af9c-1035c5ac8a74</string>
+				<key>dateExpires</key>
+				<string>23/09/2026</string>
+				<key>name</key>
+				<string>iOS Team Provisioning Profile: *</string>
+			</dict>
+			<key>team</key>
+			<dict>
+				<key>id</key>
+				<string>R9JLM23S24</string>
+				<key>name</key>
+				<string></string>
+			</dict>
+			<key>versionNumber</key>
+			<string>1.0.0</string>
+		</dict>
+	</array>
+</dict>
+</plist>

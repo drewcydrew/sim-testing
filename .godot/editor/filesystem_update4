@@ -4,5 +4,3 @@ res://Enemy/Enemy.tscn
 res://SimulationControls/simulation_controls.tscn
 res://Attraction/attraction.tscn
 res://GanttBar/GanttBar.tscn
-res://Gantt/gantt.gd
-res://GanttBar/GanttBar.gd

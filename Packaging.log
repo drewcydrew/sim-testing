@@ -1,0 +1,163 @@
+2025-09-23 07:15:40 +0000 [MT] Initial pipeline context: <IDEDistributionProcessingPipelineContext: 0x11e8703e0; archive(resolved)="<IDEArchive: 0x6000026a52d0>", distributionTask(resolved)="2", distributionDestination(resolved)="1", distributionMethod(resolved)="<IDEDistributionMethodDevelopmentSigned: 0x600000f64940>", team(resolved)="<IDEProvisioningBasicTeam: 0x600000c5d5e0; teamID='R9JLM23S24', teamName='(null)'>">
+	Chain (14, self inclusive):
+	<IDEDistributionProcessingPipelineContext: 0x11e8703e0; archive = "<IDEArchive: 0x6000026a52d0>", distributionMethod="<IDEDistributionMethodDevelopmentSigned: 0x600000f64940>", team="<IDEProvisioningBasicTeam: 0x600000c5d5e0; teamID='R9JLM23S24', teamName='(null)'>">
+	<IDEDistributionProcessingPipelineContext: 0x11e805200; archive = "<IDEArchive: 0x6000026a52d0>", distributionMethod="<IDEDistributionMethodDevelopmentSigned: 0x600000f64940>", team="<IDEProvisioningBasicTeam: 0x600000c5d5e0; teamID='R9JLM23S24', teamName='(null)'>">
+	<IDEDistributionContext: 0x11e8692d0; archive = "<IDEArchive: 0x6000026a52d0>", distributionMethod="<IDEDistributionMethodDevelopmentSigned: 0x600000f64940>", team="<IDEProvisioningBasicTeam: 0x600000c5d5e0; teamID='R9JLM23S24', teamName='(null)'>">
+	<IDEDistributionContext: 0x11d698e90; archive = "<IDEArchive: 0x6000026a52d0>", distributionMethod="<IDEDistributionMethodDevelopmentSigned: 0x600000f64940>", team="<IDEProvisioningBasicTeam: 0x600000c5d5e0; teamID='R9JLM23S24', teamName='(null)'>">
+	<IDEDistributionContext: 0x11d698c80; archive = "<IDEArchive: 0x6000026a52d0>", distributionMethod="<IDEDistributionMethodDevelopmentSigned: 0x600000f64940>", team="<IDEProvisioningBasicTeam: 0x600000c5d5e0; teamID='R9JLM23S24', teamName='(null)'>">
+	<IDEDistributionContext: 0x11d698a70; archive = "<IDEArchive: 0x6000026a52d0>", distributionMethod="<IDEDistributionMethodDevelopmentSigned: 0x600000f64940>", team="<IDEProvisioningBasicTeam: 0x600000c5d5e0; teamID='R9JLM23S24', teamName='(null)'>">
+	<IDEDistributionContext: 0x11d6996d0; archive = "<IDEArchive: 0x6000026a52d0>", distributionMethod="<IDEDistributionMethodDevelopmentSigned: 0x600000f64940>", team="<IDEProvisioningBasicTeam: 0x600000c5d5e0; teamID='R9JLM23S24', teamName='(null)'>">
+	<IDEDistributionContext: 0x11d698460; archive = "<IDEArchive: 0x6000026a52d0>", distributionMethod="<IDEDistributionMethodDevelopmentSigned: 0x600000f64940>", team="<IDEProvisioningBasicTeam: 0x600000c5d5e0; teamID='R9JLM23S24', teamName='(null)'>">
+	<IDEDistributionContext: 0x11d763740; archive = "<IDEArchive: 0x6000026a52d0>", distributionMethod="<IDEDistributionMethodDevelopmentSigned: 0x600000f64940>", team="<IDEProvisioningBasicTeam: 0x600000c5d5e0; teamID='R9JLM23S24', teamName='(null)'>">
+	<IDEDistributionContext: 0x11d763320; archive = "<IDEArchive: 0x6000026a52d0>", distributionMethod="<IDEDistributionMethodDevelopmentSigned: 0x600000f64940>", team="(null)">
+	<IDEDistributionContext: 0x11d762bc0; archive = "<IDEArchive: 0x6000026a52d0>", distributionMethod="<IDEDistributionMethodDevelopmentSigned: 0x600000f64940>", team="(null)">
+	<IDEDistributionContext: 0x11d7629b0; archive = "<IDEArchive: 0x6000026a52d0>", distributionMethod="<IDEDistributionMethodDevelopmentSigned: 0x600000f64940>", team="(null)">
+	<IDEDistributionContext: 0x11d689450; archive = "<IDEArchive: 0x6000026a52d0>", distributionMethod="<IDEDistributionMethodDevelopmentSigned: 0x600000f64940>", team="(null)">
+	<IDEDistributionContext: 0x11d685d50; archive = "<IDEArchive: 0x6000026a52d0>", distributionMethod="(null)", team="(null)">
+</IDEDistributionProcessingPipelineContext: 0x11e8703e0>
+2025-09-23 07:15:40 +0000 [MT] Processing step: IDEDistributionCreateDestRootStep
+2025-09-23 07:15:40 +0000 [MT] Processing step: IDEDistributionCopyItemStep
+2025-09-23 07:15:40 +0000 [MT] Running /usr/bin/ditto '-V' '/Users/administrator/Documents/GitHub/sim-testing/pathfindingnew.xcarchive/Products/Applications/pathfindingnew.app' '/var/folders/4p/2vqxnn9178jczwm299x0hyp00000gn/T/XcodeDistPipeline.~~~Mjr7TG/Root/Payload/pathfindingnew.app'
+2025-09-23 07:15:40 +0000  >>> Copying /Users/administrator/Documents/GitHub/sim-testing/pathfindingnew.xcarchive/Products/Applications/pathfindingnew.app 
+2025-09-23 07:15:40 +0000  copying file ./_CodeSignature/CodeResources ... 
+2025-09-23 07:15:40 +0000  4428 bytes for ./_CodeSignature/CodeResources
+2025-09-23 07:15:40 +0000  copying file ./AppIcon76x76@2x~ipad.png.import ... 
+2025-09-23 07:15:40 +0000  644 bytes for ./AppIcon76x76@2x~ipad.png.import
+2025-09-23 07:15:40 +0000  copying file ./en.lproj/InfoPlist.strings ... 
+2025-09-23 07:15:40 +0000  42 bytes for ./en.lproj/InfoPlist.strings
+2025-09-23 07:15:40 +0000  copying file ./pathfindingnew ... 
+2025-09-23 07:15:40 +0000  71185856 bytes for ./pathfindingnew
+copying file ./AppIcon60x60@2x.png ... 
+2025-09-23 07:15:40 +0000  38004 bytes for ./AppIcon60x60@2x.png
+copying file ./Launch Screen.storyboardc/01J-lp-oVM-view-Ze5-6b-2t3.nib ... 
+2104 bytes for ./Launch Screen.storyboardc/01J-lp-oVM-view-Ze5-6b-2t3.nib
+copying file ./Launch Screen.storyboardc/UIViewController-01J-lp-oVM.nib ... 
+924 bytes for ./Launch Screen.storyboardc/UIViewController-01J-lp-oVM.nib
+copying file ./Launch Screen.storyboardc/Info.plist ... 
+2025-09-23 07:15:40 +0000  258 bytes for ./Launch Screen.storyboardc/Info.plist
+2025-09-23 07:15:40 +0000  copying file ./AppIcon60x60@2x.png.import ... 
+2025-09-23 07:15:40 +0000  640 bytes for ./AppIcon60x60@2x.png.import
+2025-09-23 07:15:40 +0000  copying file ./Assets.car ... 
+2025-09-23 07:15:40 +0000  3735807 bytes for ./Assets.car
+2025-09-23 07:15:40 +0000  copying file ./AppIcon76x76@2x~ipad.png ... 
+58396 bytes for ./AppIcon76x76@2x~ipad.png
+copying file ./PrivacyInfo.xcprivacy ... 
+2025-09-23 07:15:40 +0000  990 bytes for ./PrivacyInfo.xcprivacy
+copying file ./pathfindingnew.pck ... 
+2025-09-23 07:15:40 +0000  38800 bytes for ./pathfindingnew.pck
+2025-09-23 07:15:40 +0000  copying file ./embedded.mobileprovision ... 
+2025-09-23 07:15:40 +0000  14584 bytes for ./embedded.mobileprovision
+2025-09-23 07:15:40 +0000  copying file ./Info.plist ... 
+2025-09-23 07:15:40 +0000  1528 bytes for ./Info.plist
+2025-09-23 07:15:40 +0000  copying file ./PkgInfo ... 
+2025-09-23 07:15:40 +0000  8 bytes for ./PkgInfo
+2025-09-23 07:15:40 +0000 [MT] /usr/bin/ditto exited with 0
+2025-09-23 07:15:40 +0000 [MT] Processing step: IDEDistributionEmbedProfileStep
+2025-09-23 07:15:40 +0000 [MT] Processing step: IDEDistributionInfoPlistStep
+2025-09-23 07:15:40 +0000 [MT] Skipping step: IDEDistributionInfoPlistStep because it said so
+2025-09-23 07:15:40 +0000 [MT] Processing step: IDEDistributionAppThinningPlistStep
+2025-09-23 07:15:40 +0000 [MT] Skipping step: IDEDistributionAppThinningPlistStep because it said so
+2025-09-23 07:15:40 +0000 [MT] Processing step: IDEDistributionSymbolsStep
+2025-09-23 07:15:40 +0000 [MT] Skipping step: IDEDistributionSymbolsStep because it said so
+2025-09-23 07:15:40 +0000 [MT] Processing step: IDEDistributionAppThinningStep
+2025-09-23 07:15:40 +0000 [MT] Skipping step: IDEDistributionAppThinningStep because it said so
+2025-09-23 07:15:40 +0000 [MT] Processing step: IDEDistributionArchThinningStep
+2025-09-23 07:15:40 +0000 [MT] Item /Users/administrator/Documents/GitHub/sim-testing/pathfindingnew.xcarchive/Products/Applications/pathfindingnew.app doesn't have the entitlement com.apple.developer.web-browser-engine.host enabled, returning ["arm64e"]
+2025-09-23 07:15:40 +0000 [MT] Archs to thin for item /Users/administrator/Documents/GitHub/sim-testing/pathfindingnew.xcarchive/Products/Applications/pathfindingnew.app are ["arm64e"]
+2025-09-23 07:15:40 +0000 [MT] Running /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/lipo '/var/folders/4p/2vqxnn9178jczwm299x0hyp00000gn/T/XcodeDistPipeline.~~~Mjr7TG/Root/Payload/pathfindingnew.app/pathfindingnew' '-verify_arch' 'arm64e'
+2025-09-23 07:15:40 +0000 [MT] /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/lipo exited with 1
+2025-09-23 07:15:40 +0000 [MT] Skipping architecture thinning for item "pathfindingnew" because arch "arm64e" wasn't found
+2025-09-23 07:15:40 +0000 [MT] Processing step: IDEDistributionODRStep
+2025-09-23 07:15:40 +0000 [MT] Processing step: IDEDistributionStripXattrsStep
+2025-09-23 07:15:40 +0000 [MT] Skipping stripping extended attributes because the codesign step will strip them.
+2025-09-23 07:15:40 +0000 [MT] Processing step: IDEDistributionCodesignStep
+2025-09-23 07:15:40 +0000 [MT] Entitlements for <IDEDistributionItem: 0x6000029b6d00; bundleID='com.drew92.logisticssim', path='<DVTFilePath:0x6000026a5340:'/Users/administrator/Documents/GitHub/sim-testing/pathfindingnew.xcarchive/Products/Applications/pathfindingnew.app'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0x6000029b24c0; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0x60000383c6c0; name='Apple Development: ANDREW F JOVARAS (878J5YF29Z)', hash='29A5A5FF04ABB945C22E016FBF7693138025DE74', serialNumber='BEB7B89D91B75B388DA5DA5684D9E14', certificateKinds='(
+    "1.2.840.113635.100.6.1.12",
+    "1.2.840.113635.100.6.1.2"
+), issueDate='2025-09-23 07:00:22 +0000''>', entitlements='{
+    "application-identifier" = "R9JLM23S24.com.drew92.logisticssim";
+    "com.apple.developer.team-identifier" = R9JLM23S24;
+    "get-task-allow" = 1;
+}', teamID='R9JLM23S24', identifier='com.drew92.logisticssim', executablePath='<DVTFilePath:0x6000029b8480:'/Users/administrator/Documents/GitHub/sim-testing/pathfindingnew.xcarchive/Products/Applications/pathfindingnew.app/pathfindingnew'>', hardenedRuntime='0'>'>: {
+    "application-identifier" = "R9JLM23S24.com.drew92.logisticssim";
+    "com.apple.developer.team-identifier" = R9JLM23S24;
+    "get-task-allow" = 1;
+}
+2025-09-23 07:15:40 +0000 [MT] Associated App Clip Identifiers Filter: Skipping because "com.apple.developer.associated-appclip-app-identifiers" is not present
+2025-09-23 07:15:40 +0000 [MT] Entitlements for <IDEDistributionItem: 0x6000029b6d00; bundleID='com.drew92.logisticssim', path='<DVTFilePath:0x6000026a5340:'/Users/administrator/Documents/GitHub/sim-testing/pathfindingnew.xcarchive/Products/Applications/pathfindingnew.app'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0x6000029b24c0; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0x60000383c900; name='Apple Development: ANDREW F JOVARAS (878J5YF29Z)', hash='29A5A5FF04ABB945C22E016FBF7693138025DE74', serialNumber='BEB7B89D91B75B388DA5DA5684D9E14', certificateKinds='(
+    "1.2.840.113635.100.6.1.12",
+    "1.2.840.113635.100.6.1.2"
+), issueDate='2025-09-23 07:00:22 +0000''>', entitlements='{
+    "application-identifier" = "R9JLM23S24.com.drew92.logisticssim";
+    "com.apple.developer.team-identifier" = R9JLM23S24;
+    "get-task-allow" = 1;
+}', teamID='R9JLM23S24', identifier='com.drew92.logisticssim', executablePath='<DVTFilePath:0x6000029b8480:'/Users/administrator/Documents/GitHub/sim-testing/pathfindingnew.xcarchive/Products/Applications/pathfindingnew.app/pathfindingnew'>', hardenedRuntime='0'>'> are: {
+    "application-identifier" = "R9JLM23S24.com.drew92.logisticssim";
+    "com.apple.developer.team-identifier" = R9JLM23S24;
+    "get-task-allow" = 1;
+}
+2025-09-23 07:15:40 +0000 [MT] Writing entitlements for <IDEDistributionItem: 0x6000029b6d00; bundleID='com.drew92.logisticssim', path='<DVTFilePath:0x6000026a5340:'/Users/administrator/Documents/GitHub/sim-testing/pathfindingnew.xcarchive/Products/Applications/pathfindingnew.app'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0x6000029b24c0; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0x60000383c900; name='Apple Development: ANDREW F JOVARAS (878J5YF29Z)', hash='29A5A5FF04ABB945C22E016FBF7693138025DE74', serialNumber='BEB7B89D91B75B388DA5DA5684D9E14', certificateKinds='(
+    "1.2.840.113635.100.6.1.12",
+    "1.2.840.113635.100.6.1.2"
+), issueDate='2025-09-23 07:00:22 +0000''>', entitlements='{
+    "application-identifier" = "R9JLM23S24.com.drew92.logisticssim";
+    "com.apple.developer.team-identifier" = R9JLM23S24;
+    "get-task-allow" = 1;
+}', teamID='R9JLM23S24', identifier='com.drew92.logisticssim', executablePath='<DVTFilePath:0x6000029b8480:'/Users/administrator/Documents/GitHub/sim-testing/pathfindingnew.xcarchive/Products/Applications/pathfindingnew.app/pathfindingnew'>', hardenedRuntime='0'>'> to: /var/folders/4p/2vqxnn9178jczwm299x0hyp00000gn/T/XcodeDistPipeline.~~~Mjr7TG/entitlements~~~ZIfbvh
+2025-09-23 07:15:40 +0000 [MT] invoking codesign: <NSConcreteTask: 0x600002d11ae0; launchPath='/usr/bin/codesign', arguments='(
+    "-f",
+    "-s",
+    29A5A5FF04ABB945C22E016FBF7693138025DE74,
+    "--entitlements",
+    "/var/folders/4p/2vqxnn9178jczwm299x0hyp00000gn/T/XcodeDistPipeline.~~~Mjr7TG/entitlements~~~ZIfbvh",
+    "--preserve-metadata=identifier,flags,runtime",
+    "--generate-entitlement-der",
+    "--strip-disallowed-xattrs",
+    "-vvv",
+    "/var/folders/4p/2vqxnn9178jczwm299x0hyp00000gn/T/XcodeDistPipeline.~~~Mjr7TG/Root/Payload/pathfindingnew.app"
+)'>
+2025-09-23 07:15:40 +0000 [MT] codesign output: /var/folders/4p/2vqxnn9178jczwm299x0hyp00000gn/T/XcodeDistPipeline.~~~Mjr7TG/Root/Payload/pathfindingnew.app: replacing existing signature
+/var/folders/4p/2vqxnn9178jczwm299x0hyp00000gn/T/XcodeDistPipeline.~~~Mjr7TG/Root/Payload/pathfindingnew.app: signed app bundle with Mach-O thin (arm64) [com.drew92.logisticssim]
+2025-09-23 07:15:40 +0000 [MT] Processing step: IDEDistributionZipODRItemStep
+2025-09-23 07:15:40 +0000 [MT] Skipping step: IDEDistributionZipODRItemStep because it said so
+2025-09-23 07:15:40 +0000 [MT] Processing step: IDEDistributionCreateIPAStep
+2025-09-23 07:15:40 +0000 [MT] Running /usr/bin/ditto '-V' '-c' '-k' '--norsrc' '/var/folders/4p/2vqxnn9178jczwm299x0hyp00000gn/T/XcodeDistPipeline.~~~Mjr7TG/Root' '/var/folders/4p/2vqxnn9178jczwm299x0hyp00000gn/T/XcodeDistPipeline.~~~Mjr7TG/Packages/pathfindingnew.ipa'
+2025-09-23 07:15:40 +0000  >>> Copying /var/folders/4p/2vqxnn9178jczwm299x0hyp00000gn/T/XcodeDistPipeline.~~~Mjr7TG/Root 
+2025-09-23 07:15:40 +0000  copying file ./Payload/pathfindingnew.app/_CodeSignature/CodeResources ... 
+2025-09-23 07:15:40 +0000  4914 bytes for ./Payload/pathfindingnew.app/_CodeSignature/CodeResources
+2025-09-23 07:15:40 +0000  copying file ./Payload/pathfindingnew.app/AppIcon76x76@2x~ipad.png.import ... 
+2025-09-23 07:15:40 +0000  644 bytes for ./Payload/pathfindingnew.app/AppIcon76x76@2x~ipad.png.import
+2025-09-23 07:15:40 +0000  copying file ./Payload/pathfindingnew.app/en.lproj/InfoPlist.strings ... 
+2025-09-23 07:15:40 +0000  42 bytes for ./Payload/pathfindingnew.app/en.lproj/InfoPlist.strings
+2025-09-23 07:15:40 +0000  copying file ./Payload/pathfindingnew.app/pathfindingnew ... 
+2025-09-23 07:15:41 +0000  71185856 bytes for ./Payload/pathfindingnew.app/pathfindingnew
+2025-09-23 07:15:41 +0000  copying file ./Payload/pathfindingnew.app/AppIcon60x60@2x.png ... 
+2025-09-23 07:15:41 +0000  38004 bytes for ./Payload/pathfindingnew.app/AppIcon60x60@2x.png
+2025-09-23 07:15:41 +0000  copying file ./Payload/pathfindingnew.app/Launch Screen.storyboardc/01J-lp-oVM-view-Ze5-6b-2t3.nib ... 
+2025-09-23 07:15:41 +0000  2104 bytes for ./Payload/pathfindingnew.app/Launch Screen.storyboardc/01J-lp-oVM-view-Ze5-6b-2t3.nib
+2025-09-23 07:15:41 +0000  copying file ./Payload/pathfindingnew.app/Launch Screen.storyboardc/UIViewController-01J-lp-oVM.nib ... 
+2025-09-23 07:15:41 +0000  924 bytes for ./Payload/pathfindingnew.app/Launch Screen.storyboardc/UIViewController-01J-lp-oVM.nib
+copying file ./Payload/pathfindingnew.app/Launch Screen.storyboardc/Info.plist ... 
+2025-09-23 07:15:41 +0000  258 bytes for ./Payload/pathfindingnew.app/Launch Screen.storyboardc/Info.plist
+copying file ./Payload/pathfindingnew.app/AppIcon60x60@2x.png.import ... 
+2025-09-23 07:15:41 +0000  640 bytes for ./Payload/pathfindingnew.app/AppIcon60x60@2x.png.import
+copying file ./Payload/pathfindingnew.app/Assets.car ... 
+2025-09-23 07:15:41 +0000  3735807 bytes for ./Payload/pathfindingnew.app/Assets.car
+2025-09-23 07:15:41 +0000  copying file ./Payload/pathfindingnew.app/AppIcon76x76@2x~ipad.png ... 
+2025-09-23 07:15:41 +0000  58396 bytes for ./Payload/pathfindingnew.app/AppIcon76x76@2x~ipad.png
+2025-09-23 07:15:41 +0000  copying file ./Payload/pathfindingnew.app/PrivacyInfo.xcprivacy ... 
+2025-09-23 07:15:41 +0000  990 bytes for ./Payload/pathfindingnew.app/PrivacyInfo.xcprivacy
+copying file ./Payload/pathfindingnew.app/pathfindingnew.pck ... 
+2025-09-23 07:15:41 +0000  38800 bytes for ./Payload/pathfindingnew.app/pathfindingnew.pck
+2025-09-23 07:15:41 +0000  copying file ./Payload/pathfindingnew.app/embedded.mobileprovision ... 
+2025-09-23 07:15:41 +0000  14584 bytes for ./Payload/pathfindingnew.app/embedded.mobileprovision
+2025-09-23 07:15:41 +0000  copying file ./Payload/pathfindingnew.app/Info.plist ... 
+2025-09-23 07:15:41 +0000  1528 bytes for ./Payload/pathfindingnew.app/Info.plist
+2025-09-23 07:15:41 +0000  copying file ./Payload/pathfindingnew.app/PkgInfo ... 
+2025-09-23 07:15:41 +0000  8 bytes for ./Payload/pathfindingnew.app/PkgInfo
+2025-09-23 07:15:41 +0000 [MT] /usr/bin/ditto exited with 0
+2025-09-23 07:15:41 +0000 [MT] Processing step: IDEDistributionAppStoreInformationStep
+2025-09-23 07:15:41 +0000 [MT] Skipping step: IDEDistributionAppStoreInformationStep because it said so
+2025-09-23 07:15:41 +0000 [MT] Processing step: IDEDistributionGenerateProcessedDistributionItems
+2025-09-23 07:15:41 +0000 [MT] IDEDistributionItem init <DVTFilePath:0x600002694af0:'/var/folders/4p/2vqxnn9178jczwm299x0hyp00000gn/T/XcodeDistPipeline.~~~Mjr7TG/Root/Payload/pathfindingnew.app'>
+2025-09-23 07:15:41 +0000 [MT] Processing step: IDEDistributionCreateManifestStep
