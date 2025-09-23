@@ -1,4 +1,5 @@
 # Godot-specific
+.godot/ #godot working files
 .import/               # Auto-generated import files for assets
 export.cfg             # Per-user export presets (unless you need to share!)
 export_presets.cfg     # Generated export preset cache (safe to ignore if everyone exports locally)

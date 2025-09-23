@@ -1,8 +1,0 @@
-res://Attraction/attraction.tscn::fff24ed17c2dfa61911f411fb8f694a9::1758611078::res://.godot/exported/133200997/export-2823db4b077f40941986614de898e2d1-attraction.scn
-res://Barrier/Barrier.tscn::7f03427b0f34f66ad52a7a395cf82b32::1758605411::res://.godot/exported/133200997/export-1624006e20787c35b2aefd3dbf623b20-Barrier.scn
-res://Enemy/Enemy.tscn::9f443befe29eda31e934b2d45f1cd547::1758611078::res://.godot/exported/133200997/export-27fe6323443605a8c5c7592bfef44e0f-Enemy.scn
-res://Environment/environment.tscn::c46bda12f6f5f1affc3ad6444f73f457::1758605411::res://.godot/exported/133200997/export-681818159b3bace17a11f5da4c00d470-environment.scn
-res://Gantt/gantt.tscn::8d6fea23e39a9c56a90f0e582a52c035::1758611078::res://.godot/exported/133200997/export-0c5132a2e9692a59bfc18bb2d6092806-gantt.scn
-res://GanttBar/GanttBar.tscn::5e654825c32e858727dac7e4731176c9::1758611078::res://.godot/exported/133200997/export-199c001b0558e34d4dc8259c63ac60db-GanttBar.scn
-res://SimulationControls/simulation_controls.tscn::3e644c5d1a5fa9693da2e41d8e772368::1758611078::res://.godot/exported/133200997/export-baeb0ebca549039745557512d9feb251-simulation_controls.scn
-res://World/World.tscn::ea5f46f6500266dfb632cbb837529107::1758611078::res://.godot/exported/133200997/export-de71c21559ba3535c3f0645ed0c93644-World.scn
