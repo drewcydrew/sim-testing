@@ -1,0 +1,40 @@
+# Godot-specific
+.import/               # Auto-generated import files for assets
+export.cfg             # Per-user export presets (unless you need to share!)
+export_presets.cfg     # Generated export preset cache (safe to ignore if everyone exports locally)
+
+# OS / editor junk
+.DS_Store
+Thumbs.db
+*.tmp
+*.temp
+*.swp
+*.swo
+
+# Mono / C# (only if you use Godot with C#)
+.mono/
+data_*/
+mono_crash.* 
+
+# Godot editor cache
+.cache/
+*.translation.import
+*.tscn.import
+*.tres.import
+
+# Build outputs
+*.pck
+*.zip
+*.exe
+*.apk
+*.ipa
+*.xcodeproj
+*.xcworkspace
+*.xcuserstate
+*.xcuserdatad/
+*.xcscmblueprint
+*.dSYM
+build/
+
+# Logs
+*.log
