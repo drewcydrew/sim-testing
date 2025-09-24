@@ -42,5 +42,27 @@ page = 0.2
 
 [node name="Plot" type="Control" parent="."]
 anchors_preset = 0
-offset_right = 40.0
-offset_bottom = 40.0
+offset_right = 1134.0
+offset_bottom = 430.0
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 0
+offset_left = 558.0
+offset_top = 129.0
+offset_right = 598.0
+offset_bottom = 152.0
+text = "25"
+
+[node name="Label" type="Label" parent="Label"]
+offset_left = -293.0
+offset_top = -3.0
+offset_right = -253.0
+offset_bottom = 20.0
+text = "12.5"
+
+[node name="Label" type="Label" parent="Label/Label"]
+offset_left = 562.0
+offset_top = 11.0
+offset_right = 602.0
+offset_bottom = 34.0
+text = "37.5"

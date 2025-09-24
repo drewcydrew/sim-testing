@@ -6,6 +6,5 @@ func _ready() -> void:
 	pass
 
 func _on_simulation_controls_sim_speed_changed(value: float) -> void:
-	print("Updating sim time")
-	Engine.time_scale = value
-	#_update_time_label(new_value)
+	# Drive the entire sim with Engine.time_scale via SimClock
+	SimulationClock.set_rate(value)
