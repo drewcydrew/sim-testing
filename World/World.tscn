@@ -17,6 +17,7 @@ current_tab = 2
 all_tabs_in_front = true
 
 [node name="Environment" parent="TabContainer" instance=ExtResource("2_il6x7")]
+visible = false
 layout_mode = 2
 
 [node name="Configuration" type="Control" parent="TabContainer"]

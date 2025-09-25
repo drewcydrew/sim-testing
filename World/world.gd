@@ -1,12 +1,13 @@
 extends Node2D
 
-@export var enemy_instance: Node2D
 
 # Remember the last non-zero speed so we can resume to it.
 var _last_nonzero_speed: float = 1.0
 
 @onready var _sim_controls: Node = $SimulationControls
 @onready var _play_pause_btn: Button = $SimulationControls/PlayPause
+@onready var _env: Node = $TabContainer/Environment
+@onready var _chk_auto_spawn: BaseButton = $SimulationControls/AutoSpawn if has_node("SimulationControls/AutoSpawn") else null
 
 func _ready() -> void:
 	# Keep UI in sync if the rate is changed elsewhere
@@ -41,7 +42,16 @@ func _on_rate_changed(rate: float) -> void:
 
 func _on_reset_pressed() -> void:
 	print ("Button pressed")
-	# Try soft reset first (calls enemy.reset())
-	if is_instance_valid(enemy_instance) and enemy_instance.has_method("reset"):
-		enemy_instance.reset()
-		return
+	# Optional: pause the simulation before clearing
+	#if Engine.time_scale > 0.0:
+	#	SimulationClock.set_rate(0.0)
+
+
+
+	# Clear all travellers
+	if is_instance_valid(_env) and _env.has_method("clear_all"):
+		_env.clear_all()
+
+	# Optional: reset your clock/time if you want a full sim reset
+	if Engine.has_singleton("SimulationClock") or true:
+		SimulationClock.reset(0.0)

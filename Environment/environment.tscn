@@ -1,6 +1,7 @@
-[gd_scene load_steps=5 format=3 uid="uid://wddjhpik28bm"]
+[gd_scene load_steps=6 format=3 uid="uid://wddjhpik28bm"]
 
 [ext_resource type="PackedScene" uid="uid://bvw455jm0ejqy" path="res://Barrier/Barrier.tscn" id="1_jnhet"]
+[ext_resource type="Script" uid="uid://y2ko4rhx2ha8" path="res://Environment/environment.gd" id="1_k8tir"]
 [ext_resource type="PackedScene" uid="uid://dl1vcfb7hqylb" path="res://Enemy/Enemy.tscn" id="2_k8tir"]
 [ext_resource type="PackedScene" uid="uid://f621ws6wfyog" path="res://Attraction/attraction.tscn" id="3_2r6fk"]
 
@@ -10,9 +11,10 @@ polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3), PackedInt32Arr
 outlines = Array[PackedVector2Array]([PackedVector2Array(38, 614, 41, 34, 307, 40, 313, 477, 556, 477, 556, 54, 846, 31, 834, 460, 1033, 460, 1030, 63, 1127, 72, 1133, 618, 739, 606, 741, 106, 650, 113, 631, 600, 211, 564, 216, 113, 115, 104, 114, 602)])
 
 [node name="Environment" type="Control"]
-visible = false
 layout_mode = 3
 anchors_preset = 0
+script = ExtResource("1_k8tir")
+traveller_scene = ExtResource("2_k8tir")
 metadata/_tab_index = 0
 
 [node name="NavigationRegion2D" type="NavigationRegion2D" parent="."]
@@ -24,18 +26,23 @@ position = Vector2(357, 532)
 [node name="Barrier" parent="NavigationRegion2D" instance=ExtResource("1_jnhet")]
 position = Vector2(781, 269)
 
-[node name="Enemy" parent="NavigationRegion2D" node_paths=PackedStringArray("movement_target") instance=ExtResource("2_k8tir")]
-position = Vector2(246, 465)
-movement_target = NodePath("../../NavTarget")
+[node name="NavTargets" type="Node2D" parent="."]
 
-[node name="NavTarget" type="Marker2D" parent="."]
-position = Vector2(907, 507)
-
-[node name="Attraction" parent="." groups=["attractions"] instance=ExtResource("3_2r6fk")]
+[node name="Attraction" parent="NavTargets" groups=["attractions"] instance=ExtResource("3_2r6fk")]
 position = Vector2(1085, 464)
 
-[node name="Attraction2" parent="." groups=["attractions"] instance=ExtResource("3_2r6fk")]
+[node name="Attraction2" parent="NavTargets" groups=["attractions"] instance=ExtResource("3_2r6fk")]
 position = Vector2(301, 538)
 
-[node name="Attraction3" parent="." groups=["attractions"] instance=ExtResource("3_2r6fk")]
+[node name="Attraction3" parent="NavTargets" groups=["attractions"] instance=ExtResource("3_2r6fk")]
 position = Vector2(249, 333)
+
+[node name="Travellers" type="Node2D" parent="."]
+
+[node name="SpawnPoints" type="Node2D" parent="."]
+
+[node name="NavTarget" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(789, 465)
+
+[node name="NavTarget2" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(73, 540)
