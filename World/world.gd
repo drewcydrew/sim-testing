@@ -8,6 +8,8 @@ var _last_nonzero_speed: float = 1.0
 @onready var _play_pause_btn: Button = $SimulationControls/PlayPause
 @onready var _env: Node = $TabContainer/Environment
 @onready var _chk_auto_spawn: BaseButton = $SimulationControls/AutoSpawn if has_node("SimulationControls/AutoSpawn") else null
+@onready var _gantt: BasicGantt = $TabContainer/Data/ScrollContainer/GanttNew
+
 
 func _ready() -> void:
 	# Keep UI in sync if the rate is changed elsewhere
@@ -46,8 +48,6 @@ func _on_reset_pressed() -> void:
 	#if Engine.time_scale > 0.0:
 	#	SimulationClock.set_rate(0.0)
 
-
-
 	# Clear all travellers
 	if is_instance_valid(_env) and _env.has_method("clear_all"):
 		_env.clear_all()
@@ -55,3 +55,16 @@ func _on_reset_pressed() -> void:
 	# Optional: reset your clock/time if you want a full sim reset
 	if Engine.has_singleton("SimulationClock") or true:
 		SimulationClock.reset(0.0)
+		
+			# Clear Gantt (bars are drawn from _events, so this fully wipes the chart)
+	if is_instance_valid(_gantt):
+		_gantt.clear()
+		
+	# (optional) also reset the visible domain so the next event starts from a clean window
+	# _gantt.set_axis(0.0, 1.0)  # or your preferred baseline
+
+	# (optional) if the gantt sits inside a ScrollContainer, snap scroll back to origin
+	var sc := _gantt.get_parent() as ScrollContainer
+	if sc:
+		sc.scroll_horizontal = 0
+		sc.scroll_vertical = 0
