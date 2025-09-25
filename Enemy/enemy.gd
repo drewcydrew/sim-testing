@@ -70,7 +70,7 @@ func start_visiting():
 	#print("Visiting attraction:", current_attraction.name)
 	var t1: float = SimulationClock.now()
 
-	await _visit_for_sim_seconds(2.0)
+	await _visit_for_sim_seconds(120.0)
 
 	var t2: float = SimulationClock.now()
 	#GanttHub.record(current_attraction.name, t1, t2, 0, Color8(46, 204, 113) )

@@ -1,2 +1,11 @@
 res://World/World.tscn
 res://Gantt/gantt.tscn
+res://World/world.gd
+res://Environment/environment.gd
+res://Enemy/enemy.gd
+res://Singletons/GanttHub.gd
+res://Gantt/gantt.gd
+res://Environment/environment.tscn
+res://Enemy/Enemy.tscn
+res://SimulationControls/simulation_controls.tscn
+res://Attraction/attraction.tscn
