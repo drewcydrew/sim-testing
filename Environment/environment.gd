@@ -3,15 +3,20 @@ extends Control
 @export var traveller_scene: PackedScene
 @export var max_travellers: int = 20
 @export var auto_spawn: bool = true
-@export var auto_spawn_interval_sec: float = 5
+@export var auto_spawn_interval_sec: float = 1000
 
 @onready var _spawn_points: Node = $SpawnPoints
 @onready var _targets_root: Node = $NavTargets
 @onready var _travellers_root: Node = $Travellers
 
+
+
+
 var _auto_timer: Timer
 var _targets: Array[Vector2] = []
 var _rng := RandomNumberGenerator.new()
+var _traveller_seq: int = 1
+
 
 signal traveller_spawned(node: Node2D)
 signal traveller_despawned(node: Node2D)
@@ -65,6 +70,13 @@ func spawn_one() -> Node2D:
 	var inst := traveller_scene.instantiate() as Node2D
 	_travellers_root.add_child(inst)
 	inst.global_position = spawn_at
+	
+	# ADD: unique, human-friendly name if not already set
+	inst.name = "Traveller_%03d" % _traveller_seq
+	inst.set_traveller_name("Traveller_%03d" % _traveller_seq)
+	_traveller_seq += 1
+	print ("created traveller: ", inst.name)
+
 
 	# Optional: hand initial targets to the traveller if it supports initialize()
 	if inst and inst.has_method("initialize"):

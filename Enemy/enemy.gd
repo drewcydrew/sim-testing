@@ -8,6 +8,9 @@ extends CharacterBody2D
 
 @onready var progress_bar: ProgressBar = $ProgressBar
 
+var traveller_name: String = ""
+
+
 var current_attraction: Node2D = null
 var is_visiting: bool = false
 var travelStart: float = 0.0
@@ -15,6 +18,10 @@ var travelFinish: float = 0.0
 
 const SPEED = 300.0
 const JUMP_VELOCITY = -400.0
+
+func set_traveller_name(n: String) -> void:
+	traveller_name = n
+
 
 func _ready():
 	call_deferred("actor_setup")
@@ -32,7 +39,7 @@ func visit_attraction(attraction: Node2D):
 	current_attraction = attraction
 	navigation_agent.target_position = attraction.global_position
 	travelStart = SimulationClock.now()
-	print("Heading to attraction:", attraction.name)
+	#print("Heading to attraction:", attraction.name)
 
 func _physics_process(delta: float) -> void:
 	if is_visiting or navigation_agent.is_navigation_finished():
@@ -54,18 +61,23 @@ func start_visiting():
 	velocity = Vector2.ZERO
 
 	travelFinish = SimulationClock.now()
-	print("Recording travel event from ", travelStart, " to ", travelFinish)
-	GanttHub.record("Travelling", travelStart, travelFinish, 0, Color8(52, 152, 219))
+	#print("Recording travel event from ", travelStart, " to ", travelFinish)
+	#GanttHub.record("Travelling", travelStart, travelFinish, 0, Color8(52, 152, 219))
+	print ("recording for ", traveller_name)
+	GanttHub.record_named("Travelling", travelStart, travelFinish, traveller_name, Color8(52, 152, 219))
 
-	print("Visiting attraction:", current_attraction.name)
+
+	#print("Visiting attraction:", current_attraction.name)
 	var t1: float = SimulationClock.now()
 
 	await _visit_for_sim_seconds(2.0)
 
 	var t2: float = SimulationClock.now()
-	GanttHub.record(current_attraction.name, t1, t2, 0, Color8(46, 204, 113) )
+	#GanttHub.record(current_attraction.name, t1, t2, 0, Color8(46, 204, 113) )
+	GanttHub.record_named(current_attraction.name, t1, t2, traveller_name, Color8(46, 204, 113))
 
-	print("Done visiting:", current_attraction.name)
+
+	#print("Done visiting:", current_attraction.name)
 	is_visiting = false
 	_pick_and_go_to_next_attraction()
 

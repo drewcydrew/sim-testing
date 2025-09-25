@@ -13,11 +13,10 @@ offset_left = -3.0
 offset_top = 64.0
 offset_right = 1150.0
 offset_bottom = 642.0
-current_tab = 2
+current_tab = 0
 all_tabs_in_front = true
 
 [node name="Environment" parent="TabContainer" instance=ExtResource("2_il6x7")]
-visible = false
 layout_mode = 2
 
 [node name="Configuration" type="Control" parent="TabContainer"]
@@ -26,6 +25,7 @@ layout_mode = 2
 metadata/_tab_index = 1
 
 [node name="Data" type="Control" parent="TabContainer"]
+visible = false
 layout_mode = 2
 metadata/_tab_index = 2
 
@@ -51,6 +51,12 @@ text = "Play/Pause"
 layout_mode = 2
 text = "Reset"
 
+[node name="Spawn" type="Button" parent="SimulationControls"]
+layout_mode = 2
+text = "Spawn
+"
+
 [connection signal="sim_speed_changed" from="SimulationControls" to="." method="_on_simulation_controls_sim_speed_changed"]
 [connection signal="pressed" from="SimulationControls/PlayPause" to="." method="_on_play_pause_pressed"]
 [connection signal="pressed" from="SimulationControls/Button" to="." method="_on_reset_pressed"]
+[connection signal="pressed" from="SimulationControls/Spawn" to="." method="_on_spawn_pressed"]

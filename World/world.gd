@@ -68,3 +68,8 @@ func _on_reset_pressed() -> void:
 	if sc:
 		sc.scroll_horizontal = 0
 		sc.scroll_vertical = 0
+
+
+func _on_spawn_pressed() -> void:
+	if is_instance_valid(_env) and _env.has_method("spawn_one"):
+		_env.spawn_one()

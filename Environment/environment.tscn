@@ -6,9 +6,9 @@
 [ext_resource type="PackedScene" uid="uid://f621ws6wfyog" path="res://Attraction/attraction.tscn" id="3_2r6fk"]
 
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_cmany"]
-vertices = PackedVector2Array(377, 552, 621.406, 589.141, 221.102, 554.828, 337, 552, 835.68, 41.8516, 823.719, 470, 801, 289, 801, 249, 104.008, 593.438, 48.0625, 602.281, 50.9375, 44.2188, 105.023, 93.0703, 297.133, 49.7813, 226.102, 103.859, 303.141, 487, 337, 512, 566, 487, 377, 512, 1043.08, 470, 1040.08, 73.9766, 1117.09, 81.1172, 1122.88, 607.68, 749.031, 596.289, 761, 289, 640.352, 103.711, 566, 63.2266, 751.039, 95.2031, 761, 249)
-polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3), PackedInt32Array(4, 5, 6, 7), PackedInt32Array(8, 9, 10, 11), PackedInt32Array(11, 10, 12, 13), PackedInt32Array(13, 12, 14, 2), PackedInt32Array(3, 2, 14, 15), PackedInt32Array(15, 14, 16, 17), PackedInt32Array(18, 19, 20, 21), PackedInt32Array(18, 21, 22, 5), PackedInt32Array(23, 6, 5, 22), PackedInt32Array(0, 17, 16, 1), PackedInt32Array(24, 1, 16, 25), PackedInt32Array(24, 25, 4, 26), PackedInt32Array(26, 4, 7, 27), PackedInt32Array(22, 26, 27, 23)])
-outlines = Array[PackedVector2Array]([PackedVector2Array(38, 614, 41, 34, 307, 40, 313, 477, 556, 477, 556, 54, 846, 31, 834, 460, 1033, 460, 1030, 63, 1127, 72, 1133, 618, 739, 606, 741, 106, 650, 113, 631, 600, 211, 564, 216, 113, 115, 104, 114, 602)])
+vertices = PackedVector2Array(377, 552, 662.539, 650.258, 180.867, 617.703, 337, 552, 925.719, 64, 914.742, 461.273, 853, 287, 853, 247, 226.852, 103.93, 337, 512, 104.008, 593.438, 48.0625, 602.281, 50.9375, 44.2188, 105.023, 93.0703, 298.242, 49.7969, 353.422, 452.031, 377, 512, 522.023, 433.047, 1043.08, 470.773, 1040.08, 73.9766, 1117.09, 81.1172, 1122.88, 607.68, 749.031, 596.289, 639.602, 103.773, 564.898, 64, 751.039, 95.2031, 813, 247, 813, 287)
+polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3), PackedInt32Array(4, 5, 6, 7), PackedInt32Array(3, 2, 8, 9), PackedInt32Array(10, 11, 12, 13), PackedInt32Array(13, 12, 14, 8), PackedInt32Array(8, 14, 15, 9), PackedInt32Array(16, 9, 15, 17), PackedInt32Array(18, 19, 20, 21), PackedInt32Array(18, 21, 22, 5), PackedInt32Array(1, 0, 16, 17), PackedInt32Array(23, 1, 17, 24), PackedInt32Array(23, 24, 4, 25), PackedInt32Array(25, 4, 7, 26), PackedInt32Array(22, 25, 26, 27), PackedInt32Array(5, 22, 27, 6)])
+outlines = Array[PackedVector2Array]([PackedVector2Array(38, 614, 41, 34, 307, 40, 362, 441, 513, 424, 556, 54, 936, 54, 925, 452, 1033, 460, 1030, 63, 1127, 72, 1133, 618, 739, 606, 741, 106, 650, 113, 673, 661, 170, 627, 216, 113, 115, 104, 114, 602)])
 
 [node name="Environment" type="Control"]
 layout_mode = 3
@@ -17,6 +17,10 @@ script = ExtResource("1_k8tir")
 traveller_scene = ExtResource("2_k8tir")
 metadata/_tab_index = 0
 
+[node name="Polygon2D" type="Polygon2D" parent="."]
+color = Color(1, 0.321569, 1, 1)
+polygon = PackedVector2Array(49, 596, 46, 45, 297, 44, 354, 450, 518, 434, 566, 64, 928, 61, 909, 455, 1046, 463, 1038, 76, 1121, 82, 1124, 605, 750, 599, 744, 95, 636, 104, 659, 647, 184, 615, 226, 107, 105, 96, 106, 591)
+
 [node name="NavigationRegion2D" type="NavigationRegion2D" parent="."]
 navigation_polygon = SubResource("NavigationPolygon_cmany")
 
@@ -24,15 +28,15 @@ navigation_polygon = SubResource("NavigationPolygon_cmany")
 position = Vector2(357, 532)
 
 [node name="Barrier" parent="NavigationRegion2D" instance=ExtResource("1_jnhet")]
-position = Vector2(781, 269)
+position = Vector2(833, 267)
 
 [node name="NavTargets" type="Node2D" parent="."]
 
 [node name="Attraction" parent="NavTargets" groups=["attractions"] instance=ExtResource("3_2r6fk")]
-position = Vector2(1085, 464)
+position = Vector2(1052, 550)
 
 [node name="Attraction2" parent="NavTargets" groups=["attractions"] instance=ExtResource("3_2r6fk")]
-position = Vector2(301, 538)
+position = Vector2(556, 541)
 
 [node name="Attraction3" parent="NavTargets" groups=["attractions"] instance=ExtResource("3_2r6fk")]
 position = Vector2(249, 333)

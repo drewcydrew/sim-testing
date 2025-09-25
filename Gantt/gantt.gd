@@ -29,6 +29,28 @@ class_name BasicGantt
 var _events: Array[Dictionary] = []
 var _max_row: int = -1
 
+# Map row-key (e.g. traveller name) -> numeric row index
+var _row_key_to_index: Dictionary = {}
+var _row_index_to_key: Array[String] = []  # optional, useful if you later draw row labels
+
+func _get_row_index_for(key: String) -> int:
+	if _row_key_to_index.has(key):
+		return _row_key_to_index[key]
+	# Allocate a new row
+	_max_row += 1
+	var idx := _max_row
+	_row_key_to_index[key] = idx
+	_row_index_to_key.append(key)
+	_update_content_metrics() # content height may grow
+	return idx
+
+func record_event_by_key(label: String, start_time: float, end_time: float, row_key: String, color: Color = Color(0.5, 0.8, 1.0, 1.0)) -> void:
+	var row := _get_row_index_for(row_key)
+	print ("recordign to row ", row)
+	record_event(label, start_time, end_time, row, color)
+
+
+
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_STOP
 	resized.connect(Callable(self, "_on_resized"))
@@ -69,11 +91,14 @@ func record_event(label: String, start_time: float, end_time: float, row: int = 
 	_update_content_metrics()
 	queue_redraw()
 
-func clear() -> void:
+func clear():
 	_events.clear()
 	_max_row = -1
+	_row_key_to_index.clear()
+	_row_index_to_key.clear()
 	_update_content_metrics()
 	queue_redraw()
+
 
 # Keep for compatibility; sets visible domain explicitly
 func set_time_window(start_time: float, end_time: float) -> void:
