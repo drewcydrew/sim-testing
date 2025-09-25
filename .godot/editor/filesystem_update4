@@ -1,6 +1,2 @@
 res://World/World.tscn
 res://Gantt/gantt.tscn
-res://Gantt/gantt.gd
-res://World/world.gd
-res://Enemy/enemy.gd
-res://SimClock.gd
