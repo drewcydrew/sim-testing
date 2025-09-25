@@ -42,4 +42,14 @@ offset_top = 21.0
 offset_right = 973.0
 offset_bottom = 60.0
 
+[node name="PlayPause" type="Button" parent="SimulationControls"]
+layout_mode = 2
+text = "Play/Pause"
+
+[node name="Button" type="Button" parent="SimulationControls"]
+layout_mode = 2
+text = "Reset"
+
 [connection signal="sim_speed_changed" from="SimulationControls" to="." method="_on_simulation_controls_sim_speed_changed"]
+[connection signal="pressed" from="SimulationControls/PlayPause" to="." method="_on_play_pause_pressed"]
+[connection signal="pressed" from="SimulationControls/Button" to="." method="_on_reset_pressed"]
