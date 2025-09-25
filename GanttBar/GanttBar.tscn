@@ -8,19 +8,22 @@ anchors_preset = 0
 mouse_filter = 1
 script = ExtResource("1_bar")
 
-[node name="Panel" type="Panel" parent="."]
+[node name="Panel" type="ColorRect" parent="."]
 layout_mode = 0
-offset_right = 200.0
-offset_bottom = 18.0
+offset_right = 202.0
+offset_bottom = 25.0
 
 [node name="Label" type="Label" parent="Panel"]
-layout_mode = 0
+layout_mode = 1
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 6.0
-offset_top = 2.0
-offset_right = -6.0
-offset_bottom = -2.0
+offset_left = 1.0
+offset_top = 1.0
+offset_right = -1.0
+offset_bottom = -1.0
+grow_horizontal = 2
+grow_vertical = 2
 text = "Task"
 
 [node name="HoverPopup" type="PopupPanel" parent="."]

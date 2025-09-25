@@ -1,148 +1,222 @@
 extends Control
 class_name BasicGantt
 
-# --- Fixed x-domain -----------------------------------------------------------
-const AXIS_MIN: float = 0.0
-const AXIS_MAX: float = 50.0
+# ── Time domain & horizontal zoom (works with a parent ScrollContainer) ───────
+@export var domain_min: float = 0.0
+@export var domain_max: float = 50.0
+@export var pixels_per_unit: float = 50.0            # horizontal zoom
+@export var auto_grow_domain: bool = true           # expand as events arrive
 
-# --- Vertical layout (inside host) -------------------------------------------
+# ── Layout ────────────────────────────────────────────────────────────────────
 @export var row_height: float = 18.0
 @export var row_gap: float = 6.0
+@export var left_margin: float = 0.0
+@export var right_margin: float = 0.0
+@export var top_margin: float = 0.0
+@export var bottom_margin: float = 0.0
 
-# --- Bar prefab & container ---------------------------------------------------
-@export var bar_scene: PackedScene = preload("res://GanttBar/GanttBar.tscn")
-@export var _plot: Control  # can be any Control; may be a Container
+# Optional labels inside bars
+@export var show_labels: bool = false
+@export var label_color: Color = Color(1, 1, 1, 1)
+@export var label_pad_left: float = 6.0
+@export var label_pad_right: float = 6.0
 
-# Internal host where bars are added (always a non-Container Control)
-var _host: Control
+# Debug
+@export var debug_log: bool = false
 
-# API-compat only (not used for x mapping)
-var _start_time: float = 0.0
-var _end_time: float = 30.0
-
-# Each entry: {bar: Control, start: float, end: float, row: int, label: String, color: Color}
-var _bar_nodes: Array[Dictionary] = []
+# Stored events (typed)
+# Each: { label: String, start: float, end: float, row: int, color: Color }
+var _events: Array[Dictionary] = []
+var _max_row: int = -1
 
 func _ready() -> void:
-	_init_plot_host()
+	mouse_filter = Control.MOUSE_FILTER_STOP
+	resized.connect(Callable(self, "_on_resized"))
+	_update_content_metrics()
+	# Register with hub (optional)
 	if typeof(GanttHub) != TYPE_NIL:
 		GanttHub.set_chart(self)
-	resized.connect(Callable(self, "_relayout_bars"))
 
 func _exit_tree() -> void:
 	if typeof(GanttHub) != TYPE_NIL and GanttHub.chart == self:
 		GanttHub.clear_chart()
 
-# --- Public API ---------------------------------------------------------------
-
-func set_time_window(start_time: float, end_time: float) -> void:
-	_start_time = start_time
-	_end_time = maxf(end_time, start_time + 0.001)
-	_relayout_bars()
+# ── Public API (call these from your game code) ───────────────────────────────
 
 func record_event(label: String, start_time: float, end_time: float, row: int = 0, color: Color = Color(0.5, 0.8, 1.0, 1.0)) -> void:
 	var s: float = min(start_time, end_time)
 	var e: float = max(start_time, end_time)
+	if e <= s:
+		return
 
-	var bar: Control = bar_scene.instantiate()
-	_prepare_bar_for_manual_layout(bar)
-	_host.add_child(bar)
-
-	if bar.has_method("set_data"):
-		bar.call("set_data", label, s, e, row, color)
-
-	_bar_nodes.append({
-		"bar": bar,
+	_events.append({
+		"label": label,
 		"start": s,
 		"end": e,
 		"row": row,
-		"label": label,
 		"color": color
 	})
+	_max_row = max(_max_row, row)
 
-	_relayout_bars()
+	if auto_grow_domain:
+		if _events.size() == 1:
+			domain_min = s
+			domain_max = maxf(e, s + 0.001)
+		else:
+			domain_min = min(domain_min, s)
+			domain_max = max(domain_max, e)
+
+	_update_content_metrics()
+	queue_redraw()
 
 func clear() -> void:
-	for d in _bar_nodes:
-		var bar: Control = (d.get("bar") as Control)
-		if is_instance_valid(bar):
-			bar.queue_free()
-	_bar_nodes.clear()
+	_events.clear()
+	_max_row = -1
+	_update_content_metrics()
+	queue_redraw()
 
-# --- Internal helpers ---------------------------------------------------------
+# Keep for compatibility; sets visible domain explicitly
+func set_time_window(start_time: float, end_time: float) -> void:
+	domain_min = start_time
+	domain_max = maxf(end_time, start_time + 0.001)
+	_update_content_metrics()
+	queue_redraw()
 
-func _init_plot_host() -> void:
-	# Fallback if not assigned
-	if _plot == null:
-		_plot = self
+func set_axis(min_v: float, max_v: float) -> void:
+	domain_min = min_v
+	domain_max = maxf(max_v, min_v + 0.001)
+	_update_content_metrics()
+	queue_redraw()
 
-	# If _plot is a Container, create a manual-layout child to host bars.
-	if _plot is Container:
-		push_warning("BasicGantt: _plot is a Container; adding a manual 'PlotHost' to avoid layout overrides.")
-		_host = Control.new()
-		_host.name = "PlotHost"
-		_host.set_anchors_preset(Control.PRESET_FULL_RECT)
-		_plot.add_child(_host)
-	else:
-		_host = _plot
+# Renamed to avoid colliding with Control.set_scale(Vector2)
+func set_pixels_per_unit(px_per_unit: float) -> void:
+	pixels_per_unit = max(0.01, px_per_unit)
+	_update_content_metrics()
+	queue_redraw()
 
-func _prepare_bar_for_manual_layout(bar: Control) -> void:
-	# Top-left anchored, fully manual placement
-	bar.set_anchors_preset(Control.PRESET_TOP_LEFT)
-	bar.anchor_left = 0.0
-	bar.anchor_top = 0.0
-	bar.anchor_right = 0.0
-	bar.anchor_bottom = 0.0
+func set_zoom(px_per_unit: float) -> void:
+	set_pixels_per_unit(px_per_unit)
 
-	# No automatic stretching
-	bar.size_flags_horizontal = 0
-	bar.size_flags_vertical = 0
-	bar.custom_minimum_size = Vector2.ZERO
-	bar.pivot_offset = Vector2.ZERO
-	bar.mouse_filter = Control.MOUSE_FILTER_IGNORE
+func set_auto_grow(v: bool) -> void:
+	auto_grow_domain = v
 
-# Linear map from domain value -> host-local pixels (float, no rounding)
-func _map_time_to_px(value: float, plot_width: float) -> float:
-	var span: float = AXIS_MAX - AXIS_MIN
-	if span <= 0.0:
-		return 0.0
-	var u: float = (value - AXIS_MIN) / span
-	return clamp(u, 0.0, 1.0) * plot_width
+func fit_domain(pad_units: float = 0.0) -> void:
+	if _events.is_empty():
+		return
+	var lo: float = _events[0]["start"]
+	var hi: float = _events[0]["end"]
+	for ev: Dictionary in _events:
+		lo = min(lo, ev["start"])
+		hi = max(hi, ev["end"])
+	domain_min = lo - pad_units
+	domain_max = hi + pad_units
+	_update_content_metrics()
+	queue_redraw()
 
-func _relayout_bars() -> void:
-	if _bar_nodes.is_empty() or _host == null:
+# ── Drawing (bars are drawn directly; no child scenes) ────────────────────────
+
+func _on_resized() -> void:
+	queue_redraw()
+
+func _draw() -> void:
+	if _events.is_empty():
 		return
 
-	var plot_w: float = max(1.0, _host.size.x)
-	var plot_h: float = max(1.0, _host.size.y)
+	var plot: Rect2 = _plot_rect()
+	var span: float = domain_max - domain_min
+	if span <= 0.0:
+		return
 
-	for d in _bar_nodes:
-		var bar: ColorRect = (d["bar"] as ColorRect)
-		var s: float = d["start"]
-		var e: float = d["end"]
-		var row: int = int(d["row"])
+	# integer pixel mapping across the whole content area
+	var scale: float = pixels_per_unit
+	var font := get_theme_default_font()
+	var font_size: int = int(get_theme_default_font_size())
 
-		# Fully out of range -> hide
-		if e <= AXIS_MIN or s >= AXIS_MAX:
-			#bar.visible = false
-			continue
-		#bar.visible = true
+	for ev: Dictionary in _events:
+		var s: float = ev["start"]
+		var e: float = ev["end"]
+		var row: int = int(ev["row"])
+		var col: Color = ev["color"]
+		var label: String = ev["label"]
 
-		# Clip to domain
-		var s_clip: float = max(s, AXIS_MIN)
-		var e_clip: float = min(e, AXIS_MAX)
-
-		# Independent mapping (no sequencing, no rounding)
-		var x0: float = _map_time_to_px(s_clip, plot_w)
-		var x1: float = _map_time_to_px(e_clip, plot_w)
-		#var w: float = max(1.0, x1 - x0)
-
-		# Vertical placement per row inside host
-		var row_y: float = float(row) * (row_height + row_gap)
-		if row_y + row_height > plot_h:
-			bar.visible = false
+		if e <= s:
 			continue
 
-		bar.size = Vector2(1, row_height)
-		bar.position = Vector2(x0, row_y)   # host-local
-		
+		# clip to visible domain
+		var s_clip: float = max(s, domain_min)
+		var e_clip: float = min(e, domain_max)
+		if e_clip <= s_clip:
+			continue
+
+		# half-open, integer-snapped mapping in *plot* space
+		var x0_px: int = int(floor(plot.position.x + (s_clip - domain_min) * scale))
+		var x1_px: int = int(floor(plot.position.x + (e_clip - domain_min) * scale))
+		if x1_px <= x0_px:
+			x1_px = x0_px + 1
+		var w_px: int = x1_px - x0_px
+
+		var y_px: int = int(floor(plot.position.y + float(row) * (row_height + row_gap)))
+		var h_px: int = max(1, int(floor(row_height)))
+
+		var bar_rect: Rect2 = Rect2(Vector2(float(x0_px), float(y_px)), Vector2(float(w_px), float(h_px)))
+		draw_rect(bar_rect, col, true)
+
+		if show_labels and font != null:
+			var baseline_y: float = bar_rect.position.y + (bar_rect.size.y - font.get_height(font_size)) * 0.5 + font.get_ascent(font_size)
+			var text_pos: Vector2 = Vector2(bar_rect.position.x + label_pad_left, baseline_y)
+			draw_string(font, text_pos, label, HORIZONTAL_ALIGNMENT_LEFT, -1.0, font_size, label_color)
+
+		if debug_log:
+			print("'", label, "' s=", s_clip, " e=", e_clip, " rect=", bar_rect)
+
+# Tooltips for hovered bars
+func _get_tooltip(at_position: Vector2) -> String:
+	var plot: Rect2 = _plot_rect()
+	var scale: float = pixels_per_unit
+
+	for ev: Dictionary in _events:
+		var s: float = ev["start"]
+		var e: float = ev["end"]
+		var row: int = int(ev["row"])
+		if e <= s:
+			continue
+
+		var s_clip: float = max(s, domain_min)
+		var e_clip: float = min(e, domain_max)
+		if e_clip <= s_clip:
+			continue
+
+		var x0_px: int = int(floor(plot.position.x + (s_clip - domain_min) * scale))
+		var x1_px: int = int(floor(plot.position.x + (e_clip - domain_min) * scale))
+		if x1_px <= x0_px:
+			x1_px = x0_px + 1
+		var y_px: int = int(floor(plot.position.y + float(row) * (row_height + row_gap)))
+		var h_px: int = int(floor(row_height))
+
+		var r: Rect2 = Rect2(Vector2(float(x0_px), float(y_px)), Vector2(float(x1_px - x0_px), float(h_px)))
+		if r.has_point(at_position):
+			var dur: float = max(0.0, e - s)
+			return "%s\nStart: %.3f  End: %.3f\nDuration: %.3fs" % [ev["label"], s, e, dur]
+	return ""
+
+# ── Helpers ───────────────────────────────────────────────────────────────────
+
+func _plot_rect() -> Rect2:
+	# The content (and thus scrollable width/height) is determined by domain span and rows.
+	var x0: float = left_margin
+	var y0: float = top_margin
+	var content_w: float = max(1.0, (domain_max - domain_min) * pixels_per_unit)
+	var content_h: float = max(1.0, _content_rows_height())
+	return Rect2(Vector2(x0, y0), Vector2(content_w, content_h))
+
+func _content_rows_height() -> float:
+	if _max_row < 0:
+		return 0.0
+	var rows_total: float = float(_max_row + 1)
+	return rows_total * row_height + max(0.0, rows_total - 1.0) * row_gap
+
+func _update_content_metrics() -> void:
+	# Set the size the ScrollContainer will use for scrollbars.
+	var content_w: float = left_margin + right_margin + max(1.0, (domain_max - domain_min) * pixels_per_unit)
+	var content_h: float = top_margin + bottom_margin + max(1.0, _content_rows_height())
+	custom_minimum_size = Vector2(content_w, content_h)

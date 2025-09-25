@@ -28,11 +28,13 @@ metadata/_tab_index = 1
 layout_mode = 2
 metadata/_tab_index = 2
 
-[node name="GanttNew" parent="TabContainer/Data" groups=["gantt"] instance=ExtResource("6_04mge")]
-offset_left = 9.0
-offset_top = 3.0
+[node name="ScrollContainer" type="ScrollContainer" parent="TabContainer/Data"]
+layout_mode = 0
 offset_right = 1153.0
-offset_bottom = 541.0
+offset_bottom = 547.0
+
+[node name="GanttNew" parent="TabContainer/Data/ScrollContainer" groups=["gantt"] instance=ExtResource("6_04mge")]
+layout_mode = 2
 
 [node name="SimulationControls" parent="." instance=ExtResource("6_eue43")]
 offset_left = 192.0
