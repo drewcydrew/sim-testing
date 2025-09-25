@@ -2,7 +2,7 @@ extends Node2D
 
 
 # Remember the last non-zero speed so we can resume to it.
-var _last_nonzero_speed: float = 1.0
+var _last_nonzero_speed: float = 100.0
 
 
 const START_OF_DAY_SECONDS: int = 9 * 3600  # 9:00 AM
@@ -44,7 +44,7 @@ func _on_play_pause_pressed() -> void:
 		SimulationClock.set_rate(0.0)
 	else:
 		# Resume to last non-zero (fallback to 1.0 if somehow 0)
-		var target := (_last_nonzero_speed if _last_nonzero_speed > 0.0 else 1.0)
+		var target := (_last_nonzero_speed if _last_nonzero_speed > 0.0 else 100.0)
 		SimulationClock.set_rate(target)
 
 func _on_rate_changed(rate: float) -> void:

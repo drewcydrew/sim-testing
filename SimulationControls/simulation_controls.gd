@@ -4,7 +4,7 @@ signal sim_speed_changed(value: float)
 
 
 
-@export var initial_value: float = 1.0
+@export var initial_value: float = 100.0
 
 func _ready() -> void:
 	$HSlider.value = initial_value
