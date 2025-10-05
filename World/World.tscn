@@ -1,7 +1,8 @@
-[gd_scene load_steps=5 format=3 uid="uid://bkjo27tus16cr"]
+[gd_scene load_steps=6 format=3 uid="uid://bkjo27tus16cr"]
 
 [ext_resource type="Script" uid="uid://ci23ngthgce8j" path="res://World/world.gd" id="1_2dftf"]
 [ext_resource type="PackedScene" uid="uid://wddjhpik28bm" path="res://Environment/environment.tscn" id="2_il6x7"]
+[ext_resource type="PackedScene" uid="uid://w5wpn02l2m0v" path="res://Configuration/configuration.tscn" id="4_o14yy"]
 [ext_resource type="PackedScene" uid="uid://co5uy51mo4xql" path="res://Gantt/gantt.tscn" id="6_04mge"]
 [ext_resource type="PackedScene" uid="uid://geysmsrle8io" path="res://SimulationControls/simulation_controls.tscn" id="6_eue43"]
 
@@ -13,21 +14,17 @@ offset_left = -3.0
 offset_top = 64.0
 offset_right = 1150.0
 offset_bottom = 642.0
-current_tab = 0
+current_tab = 2
 all_tabs_in_front = true
 
 [node name="Environment" parent="TabContainer" instance=ExtResource("2_il6x7")]
-layout_mode = 2
-
-[node name="Configuration" type="Control" parent="TabContainer"]
 visible = false
 layout_mode = 2
-metadata/_tab_index = 1
 
 [node name="Data" type="Control" parent="TabContainer"]
 visible = false
 layout_mode = 2
-metadata/_tab_index = 2
+metadata/_tab_index = 1
 
 [node name="ScrollContainer" type="ScrollContainer" parent="TabContainer/Data"]
 layout_mode = 0
@@ -37,11 +34,15 @@ offset_bottom = 547.0
 [node name="GanttNew" parent="TabContainer/Data/ScrollContainer" groups=["gantt"] instance=ExtResource("6_04mge")]
 layout_mode = 2
 
+[node name="Configuration" parent="TabContainer" instance=ExtResource("4_o14yy")]
+layout_mode = 2
+metadata/_tab_index = 2
+
 [node name="SimulationControls" parent="." instance=ExtResource("6_eue43")]
-offset_left = 192.0
-offset_top = 21.0
-offset_right = 973.0
-offset_bottom = 60.0
+offset_left = 25.0
+offset_top = 11.0
+offset_right = 1259.0
+offset_bottom = 82.0
 
 [node name="PlayPause" type="Button" parent="SimulationControls"]
 layout_mode = 2

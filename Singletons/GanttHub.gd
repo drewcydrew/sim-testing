@@ -18,7 +18,6 @@ func record_named(label: String, start_time: float, end_time: float, row_key: St
 	if not chart:
 		return
 	if chart.has_method("record_event_by_key"):
-		print ("recording event for: ", row_key)
 		chart.record_event_by_key(label, start_time, end_time, row_key, color)
 	else:
 		# Deterministic numeric fallback if the chart doesn’t support keys yet

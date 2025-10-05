@@ -81,9 +81,7 @@ func set_bar_color(c: Color) -> void:
 func apply_rect(pos: Vector2, sz: Vector2) -> void:
 	position = pos
 	size = sz
-	
-	print ("Setting rectangle size to", sz)
-	# Children are anchored to FULL_RECT, so they resize automatically.
+
 
 # --- Internals ----------------------------------------------------------------
 

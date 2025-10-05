@@ -12,7 +12,7 @@ class_name BasicGantt
 @export var row_gap: float = 6.0
 @export var left_margin: float = 0.0                 # keeps working as before
 @export var right_margin: float = 0.0
-@export var top_margin: float = 0.0
+@export var top_margin: float = 60.0
 @export var bottom_margin: float = 0.0
 
 # Labels **inside bars**
@@ -28,6 +28,11 @@ class_name BasicGantt
 @export var row_label_color: Color = Color(0.92, 0.92, 0.92, 1.0)
 @export var row_label_font: Font
 @export var row_label_font_size: int = 0            # 0 = use theme default
+
+# ── Zoom/Pan controls ─────────────────────────────────────────────────────────
+@export var zoom_min: float = 0.01
+@export var zoom_max: float = 100.0
+@export var zoom_sensitivity: float = 0.1
 
 # Debug
 @export var debug_log: bool = false
@@ -100,6 +105,19 @@ func record_event(label: String, start_time: float, end_time: float, row: int = 
 			domain_min = min(domain_min, s)
 			domain_max = max(domain_max, e)
 
+	_update_content_metrics()
+	queue_redraw()
+	
+func zoom_in(factor: float = 1.2) -> void:
+	print("calling zoom in: ", factor)
+	var new_zoom = pixels_per_unit * factor
+	pixels_per_unit = clamp(new_zoom, zoom_min, zoom_max)
+	_update_content_metrics()
+	queue_redraw()
+
+func zoom_out(factor: float = 1.2) -> void:
+	var new_zoom = pixels_per_unit / factor
+	pixels_per_unit = clamp(new_zoom, zoom_min, zoom_max)
 	_update_content_metrics()
 	queue_redraw()
 
@@ -295,3 +313,123 @@ func _update_content_metrics() -> void:
 	var content_w: float = left_margin + _gutter_width() + right_margin + max(1.0, (domain_max - domain_min) * pixels_per_unit)
 	var content_h: float = top_margin + bottom_margin + max(1.0, _content_rows_height())
 	custom_minimum_size = Vector2(content_w, content_h)
+
+
+func _on_zoom_in_pressed() -> void:
+	zoom_in(2)
+
+
+func _on_zoom_out_pressed() -> void:
+	zoom_out(2)
+	
+	## ───────────────────────── CSV Export ─────────────────────────
+
+# Public helper in case other code wants the raw list
+func get_events() -> Array[Dictionary]:
+	# Return a shallow copy so callers can't mutate our internal array directly
+	return _events.duplicate()
+
+# Button: open save dialog, or fall back to a default user:// path
+func _on_export_csv_pressed() -> void:
+	var default_name := "gantt_export_%s.csv" % Time.get_datetime_string_from_system().replace(":", "").replace("T", "_")
+	var dlg := get_node_or_null("SaveDialog")
+	if dlg:
+		dlg.current_file = default_name
+		dlg.popup_centered()
+	else:
+		# Fallback: auto-save to user://
+		var path := "user://%s" % default_name
+		var ok := export_csv(path)
+		if ok:
+			if debug_log:
+				print("Gantt CSV exported to ", path)
+		else:
+			push_warning("Failed to export CSV to %s" % path)
+
+# Called by FileDialog when the user picks a file
+func _on_save_dialog_file_selected(path: String) -> void:
+	var ok := export_csv(path)
+	if ok:
+		if debug_log:
+			print("Gantt CSV exported to ", path)
+	else:
+		push_warning("Failed to export CSV to %s" % path)
+
+# Core export function. Returns true on success.
+func export_csv(path: String) -> bool:
+	# Header
+	var header := [
+		"row_key",
+		"row_index",
+		"label",
+		"start",
+		"end",
+		"duration",
+		"color_rgba"
+	]
+
+	var lines: Array[String] = []
+	lines.append(_csv_join(header))
+
+	# Rows
+	for e in _events:
+		var row_index: int = int(e.get("row", -1))
+		var row_key: String = ""
+		if row_index >= 0 and row_index < _row_index_to_key.size():
+			row_key = _row_index_to_key[row_index]
+
+		var label: String = str(e.get("label", ""))
+		var start := float(e.get("start", 0.0))
+		var end := float(e.get("end", start))
+		var duration := end - start
+		var color: Color = e.get("color", Color.WHITE)
+		var color_hex := color.to_html(true) # RGBA, e.g. #RRGGBBAA
+
+		var row := [
+			row_key,
+			str(row_index),
+			label,
+			_stringify_num(start),
+			_stringify_num(end),
+			_stringify_num(duration),
+			color_hex
+		]
+		lines.append(_csv_join(row))
+
+	# Write
+	var fa := FileAccess.open(path, FileAccess.WRITE)
+	if fa == null:
+		return false
+	fa.store_string("\n".join(lines) + "\n")
+	fa.close()
+	return true
+
+# ---- CSV helpers ----
+# Basic CSV quoting: wrap fields in quotes, double any inner quotes.
+func _csv_escape(s: String) -> String:
+	return '"' + s.replace('"', '""') + '"'
+
+func _csv_join(fields: Array) -> String:
+	var out: Array[String] = []
+	for f in fields:
+		var txt := str(f)
+		# Always quote to be safe (commas, newlines, etc.)
+		out.append(_csv_escape(txt))
+	return _join(out, ",")
+
+# Keep numeric output tidy (avoid scientific notation, ensure decimals when needed)
+func _stringify_num(x: float) -> String:
+	# Use a fixed precision that suits your time units.
+	# Adjust decimals if you prefer fewer/more (e.g., 3 decimals).
+	return String.num(x, 4)
+
+func _join(parts: Array[String], sep: String) -> String:
+	var s := ""
+	var first := true
+	for p in parts:
+		if first:
+			first = false
+		else:
+			s += sep
+		s += p
+	return s

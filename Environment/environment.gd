@@ -75,7 +75,6 @@ func spawn_one() -> Node2D:
 	inst.name = "Traveller_%03d" % _traveller_seq
 	inst.set_traveller_name("Traveller_%03d" % _traveller_seq)
 	_traveller_seq += 1
-	print ("created traveller: ", inst.name)
 
 
 	# Optional: hand initial targets to the traveller if it supports initialize()
@@ -114,3 +113,28 @@ func _pick_spawn_point() -> Vector2:
 	var idx := _rng.randi_range(0, options.size() - 1)
 	var n := options[idx]
 	return (n as Node2D).global_position if n is Node2D else global_position
+	
+	
+func set_spawn_rate_per_hour(rate_per_hour: float) -> void:
+	print("updating spawn rate: ", rate_per_hour)
+	# Treat <=0 as "off"
+	if rate_per_hour <= 0.0:
+		auto_spawn = false
+		auto_spawn_interval_sec = 0.0
+		if _auto_timer:
+			_auto_timer.stop()
+		return
+
+	auto_spawn = true
+	auto_spawn_interval_sec = 3600.0 / rate_per_hour
+
+	# If a timer exists at runtime, keep it synced
+	if _auto_timer:
+		_auto_timer.wait_time = auto_spawn_interval_sec
+		if _auto_timer.is_stopped():
+			_auto_timer.start()
+
+func get_spawn_rate_per_hour() -> float:
+	if auto_spawn_interval_sec <= 0.0:
+		return 0.0
+	return 3600.0 / auto_spawn_interval_sec

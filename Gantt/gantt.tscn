@@ -9,3 +9,34 @@ offset_right = 1151.0
 offset_bottom = 644.0
 script = ExtResource("1_udaaf")
 show_labels = true
+
+[node name="ZoomIn" type="Button" parent="."]
+layout_mode = 0
+offset_left = 3.0
+offset_top = 4.0
+offset_right = 200.0
+offset_bottom = 43.0
+text = "Zoom In"
+
+[node name="ZoomOut" type="Button" parent="."]
+layout_mode = 0
+offset_left = 207.0
+offset_top = 4.0
+offset_right = 404.0
+offset_bottom = 43.0
+text = "Zoom Out"
+
+[node name="SaveDialog" type="FileDialog" parent="."]
+
+[node name="ExportCSV" type="Button" parent="."]
+layout_mode = 0
+offset_left = 414.0
+offset_top = 4.0
+offset_right = 611.0
+offset_bottom = 47.0
+text = "Export"
+
+[connection signal="pressed" from="ZoomIn" to="." method="_on_zoom_in_pressed"]
+[connection signal="pressed" from="ZoomOut" to="." method="_on_zoom_out_pressed"]
+[connection signal="file_selected" from="SaveDialog" to="." method="_on_save_dialog_file_selected"]
+[connection signal="pressed" from="ExportCSV" to="." method="_on_export_csv_pressed"]

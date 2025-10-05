@@ -16,7 +16,7 @@ var is_visiting: bool = false
 var travelStart: float = 0.0
 var travelFinish: float = 0.0
 
-const SPEED = 300.0
+const SPEED = 3000.0
 const JUMP_VELOCITY = -400.0
 
 func set_traveller_name(n: String) -> void:

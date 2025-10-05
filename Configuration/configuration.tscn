@@ -1,0 +1,25 @@
+[gd_scene load_steps=2 format=3 uid="uid://w5wpn02l2m0v"]
+
+[ext_resource type="Script" uid="uid://dr8bkyvh7ld8l" path="res://Configuration/configuration.gd" id="1_2q1r1"]
+
+[node name="Configuration" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("1_2q1r1")
+
+[node name="HSlider" type="HSlider" parent="."]
+layout_mode = 0
+offset_left = 66.0
+offset_top = 31.0
+offset_right = 957.0
+offset_bottom = 138.0
+
+[node name="ValueLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = 74.0
+offset_top = 33.0
+offset_right = 222.0
+offset_bottom = 56.0
+text = "Travellers per hour"

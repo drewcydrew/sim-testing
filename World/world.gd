@@ -1,6 +1,8 @@
 extends Node2D
 
 
+
+
 # Remember the last non-zero speed so we can resume to it.
 var _last_nonzero_speed: float = 100.0
 
@@ -12,12 +14,24 @@ const START_OF_DAY_SECONDS: int = 9 * 3600  # 9:00 AM
 
 @onready var _sim_controls: Node = $SimulationControls
 @onready var _play_pause_btn: Button = $SimulationControls/PlayPause
+@onready var _config: Node = $TabContainer/Configuration
 @onready var _env: Node = $TabContainer/Environment
 @onready var _chk_auto_spawn: BaseButton = $SimulationControls/AutoSpawn if has_node("SimulationControls/AutoSpawn") else null
 @onready var _gantt: BasicGantt = $TabContainer/Data/ScrollContainer/GanttNew
 
 
 func _ready() -> void:
+	
+	_config.spawn_rate_changed.connect(_env.set_spawn_rate_per_hour)
+	_config.auto_spawn_toggled.connect(func(on):
+		_env.set_spawn_rate_per_hour(_config.get_displayed_rate() if on else 0.0)
+	)
+	# Optionally initialize UI from env:
+	#_config.set_displayed_rate(_env.get_spawn_rate_per_hour())
+
+	SimulationClock.set_rate(100.0)
+
+
 	# Keep UI in sync if the rate is changed elsewhere
 	SimulationClock.rate_changed.connect(_on_rate_changed)
 	# Initialize UI from current Engine.time_scale
@@ -54,10 +68,6 @@ func _on_rate_changed(rate: float) -> void:
 
 
 func _on_reset_pressed() -> void:
-	print ("Button pressed")
-	# Optional: pause the simulation before clearing
-	#if Engine.time_scale > 0.0:
-	#	SimulationClock.set_rate(0.0)
 
 	# Clear all travellers
 	if is_instance_valid(_env) and _env.has_method("clear_all"):
@@ -90,11 +100,9 @@ func _update_time_label() -> void:
 	
 	if not is_instance_valid(_time_label):
 		return
-		
-	print("Updating time label")
+
 	var sim_sec: int = int(SimulationClock.now())
 	var display_sec: int = START_OF_DAY_SECONDS + sim_sec
-	print("Added", sim_sec)
 	_time_label.text = _format_time_of_day(display_sec)
 
 func _format_time_of_day(total_seconds: float) -> String:
