@@ -12,13 +12,12 @@ script = ExtResource("1_2dftf")
 [node name="TabContainer" type="TabContainer" parent="."]
 offset_left = -3.0
 offset_top = 64.0
-offset_right = 1150.0
-offset_bottom = 642.0
-current_tab = 2
+offset_right = 1275.0
+offset_bottom = 887.0
+current_tab = 0
 all_tabs_in_front = true
 
 [node name="Environment" parent="TabContainer" instance=ExtResource("2_il6x7")]
-visible = false
 layout_mode = 2
 
 [node name="Data" type="Control" parent="TabContainer"]
@@ -28,13 +27,14 @@ metadata/_tab_index = 1
 
 [node name="ScrollContainer" type="ScrollContainer" parent="TabContainer/Data"]
 layout_mode = 0
-offset_right = 1153.0
-offset_bottom = 547.0
+offset_right = 1270.0
+offset_bottom = 750.0
 
 [node name="GanttNew" parent="TabContainer/Data/ScrollContainer" groups=["gantt"] instance=ExtResource("6_04mge")]
 layout_mode = 2
 
 [node name="Configuration" parent="TabContainer" instance=ExtResource("4_o14yy")]
+visible = false
 layout_mode = 2
 metadata/_tab_index = 2
 
@@ -42,7 +42,7 @@ metadata/_tab_index = 2
 offset_left = 25.0
 offset_top = 11.0
 offset_right = 1259.0
-offset_bottom = 82.0
+offset_bottom = 58.0
 
 [node name="PlayPause" type="Button" parent="SimulationControls"]
 layout_mode = 2

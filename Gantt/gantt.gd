@@ -3,7 +3,7 @@ class_name BasicGantt
 
 # ── Time domain & horizontal zoom (works with a parent ScrollContainer) ───────
 @export var domain_min: float = 0.0
-@export var domain_max: float = 50.0
+@export var domain_max: float = 60.0
 @export var pixels_per_unit: float = 10.0            # horizontal zoom
 @export var auto_grow_domain: bool = true            # expand as events arrive
 
@@ -69,6 +69,7 @@ func record_event_by_key(label: String, start_time: float, end_time: float, row_
 # ── Node lifecycle ────────────────────────────────────────────────────────────
 
 func _ready() -> void:
+	size = Vector2(1600, 600) 
 	mouse_filter = Control.MOUSE_FILTER_STOP
 	resized.connect(Callable(self, "_on_resized"))
 	_update_content_metrics()

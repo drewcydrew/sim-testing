@@ -23,7 +23,7 @@ SimulationClock="*res://Singletons/SimClock.gd"
 [display]
 
 window/size/viewport_width=1280
-window/size/viewport_height=720
+window/size/viewport_height=890
 window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
 
