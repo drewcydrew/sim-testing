@@ -28,7 +28,6 @@ mono_crash.*
 *.zip
 *.exe
 *.apk
-*.ipa
 *.xcodeproj
 *.xcworkspace
 *.xcuserstate
