@@ -24,6 +24,16 @@ func set_traveller_name(n: String) -> void:
 
 
 func _ready():
+	# --- Physics layers: assume environment/obstacles = layer 1, travellers = layer 2 ---
+	# Put traveller on layer 2:
+	set_collision_layer_value(1, false) # not on world layer
+	set_collision_layer_value(2, true)  # on travellers layer
+
+	# Collide only with world (layer 1), not with other travellers (layer 2):
+	set_collision_mask_value(1, true)   # collide with world/obstacles
+	set_collision_mask_value(2, false)  # ignore other travellers
+	
+	
 	call_deferred("actor_setup")
 	_pick_and_go_to_next_attraction()
 
