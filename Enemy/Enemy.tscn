@@ -28,4 +28,14 @@ offset_top = -43.0
 offset_right = 81.0
 offset_bottom = -16.0
 
+[node name="PanelContainer" type="PanelContainer" parent="."]
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="MarginContainer" type="MarginContainer" parent="PanelContainer"]
+layout_mode = 2
+
+[node name="RichTextLabel" type="RichTextLabel" parent="PanelContainer/MarginContainer"]
+layout_mode = 2
+
 [connection signal="value_changed" from="ProgressBar" to="." method="_on_progress_bar_value_changed"]

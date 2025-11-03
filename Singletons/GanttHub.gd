@@ -25,3 +25,10 @@ func record_named(label: String, start_time: float, end_time: float, row_key: St
 		var hashed: int = int(hash(row_key))
 		var row: int = int(abs(hashed) % MAX_FALLBACK_ROWS)
 		chart.record_event(label, start_time, end_time, row, color)
+		
+		
+# ── Add to GanttHub.gd ──────────────────────────────────────────────────────
+func get_events_for(row_key: String, up_to_time: float = INF) -> Array[Dictionary]:
+	if chart and chart.has_method("get_events_by_row_key"):
+		return chart.get_events_by_row_key(row_key, up_to_time)
+	return []
