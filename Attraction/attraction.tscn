@@ -4,14 +4,32 @@
 [ext_resource type="Texture2D" uid="uid://cppavw05cmbhn" path="res://Attraction/attraction.png" id="2_acn2v"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_f3ipd"]
+size = Vector2(94, 84)
 
 [node name="Attraction" type="Area2D"]
 script = ExtResource("1_f3ipd")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(5, 8)
 shape = SubResource("RectangleShape2D_f3ipd")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 position = Vector2(3, 6.99999)
 scale = Vector2(0.0908203, 0.0917969)
 texture = ExtResource("2_acn2v")
+
+[node name="Tooltip" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_left = 3.0
+offset_top = 6.99999
+offset_right = 43.0
+offset_bottom = 47.0
+
+[node name="PanelContainer" type="PanelContainer" parent="Tooltip"]
+layout_mode = 0
+offset_right = 260.0
+offset_bottom = 294.0
+
+[connection signal="mouse_entered" from="." to="." method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="." to="." method="_on_mouse_exited"]

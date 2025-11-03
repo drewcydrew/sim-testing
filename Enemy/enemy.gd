@@ -7,6 +7,8 @@ extends CharacterBody2D
 @export var gantt_path: NodePath
 
 @onready var progress_bar: ProgressBar = $ProgressBar
+@onready var tooltip: Control = $Tooltip
+
 
 var traveller_name: String = ""
 
@@ -119,3 +121,15 @@ func _pick_and_go_to_next_attraction() -> void:
 
 	var choice: Node2D = all[randi() % all.size()] if candidates.is_empty() else candidates[randi() % candidates.size()]
 	visit_attraction(choice)
+
+
+func _on_mouse_entered() -> void:
+	print("entered")
+	tooltip.visible = true
+	
+
+
+
+func _on_mouse_exited() -> void:
+	print("exited")
+	tooltip.visible = false

@@ -4,9 +4,10 @@
 [ext_resource type="Texture2D" uid="uid://duty2ee10687k" path="res://Enemy/traveller.png" id="2_epr5s"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_s7bn3"]
-radius = 8.0
+radius = 29.0689
 
 [node name="Enemy" type="CharacterBody2D" node_paths=PackedStringArray("navigation_agent")]
+input_pickable = true
 script = ExtResource("1_s7bn3")
 movement_speed = 20.0
 navigation_agent = NodePath("NavigationAgent2D")
@@ -28,14 +29,23 @@ offset_top = -43.0
 offset_right = 81.0
 offset_bottom = -16.0
 
-[node name="PanelContainer" type="PanelContainer" parent="."]
+[node name="Tooltip" type="Control" parent="."]
+visible = false
+layout_mode = 3
+anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
 
-[node name="MarginContainer" type="MarginContainer" parent="PanelContainer"]
+[node name="PanelContainer" type="PanelContainer" parent="Tooltip"]
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="MarginContainer" type="MarginContainer" parent="Tooltip/PanelContainer"]
 layout_mode = 2
 
-[node name="RichTextLabel" type="RichTextLabel" parent="PanelContainer/MarginContainer"]
+[node name="RichTextLabel" type="RichTextLabel" parent="Tooltip/PanelContainer/MarginContainer"]
 layout_mode = 2
 
+[connection signal="mouse_entered" from="." to="." method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="." to="." method="_on_mouse_exited"]
 [connection signal="value_changed" from="ProgressBar" to="." method="_on_progress_bar_value_changed"]
