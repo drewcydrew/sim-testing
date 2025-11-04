@@ -4,14 +4,18 @@
 [ext_resource type="Texture2D" uid="uid://cppavw05cmbhn" path="res://Attraction/attraction.png" id="2_acn2v"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_f3ipd"]
-size = Vector2(94, 84)
+size = Vector2(13, 6)
 
 [node name="Attraction" type="Area2D"]
+collision_layer = 0
+collision_mask = 0
+input_pickable = false
 script = ExtResource("1_f3ipd")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(5, 8)
+position = Vector2(-35.5, -31)
 shape = SubResource("RectangleShape2D_f3ipd")
+disabled = true
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 position = Vector2(3, 6.99999)
@@ -19,6 +23,9 @@ scale = Vector2(0.0908203, 0.0917969)
 texture = ExtResource("2_acn2v")
 
 [node name="Tooltip" type="Control" parent="."]
+visible = false
+light_mask = 0
+visibility_layer = 0
 layout_mode = 3
 anchors_preset = 0
 offset_left = 3.0

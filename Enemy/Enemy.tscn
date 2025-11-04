@@ -4,7 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://duty2ee10687k" path="res://Enemy/traveller.png" id="2_epr5s"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_s7bn3"]
-radius = 29.0689
+radius = 28.1603
 
 [node name="Enemy" type="CharacterBody2D" node_paths=PackedStringArray("navigation_agent")]
 input_pickable = true
@@ -23,7 +23,6 @@ shape = SubResource("CircleShape2D_s7bn3")
 [node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
 
 [node name="ProgressBar" type="ProgressBar" parent="."]
-visible = false
 offset_left = -43.0
 offset_top = -43.0
 offset_right = 81.0
@@ -33,12 +32,13 @@ offset_bottom = -16.0
 visible = false
 layout_mode = 3
 anchors_preset = 0
-offset_right = 40.0
-offset_bottom = 40.0
+offset_right = 304.0
+offset_bottom = 328.0
 
 [node name="PanelContainer" type="PanelContainer" parent="Tooltip"]
-offset_right = 40.0
-offset_bottom = 40.0
+layout_mode = 0
+offset_right = 306.0
+offset_bottom = 326.0
 
 [node name="MarginContainer" type="MarginContainer" parent="Tooltip/PanelContainer"]
 layout_mode = 2

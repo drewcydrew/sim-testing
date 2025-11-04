@@ -3,6 +3,8 @@ extends Area2D
 signal attraction_selected(attraction)
 
 @onready var tooltip: Control = $Tooltip
+@export var visit_duration_seconds: float = 120.0
+
 
 func _ready():
 	print("initialised")
@@ -23,3 +25,8 @@ func _on_mouse_entered() -> void:
 func _on_mouse_exited() -> void:
 	print("Exited")
 	tooltip.visible = false
+	
+	
+func get_visit_duration() -> float:
+	# e.g., vary by traveller, queue length, time of day, etc.
+	return visit_duration_seconds
