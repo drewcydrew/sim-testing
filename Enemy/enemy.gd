@@ -11,6 +11,8 @@ extends CharacterBody2D
 @onready var tooltip_label: RichTextLabel = $Tooltip/PanelContainer/MarginContainer/RichTextLabel
 
 
+
+
 var traveller_name: String = ""
 @export var max_visits: int = 5
 var visits_completed: int = 0
@@ -87,17 +89,29 @@ func start_visiting():
 	print ("recording for ", traveller_name)
 	GanttHub.record_named("Travelling", travelStart, travelFinish, traveller_name, Color8(52, 152, 219))
 	
-
-
-	#print("Visiting attraction:", current_attraction.name)
+	current_attraction.emit_signal("visit_requested", self)
+	
+		#print("Visiting attraction:", current_attraction.name)
 	var t1: float = SimulationClock.now()
-
 	var visitDuration = _get_visit_duration_for(current_attraction)
-	print(visitDuration)
-	await _visit_for_sim_seconds(visitDuration)
+	#print(visitDuration)
+	#await _visit_for_sim_seconds(visitDuration)
+
+	
+	#  Wait until this exact traveller is finished
+	while true:
+		var finished_traveller: Node= await current_attraction.visit_finished
+		print("traveller finished")
+		if finished_traveller == self:
+			break
+	
+
+
+
+	
 
 	var t2: float = SimulationClock.now()
-	#GanttHub.record(current_attraction.name, t1, t2, 0, Color8(46, 204, 113) )
+	GanttHub.record(current_attraction.name, t1, t2, 0, Color8(46, 204, 113) )
 	GanttHub.record_named(current_attraction.name, t1, t2, traveller_name, Color8(46, 204, 113))
 	
 	localEvents.append("finished at attraction")

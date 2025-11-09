@@ -1,9 +1,9 @@
+res://Enemy/Enemy.tscn
+res://Enemy/enemy.gd
 res://World/World.tscn
 res://Gantt/gantt.tscn
 res://Environment/environment.tscn
-res://Enemy/Enemy.tscn
 res://SimulationControls/simulation_controls.tscn
 res://Attraction/attraction.tscn
 res://Configuration/configuration.tscn
-res://Enemy/enemy.gd
 res://Attraction/attraction.gd
