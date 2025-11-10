@@ -16,6 +16,8 @@ signal visit_finished(traveller: Node)
 var queue: Array[Node] = []
 var active: Array[Node] = [] 
 
+var _pumping: bool = false
+
 
 func _ready():
 	print("initialised")
@@ -44,17 +46,29 @@ func _on_visit_requested(traveller: Node) -> void:
 	queueIndicator.add_child(rect)
 
 	_pump_queue()
+	
+func _emit_visit_started(traveller: Node) -> void:
+	emit_signal("visit_started", traveller)
+
 
 func _pump_queue() -> void:
+	#if _pumping:
+	#	return
+		
+	#_pumping = true
+
 	# Start as many as we have capacity for
 	while active.size() < capacity and queue.size() > 0:
 		var next := queue.pop_front() as Node
 		if not is_instance_valid(next):
 			continue
 		active.append(next)
-		emit_signal("visit_started", next)
+		#emit_signal("visit_started", next)
+		call_deferred("_emit_visit_started", next)
 		# fire-and-forget the service task (don’t block the loop)
 		_serve_one(next)
+		
+	#_pumping = false
 
 func _serve_one(traveller: Node) -> void:
 	# Show progress only for single-slot attractions (shared bar)

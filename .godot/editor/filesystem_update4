@@ -6,3 +6,5 @@ res://SimulationControls/simulation_controls.tscn
 res://Attraction/attraction.tscn
 res://Configuration/configuration.tscn
 res://Attraction/attraction.gd
+res://Enemy/enemy.gd
+res://GanttBar/GanttBar.tscn

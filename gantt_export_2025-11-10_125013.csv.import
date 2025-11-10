@@ -1,0 +1,15 @@
+[remap]
+
+importer="csv_translation"
+type="Translation"
+uid="uid://dd4h4tvjirouo"
+valid=false
+
+[deps]
+
+source_file="res://gantt_export_2025-11-10_125013.csv"
+
+[params]
+
+compress=true
+delimiter=0

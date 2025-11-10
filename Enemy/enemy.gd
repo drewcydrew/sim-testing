@@ -89,15 +89,32 @@ func start_visiting():
 	print ("recording for ", traveller_name)
 	GanttHub.record_named("Travelling", travelStart, travelFinish, traveller_name, Color8(52, 152, 219))
 	
-	current_attraction.emit_signal("visit_requested", self)
+	
+	
+	var requestStart = SimulationClock.now()
+	
 	
 		#print("Visiting attraction:", current_attraction.name)
 	var t1: float = SimulationClock.now()
-	var visitDuration = _get_visit_duration_for(current_attraction)
+	#var visitDuration = _get_visit_duration_for(current_attraction)
 	#print(visitDuration)
 	#await _visit_for_sim_seconds(visitDuration)
 
+	current_attraction.emit_signal("visit_requested", self)
 	
+	#  Wait until this exact traveller is finished
+	while true:
+		var finished_traveller: Node= await current_attraction.visit_started
+		print("traveller started")
+		if finished_traveller == self:
+			break
+			
+	
+	var t2: float = SimulationClock.now()
+	#GanttHub.record("Waiting", t1, t2, 0, Color8(46, 204, 113) )
+	GanttHub.record_named("Waiting", t1, t2, traveller_name, Color8(46, 204, 113))
+	t1 = SimulationClock.now()
+			
 	#  Wait until this exact traveller is finished
 	while true:
 		var finished_traveller: Node= await current_attraction.visit_finished
@@ -110,9 +127,9 @@ func start_visiting():
 
 	
 
-	var t2: float = SimulationClock.now()
-	GanttHub.record(current_attraction.name, t1, t2, 0, Color8(46, 204, 113) )
-	GanttHub.record_named(current_attraction.name, t1, t2, traveller_name, Color8(46, 204, 113))
+	t2 = SimulationClock.now()
+	#GanttHub.record(current_attraction.name, t1, t2, 0, Color8(243, 156, 18) )
+	GanttHub.record_named(current_attraction.name, t1, t2, traveller_name, Color8(243, 156, 18))
 	
 	localEvents.append("finished at attraction")
 	
