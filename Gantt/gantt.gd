@@ -34,6 +34,11 @@ class_name BasicGantt
 @export var zoom_max: float = 100.0
 @export var zoom_sensitivity: float = 0.1
 
+
+@export var grow_open_events: bool = true
+
+var _open_by_key: Dictionary = {} 
+
 # Debug
 @export var debug_log: bool = false
 
@@ -70,18 +75,79 @@ func record_event_by_key(label: String, start_time: float, end_time: float, row_
 
 func _ready() -> void:
 	size = Vector2(1600, 600) 
+	set_process(true)
 	mouse_filter = Control.MOUSE_FILTER_STOP
 	resized.connect(Callable(self, "_on_resized"))
 	_update_content_metrics()
 	# Register with hub (optional)
 	if typeof(GanttHub) != TYPE_NIL:
 		GanttHub.set_chart(self)
+		
+
+func _now() -> float:
+	# Use a sim clock if you have one; otherwise wall-clock seconds
+	if typeof(SimulationClock) != TYPE_NIL and SimulationClock.has_method("now"):
+		return float(SimulationClock.now())
+	return float(Time.get_ticks_msec()) / 1000.0
+
+		
+func _process(delta: float) -> void:
+	# Only repaint/follow time if we actually have open events.
+	if _open_by_key.is_empty():
+		return
+
+	var now := _now()
+
+	# Follow "now" so the right edge of the visible window keeps moving.
+	# This prevents e_clip = min(e, domain_max) from freezing growth.
+	if auto_grow_domain and now > domain_max:
+		domain_max = now
+		_update_content_metrics()
+
+	queue_redraw()
+
 
 func _exit_tree() -> void:
 	if typeof(GanttHub) != TYPE_NIL and GanttHub.chart == self:
 		GanttHub.clear_chart()
 
 # ── Public API (call these from your game code) ───────────────────────────────
+
+func open_event_by_key(label: String, start_time: float, row_key: String, color: Color = Color(0.5, 0.8, 1.0, 1.0)) -> void:
+	var row := _get_row_index_for(row_key)
+	var s: float = start_time
+	_events.append({
+		"label": label,
+		"start": s,
+		"end": INF,         # sentinel: draw up to now
+		"row": row,
+		"color": color,
+		"open": true
+	})
+	_open_by_key[row_key] = _events.size() - 1
+	_max_row = max(_max_row, row)
+	if auto_grow_domain and s > domain_max:
+		domain_max = s
+	_update_content_metrics()
+	queue_redraw()
+
+func finish_event_by_key(row_key: String, end_time: float) -> void:
+	if not _open_by_key.has(row_key):
+		return
+	var idx: int = _open_by_key[row_key]
+	if idx < 0 or idx >= _events.size():
+		_open_by_key.erase(row_key)
+		return
+	var ev: Dictionary = _events[idx]
+	ev["end"] = max(end_time, float(ev.get("start", end_time)))
+	ev["open"] = false
+	_events[idx] = ev
+	_open_by_key.erase(row_key)
+	if auto_grow_domain and ev["end"] > domain_max:
+		domain_max = ev["end"]
+	_update_content_metrics()
+	queue_redraw()
+
 
 func record_event(label: String, start_time: float, end_time: float, row: int = 0, color: Color = Color(0.5, 0.8, 1.0, 1.0)) -> void:
 	var s: float = min(start_time, end_time)
@@ -177,6 +243,9 @@ func _draw() -> void:
 	var plot: Rect2 = _plot_rect()
 	var span: float = domain_max - domain_min
 	var scale: float = pixels_per_unit
+	if _events.is_empty() or span <= 0.0:
+		return
+
 
 	# Draw row labels in the left gutter (even when there are no events)
 	if show_row_labels and _row_index_to_key.size() > 0:
@@ -194,7 +263,10 @@ func _draw() -> void:
 
 	for ev: Dictionary in _events:
 		var s: float = ev["start"]
-		var e: float = ev["end"]
+		#var e: float = ev["end"]
+		var e_raw: float = float(ev["end"])
+		var is_open: bool = grow_open_events and ev.get("open", false) and is_finite(e_raw) == false
+		var e: float = _now() if is_open else e_raw
 		var row: int = int(ev["row"])
 		var col: Color = ev["color"]
 		var inside_label: String = ev["label"]
@@ -356,6 +428,13 @@ func _on_save_dialog_file_selected(path: String) -> void:
 	else:
 		push_warning("Failed to export CSV to %s" % path)
 
+
+func _effective_end(ev: Dictionary) -> float:
+	var e_raw := float(ev.get("end", NAN))
+	var is_open: bool = grow_open_events and ev.get("open", false) and not is_finite(e_raw)
+	return _now() if is_open else e_raw
+
+
 # Core export function. Returns true on success.
 func export_csv(path: String) -> bool:
 	# Header
@@ -381,7 +460,8 @@ func export_csv(path: String) -> bool:
 
 		var label: String = str(e.get("label", ""))
 		var start := float(e.get("start", 0.0))
-		var end := float(e.get("end", start))
+		var end := _effective_end(e)  # <-- resolve INF/open to now
+		#var end := float(e.get("end", start))
 		var duration := end - start
 		var color: Color = e.get("color", Color.WHITE)
 		var color_hex := color.to_html(true) # RGBA, e.g. #RRGGBBAA

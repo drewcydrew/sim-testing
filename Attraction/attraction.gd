@@ -4,7 +4,7 @@ signal attraction_selected(attraction)
 
 @onready var tooltip: Control = $Tooltip
 @export var visit_duration_seconds: float = 120.0
-@export var capacity: int = 1
+@export var capacity: int = 2
 
 signal visit_requested(traveller: Node)
 signal visit_started(traveller: Node)

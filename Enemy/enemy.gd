@@ -52,6 +52,8 @@ func actor_setup():
 	pass
 
 func set_movement_target(movement_target: Vector2):
+	#GanttHub.record_named("Travelling", travelStart, travelFinish, traveller_name, Color8(52, 152, 219))
+	
 	navigation_agent.target_position = movement_target
 
 func visit_attraction(attraction: Node2D):
@@ -84,10 +86,11 @@ func start_visiting():
 	velocity = Vector2.ZERO
 
 	travelFinish = SimulationClock.now()
+	GanttHub.finish_named(traveller_name, SimulationClock.now())
 	#print("Recording travel event from ", travelStart, " to ", travelFinish)
 	#GanttHub.record("Travelling", travelStart, travelFinish, 0, Color8(52, 152, 219))
 	print ("recording for ", traveller_name)
-	GanttHub.record_named("Travelling", travelStart, travelFinish, traveller_name, Color8(52, 152, 219))
+	#GanttHub.record_named("Travelling", travelStart, travelFinish, traveller_name, Color8(52, 152, 219))
 	
 	
 	
@@ -102,6 +105,10 @@ func start_visiting():
 
 	current_attraction.emit_signal("visit_requested", self)
 	
+	GanttHub.start_named("Waiting", SimulationClock.now(), traveller_name, Color8(46, 204, 113))  # green
+
+
+	
 	#  Wait until this exact traveller is finished
 	while true:
 		var finished_traveller: Node= await current_attraction.visit_started
@@ -111,8 +118,11 @@ func start_visiting():
 			
 	
 	var t2: float = SimulationClock.now()
+	GanttHub.finish_named(traveller_name, SimulationClock.now())  # close Waiting
+	GanttHub.start_named(current_attraction.name, SimulationClock.now(), traveller_name, Color8(243, 156, 18))  # orange
+
 	#GanttHub.record("Waiting", t1, t2, 0, Color8(46, 204, 113) )
-	GanttHub.record_named("Waiting", t1, t2, traveller_name, Color8(46, 204, 113))
+	#GanttHub.record_named("Waiting", t1, t2, traveller_name, Color8(46, 204, 113))
 	t1 = SimulationClock.now()
 			
 	#  Wait until this exact traveller is finished
@@ -126,10 +136,13 @@ func start_visiting():
 
 
 	
+	GanttHub.finish_named(traveller_name, SimulationClock.now())
+	#GanttHub.start_named("Travelling", SimulationClock.now(), traveller_name, Color8(52, 152, 219))  # orange
+	
 
 	t2 = SimulationClock.now()
 	#GanttHub.record(current_attraction.name, t1, t2, 0, Color8(243, 156, 18) )
-	GanttHub.record_named(current_attraction.name, t1, t2, traveller_name, Color8(243, 156, 18))
+	#GanttHub.record_named(current_attraction.name, t1, t2, traveller_name, Color8(243, 156, 18))
 	
 	localEvents.append("finished at attraction")
 	
@@ -170,6 +183,8 @@ func _pick_and_go_to_next_attraction() -> void:
 			candidates.append(a)
 
 	var choice: Node2D = all[randi() % all.size()] if candidates.is_empty() else candidates[randi() % candidates.size()]
+	print("Traeller Name: ", traveller_name)
+	GanttHub.start_named("Travelling", SimulationClock.now(), traveller_name, Color8(52, 152, 219))  # orange
 	visit_attraction(choice)
 
 func _build_bbcode_from_local_events() -> String:
@@ -191,6 +206,7 @@ func _begin_leaving() -> void:
 	is_leaving = true
 	is_visiting = false
 	current_attraction = null
+	GanttHub.finish_named(traveller_name, SimulationClock.now())
 	
 	print("Leaving")
 	_despawn_now()

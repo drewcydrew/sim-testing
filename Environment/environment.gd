@@ -68,13 +68,15 @@ func spawn_one() -> Node2D:
 
 	var spawn_at := _pick_spawn_point()
 	var inst := traveller_scene.instantiate() as Node2D
-	_travellers_root.add_child(inst)
+	
 	inst.global_position = spawn_at
 	
 	# ADD: unique, human-friendly name if not already set
 	inst.name = "Traveller_%03d" % _traveller_seq
 	inst.set_traveller_name("Traveller_%03d" % _traveller_seq)
 	_traveller_seq += 1
+	
+	_travellers_root.add_child(inst)
 
 
 	# Optional: hand initial targets to the traveller if it supports initialize()

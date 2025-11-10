@@ -8,3 +8,6 @@ res://Configuration/configuration.tscn
 res://Attraction/attraction.gd
 res://Enemy/enemy.gd
 res://GanttBar/GanttBar.tscn
+res://Gantt/gantt.gd
+res://Singletons/GanttHub.gd
+res://Environment/environment.gd
