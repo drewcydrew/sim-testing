@@ -1,7 +1,8 @@
+RichTextLabel
+HBoxContainer
 ProgressBar
 PanelContainer
 Control
-RichTextLabel
 MarginContainer
 CollisionShape2D
 StaticBody2D

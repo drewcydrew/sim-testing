@@ -43,5 +43,9 @@ visible = false
 offset_right = 337.0
 offset_bottom = 40.0
 
+[node name="QueueIndicator" type="HBoxContainer" parent="."]
+offset_right = 204.0
+offset_bottom = 51.0
+
 [connection signal="mouse_entered" from="." to="." method="_on_mouse_entered"]
 [connection signal="mouse_exited" from="." to="." method="_on_mouse_exited"]
