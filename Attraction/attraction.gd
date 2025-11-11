@@ -5,6 +5,7 @@ signal attraction_selected(attraction)
 @onready var tooltip: Control = $Tooltip
 @export var visit_duration_seconds: float = 120.0
 @export var capacity: int = 2
+@export var attractionName: String = "Whirly Dirvy"
 
 signal visit_requested(traveller: Node)
 signal visit_started(traveller: Node)
@@ -12,6 +13,7 @@ signal visit_finished(traveller: Node)
 
 @onready var progress_bar: ProgressBar = $ProgressBar
 @onready var queueIndicator: HBoxContainer = $QueueIndicator
+@onready var activeIndicator: HBoxContainer = $ActiveIndicator
 
 var queue: Array[Node] = []
 var active: Array[Node] = [] 
@@ -74,10 +76,17 @@ func _serve_one(traveller: Node) -> void:
 	# Show progress only for single-slot attractions (shared bar)
 	var show_progress := (capacity == 1)
 	queueIndicator.get_child(0).queue_free()
+	var rect = ColorRect.new()
+	rect.color = Color(0.2, 0.4, 1.0)  # cyan color
+	rect.custom_minimum_size = Vector2(10, 10)
+	activeIndicator.add_child(rect)
+	GanttHub.start_named("Serving", SimulationClock.now(), attractionName, Color8(52, 152, 219))  # orange
 	await _visit_for_sim_seconds(get_visit_duration())
+	GanttHub.finish_named(attractionName, SimulationClock.now())
 
 	emit_signal("visit_finished", traveller)
 	active.erase(traveller)
+	activeIndicator.get_child(0).queue_free()
 
 	# Clean up progress bar in single-slot case
 	if capacity == 1 and active.is_empty():

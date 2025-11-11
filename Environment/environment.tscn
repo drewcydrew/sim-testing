@@ -89,9 +89,11 @@ visit_duration_seconds = 300.0
 
 [node name="Attraction2" parent="NavTargets" groups=["attractions"] instance=ExtResource("3_2r6fk")]
 position = Vector2(472, 176)
+attractionName = "second attraction"
 
 [node name="Attraction3" parent="NavTargets" groups=["attractions"] instance=ExtResource("3_2r6fk")]
 position = Vector2(182, 451)
+attractionName = "3rd time lucky"
 
 [node name="Travellers" type="Node2D" parent="."]
 
