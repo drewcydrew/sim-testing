@@ -9,6 +9,7 @@ offset_right = 1280.0
 offset_bottom = 900.0
 script = ExtResource("1_udaaf")
 show_labels = true
+display_type = "ATTRACTION"
 
 [node name="ZoomIn" type="Button" parent="."]
 layout_mode = 0

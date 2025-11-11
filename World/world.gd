@@ -78,8 +78,9 @@ func _on_reset_pressed() -> void:
 		SimulationClock.reset(0.0)
 		
 			# Clear Gantt (bars are drawn from _events, so this fully wipes the chart)
-	if is_instance_valid(_gantt):
-		_gantt.clear()
+	if typeof(GanttHub) != TYPE_NIL and GanttHub.has_method("reset_all"):
+		GanttHub.reset_all()
+
 		
 	# (optional) also reset the visible domain so the next event starts from a clean window
 	# _gantt.set_axis(0.0, 1.0)  # or your preferred baseline

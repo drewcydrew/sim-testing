@@ -37,6 +37,8 @@ class_name BasicGantt
 
 @export var grow_open_events: bool = true
 
+@export var display_type: String = ""
+
 var _open_by_key: Dictionary = {} 
 
 # Debug
@@ -73,6 +75,45 @@ func record_event_by_key(label: String, start_time: float, end_time: float, row_
 
 # ── Node lifecycle ────────────────────────────────────────────────────────────
 
+# Handlers (very small)
+func _on_hub_event_recorded(ev: Dictionary) -> void:
+	var ev_type := String(ev.get("type", ""))
+	if not _type_matches(ev_type):
+		return
+	if ev.has("row_key"):
+		record_event_by_key(ev.label, float(ev.start_time), float(ev.end_time), ev.row_key, ev.color)
+	elif ev.has("row"):
+		record_event(ev.label, float(ev.start_time), float(ev.end_time), int(ev.row), ev.color)
+
+func _on_hub_event_opened(row_key: String, payload: Dictionary) -> void:
+	var ev_type := String(payload.get("type", ""))
+	if not _type_matches(ev_type):
+		return
+	open_event_by_key(payload.label, float(payload.start_time), row_key, payload.color)
+
+func _on_hub_event_finished(row_key: String, end_time: float) -> void:
+	# Safe: only matching-type opens were created locally, so this is a no-op otherwise.
+	finish_event_by_key(row_key, float(end_time))
+
+		
+func _norm(s: String) -> String:
+	return String(s).strip_edges().to_lower()
+
+func _type_matches(t: String) -> bool:
+	var want := _norm(display_type)
+	if want == "" or want == "all":
+		return true
+	return _norm(t) == want
+
+func _row_key_from_open_map_key(k: String) -> String:
+	var sep := "::"
+	if typeof(GanttHub) != TYPE_NIL and GanttHub.has_variable("_TYPE_SEP"):
+		sep = String(GanttHub._TYPE_SEP)
+	var parts := String(k).split(sep, false, 1)
+	return String(parts[1]) if parts.size() == 2 else String(k)
+
+
+
 func _ready() -> void:
 	size = Vector2(1600, 600) 
 	set_process(true)
@@ -80,9 +121,44 @@ func _ready() -> void:
 	resized.connect(Callable(self, "_on_resized"))
 	_update_content_metrics()
 	# Register with hub (optional)
-	if typeof(GanttHub) != TYPE_NIL:
-		GanttHub.set_chart(self)
+	#if typeof(GanttHub) != TYPE_NIL:
+	#	GanttHub.set_chart(self)
 		
+		# 1) Closed events
+	if typeof(GanttHub) != TYPE_NIL and GanttHub.has_method("get_all_events"):
+		for ev in GanttHub.get_all_events():
+			var ev_type := String(ev.get("type", ""))
+			if not _type_matches(ev_type):
+				continue
+			if ev.has("row_key"):
+				record_event_by_key(ev.label, ev.start_time, ev.end_time, ev.row_key, ev.color)
+			elif ev.has("row"):
+				record_event(ev.label, ev.start_time, ev.end_time, int(ev.row), ev.color)
+
+	# 2) Open events
+	if typeof(GanttHub) != TYPE_NIL and GanttHub.has_method("get_open_events"):
+		var open_map := GanttHub.get_open_events()
+		for k in open_map.keys():
+			var o: Dictionary = open_map[k]
+			var ev_type := String(o.get("type", ""))
+			if not _type_matches(ev_type):
+				continue
+			var rk := String(o.get("row_key", ""))
+			if rk == "":
+				rk = _row_key_from_open_map_key(String(k))
+			open_event_by_key(o.label, float(o.start_time), rk, o.color)
+
+
+		# 3) Subscribe to live updates
+		if not GanttHub.is_connected("event_recorded", Callable(self, "_on_hub_event_recorded")):
+			GanttHub.connect("event_recorded", Callable(self, "_on_hub_event_recorded"))
+		if not GanttHub.is_connected("event_opened", Callable(self, "_on_hub_event_opened")):
+			GanttHub.connect("event_opened", Callable(self, "_on_hub_event_opened"))
+		if not GanttHub.is_connected("event_finished", Callable(self, "_on_hub_event_finished")):
+			GanttHub.connect("event_finished", Callable(self, "_on_hub_event_finished"))
+		if GanttHub.has_signal("events_reset") and not GanttHub.is_connected("events_reset", Callable(self, "_on_hub_events_reset")):
+			GanttHub.connect("events_reset", Callable(self, "_on_hub_events_reset"))
+
 
 func _now() -> float:
 	# Use a sim clock if you have one; otherwise wall-clock seconds
@@ -105,6 +181,11 @@ func _process(delta: float) -> void:
 		_update_content_metrics()
 
 	queue_redraw()
+	
+func _on_hub_events_reset() -> void:
+	# Restore the initial viewport and wipe all local state
+	clear()  # will now also clear open events
+
 
 
 func _exit_tree() -> void:
@@ -113,7 +194,7 @@ func _exit_tree() -> void:
 
 # ── Public API (call these from your game code) ───────────────────────────────
 
-func open_event_by_key(label: String, start_time: float, row_key: String, color: Color = Color(0.5, 0.8, 1.0, 1.0)) -> void:
+func open_event_by_key(label: String, start_time: float, row_key: String, color: Color = Color(0.5, 0.8, 1.0, 1.0), type: String = "TEST") -> void:
 	var row := _get_row_index_for(row_key)
 	var s: float = start_time
 	_events.append({
@@ -122,7 +203,8 @@ func open_event_by_key(label: String, start_time: float, row_key: String, color:
 		"end": INF,         # sentinel: draw up to now
 		"row": row,
 		"color": color,
-		"open": true
+		"open": true,
+		"type": type
 	})
 	_open_by_key[row_key] = _events.size() - 1
 	_max_row = max(_max_row, row)
@@ -190,6 +272,7 @@ func zoom_out(factor: float = 1.2) -> void:
 
 func clear():
 	_events.clear()
+	_open_by_key.clear()   
 	_max_row = -1
 	_row_key_to_index.clear()
 	_row_index_to_key.clear()

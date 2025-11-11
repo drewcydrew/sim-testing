@@ -78,7 +78,7 @@ func _physics_process(delta: float) -> void:
 	move_and_slide()
 
 	if current_attraction and global_position.distance_to(current_attraction.global_position) < 50.0:
-		print("arrived")
+		#print("arrived")
 		start_visiting()
 
 func start_visiting():
@@ -89,7 +89,7 @@ func start_visiting():
 	GanttHub.finish_named(traveller_name, SimulationClock.now())
 	#print("Recording travel event from ", travelStart, " to ", travelFinish)
 	#GanttHub.record("Travelling", travelStart, travelFinish, 0, Color8(52, 152, 219))
-	print ("recording for ", traveller_name)
+	#print ("recording for ", traveller_name)
 	#GanttHub.record_named("Travelling", travelStart, travelFinish, traveller_name, Color8(52, 152, 219))
 	
 	
@@ -105,21 +105,21 @@ func start_visiting():
 
 	current_attraction.emit_signal("visit_requested", self)
 	
-	GanttHub.start_named("Waiting", SimulationClock.now(), traveller_name, Color8(46, 204, 113))  # green
+	GanttHub.start_named("Waiting", SimulationClock.now(), traveller_name, Color8(46, 204, 113), "PERSON")  # green
 
 
 	
 	#  Wait until this exact traveller is finished
 	while true:
 		var finished_traveller: Node= await current_attraction.visit_started
-		print("traveller started")
+		#print("traveller started")
 		if finished_traveller == self:
 			break
 			
 	
 	var t2: float = SimulationClock.now()
 	GanttHub.finish_named(traveller_name, SimulationClock.now())  # close Waiting
-	GanttHub.start_named(current_attraction.name, SimulationClock.now(), traveller_name, Color8(243, 156, 18))  # orange
+	GanttHub.start_named(current_attraction.name, SimulationClock.now(), traveller_name, Color8(243, 156, 18),  "PERSON")  # orange
 
 	#GanttHub.record("Waiting", t1, t2, 0, Color8(46, 204, 113) )
 	#GanttHub.record_named("Waiting", t1, t2, traveller_name, Color8(46, 204, 113))
@@ -127,8 +127,8 @@ func start_visiting():
 			
 	#  Wait until this exact traveller is finished
 	while true:
-		var finished_traveller: Node= await current_attraction.visit_finished
-		print("traveller finished")
+		var finished_traveller: Node = await current_attraction.visit_finished
+		#print("traveller finished")
 		if finished_traveller == self:
 			break
 	
@@ -174,7 +174,7 @@ func _visit_for_sim_seconds(dur: float) -> void:
 func _pick_and_go_to_next_attraction() -> void:
 	var all := get_tree().get_nodes_in_group("attractions")
 	if all.is_empty():
-		print("no attractions")
+		#print("no attractions")
 		return
 
 	var candidates: Array = []
@@ -183,8 +183,8 @@ func _pick_and_go_to_next_attraction() -> void:
 			candidates.append(a)
 
 	var choice: Node2D = all[randi() % all.size()] if candidates.is_empty() else candidates[randi() % candidates.size()]
-	print("Traeller Name: ", traveller_name)
-	GanttHub.start_named("Travelling", SimulationClock.now(), traveller_name, Color8(52, 152, 219))  # orange
+	#print("Traeller Name: ", traveller_name)
+	GanttHub.start_named("Travelling", SimulationClock.now(), traveller_name, Color8(52, 152, 219),  "PERSON")  # orange
 	visit_attraction(choice)
 
 func _build_bbcode_from_local_events() -> String:
@@ -208,7 +208,7 @@ func _begin_leaving() -> void:
 	current_attraction = null
 	GanttHub.finish_named(traveller_name, SimulationClock.now())
 	
-	print("Leaving")
+	#print("Leaving")
 	_despawn_now()
 
 
@@ -232,7 +232,7 @@ func _get_visit_duration_for(a: Node) -> float:
 
 
 func _on_mouse_entered() -> void:
-	print("entered")
+	#print("entered")
 	tooltip_label.text = _build_bbcode_from_local_events()
 	tooltip.visible = true
 	
@@ -240,5 +240,5 @@ func _on_mouse_entered() -> void:
 
 
 func _on_mouse_exited() -> void:
-	print("exited")
+	#print("exited")
 	tooltip.visible = false

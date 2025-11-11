@@ -19,6 +19,33 @@ var queue: Array[Node] = []
 var active: Array[Node] = [] 
 
 var _pumping: bool = false
+var _epoch: int = 0   # increments on reset to cancel in-flight awaits
+
+
+
+func _clear_container_children(c: Node) -> void:
+	if c == null:
+		return
+	for child in c.get_children():
+		child.queue_free()
+
+
+func clear_all() -> void:
+	# bump epoch to cancel all running _serve_one coroutines
+	_epoch += 1
+
+	# clear queues
+	queue.clear()
+	active.clear()
+	_pumping = false
+
+	# UI bits
+	_clear_container_children(queueIndicator)
+	_clear_container_children(activeIndicator)
+
+	progress_bar.visible = false
+	progress_bar.value = 0.0
+
 
 
 func _ready():
@@ -26,6 +53,14 @@ func _ready():
 	connect("area_entered",_on_mouse_entered)
 	connect("area_exited",_on_mouse_exited)
 	connect("visit_requested", _on_visit_requested)
+	
+	if typeof(GanttHub) != TYPE_NIL and GanttHub.has_signal("events_reset"):
+		if not GanttHub.is_connected("events_reset", Callable(self, "_on_events_reset")):
+			GanttHub.connect("events_reset", Callable(self, "_on_events_reset"))
+
+func _on_events_reset() -> void:
+	print("CLEARING ATTRACTIN")
+	clear_all()
 
 
 func _input_event(viewport, event, shape_idx):
@@ -80,7 +115,7 @@ func _serve_one(traveller: Node) -> void:
 	rect.color = Color(0.2, 0.4, 1.0)  # cyan color
 	rect.custom_minimum_size = Vector2(10, 10)
 	activeIndicator.add_child(rect)
-	GanttHub.start_named("Serving", SimulationClock.now(), attractionName, Color8(52, 152, 219))  # orange
+	GanttHub.start_named("Serving", SimulationClock.now(), attractionName, Color8(52, 152, 219), "ATTRACTION")  # orange
 	await _visit_for_sim_seconds(get_visit_duration())
 	GanttHub.finish_named(attractionName, SimulationClock.now())
 

@@ -1,0 +1,17 @@
+[gd_scene load_steps=2 format=3 uid="uid://elq1pdceokih"]
+
+[ext_resource type="PackedScene" uid="uid://co5uy51mo4xql" path="res://Gantt/gantt.tscn" id="1_rstdo"]
+
+[node name="Control" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="GanttNew" parent="." instance=ExtResource("1_rstdo")]
+offset_bottom = 503.0
+
+[node name="GanttNew2" parent="." instance=ExtResource("1_rstdo")]
+offset_top = 502.0
+offset_bottom = 878.0
+display_type = "PERSON"
