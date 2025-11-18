@@ -1,6 +1,6 @@
 extends CharacterBody2D
 
-@export var movement_speed: float = 200.0
+@export var movement_speed: float = 0.5
 
 @export var movement_target: Node2D
 @export var navigation_agent: NavigationAgent2D
@@ -18,6 +18,9 @@ var traveller_name: String = ""
 var visits_completed: int = 0
 var is_leaving: bool = false
 
+var _env: Node = null
+var _env_is_open: bool = true
+
 
 var localEvents: Array = []
 
@@ -32,6 +35,18 @@ const JUMP_VELOCITY = -400.0
 
 func set_traveller_name(n: String) -> void:
 	traveller_name = n
+	
+
+func set_environment(env: Node) -> void:
+	_env = env
+	_env_is_open = env._is_open()
+	print("spwnign in park: ",_env_is_open)
+	env.workday_state_changed.connect(_on_workday_state_changed)
+		
+
+func _on_workday_state_changed(open: bool) -> void:
+	_env_is_open = open
+
 
 
 func _ready():
@@ -45,11 +60,11 @@ func _ready():
 	set_collision_mask_value(2, false)  # ignore other travellers
 	
 	
-	call_deferred("actor_setup")
+	#call_deferred("actor_setup")
 	_pick_and_go_to_next_attraction()
 
-func actor_setup():
-	pass
+#func actor_setup():
+#	pass
 
 func set_movement_target(movement_target: Vector2):
 	#GanttHub.record_named("Travelling", travelStart, travelFinish, traveller_name, Color8(52, 152, 219))
@@ -62,10 +77,11 @@ func visit_attraction(attraction: Node2D):
 	current_attraction = attraction
 	navigation_agent.target_position = attraction.global_position
 	travelStart = SimulationClock.now()
+	GanttHub.start_named("Travelling", SimulationClock.now(), traveller_name, Color8(52, 152, 219),  "PERSON") 
 	localEvents.append("moving to attraction")
-	#print("Heading to attraction:", attraction.name)
 
 func _physics_process(delta: float) -> void:
+	#print("Park is: ", _env_is_open)
 	if is_visiting or navigation_agent.is_navigation_finished():
 		return
 
@@ -146,6 +162,10 @@ func start_visiting():
 	
 	localEvents.append("finished at attraction")
 	
+	if not _env_is_open:
+		visits_completed = max_visits
+
+	
 	
 	visits_completed += 1
 	if visits_completed >= max_visits:
@@ -174,7 +194,6 @@ func _visit_for_sim_seconds(dur: float) -> void:
 func _pick_and_go_to_next_attraction() -> void:
 	var all := get_tree().get_nodes_in_group("attractions")
 	if all.is_empty():
-		#print("no attractions")
 		return
 
 	var candidates: Array = []
@@ -183,8 +202,6 @@ func _pick_and_go_to_next_attraction() -> void:
 			candidates.append(a)
 
 	var choice: Node2D = all[randi() % all.size()] if candidates.is_empty() else candidates[randi() % candidates.size()]
-	#print("Traeller Name: ", traveller_name)
-	GanttHub.start_named("Travelling", SimulationClock.now(), traveller_name, Color8(52, 152, 219),  "PERSON")  # orange
 	visit_attraction(choice)
 
 func _build_bbcode_from_local_events() -> String:
@@ -215,6 +232,12 @@ func _begin_leaving() -> void:
 func _despawn_now() -> void:
 	# close any open 'Leaving' segment
 	queue_free()
+
+func _leave() -> void:
+	# close any open 'Leaving' segment
+	#navigation_agent.target_position = attraction.global_position
+	travelStart = SimulationClock.now()
+	localEvents.append("moving to attraction")
 	
 	
 func _get_visit_duration_for(a: Node) -> float:

@@ -4,7 +4,7 @@ extends Node2D
 
 
 # Remember the last non-zero speed so we can resume to it.
-var _last_nonzero_speed: float = 100.0
+var _last_nonzero_speed: float = 0.0
 
 
 const START_OF_DAY_SECONDS: int = 9 * 3600  # 9:00 AM
@@ -29,7 +29,7 @@ func _ready() -> void:
 	# Optionally initialize UI from env:
 	#_config.set_displayed_rate(_env.get_spawn_rate_per_hour())
 
-	SimulationClock.set_rate(100.0)
+	SimulationClock.set_rate(0.0)
 
 
 	# Keep UI in sync if the rate is changed elsewhere

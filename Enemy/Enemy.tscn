@@ -9,7 +9,6 @@ radius = 28.1603
 [node name="Enemy" type="CharacterBody2D" node_paths=PackedStringArray("navigation_agent")]
 input_pickable = true
 script = ExtResource("1_s7bn3")
-movement_speed = 20.0
 navigation_agent = NodePath("NavigationAgent2D")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
@@ -21,6 +20,7 @@ texture = ExtResource("2_epr5s")
 shape = SubResource("CircleShape2D_s7bn3")
 
 [node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
+max_speed = 10.0
 
 [node name="ProgressBar" type="ProgressBar" parent="."]
 offset_left = -43.0

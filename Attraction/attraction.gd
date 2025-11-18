@@ -108,20 +108,45 @@ func _pump_queue() -> void:
 	#_pumping = false
 
 func _serve_one(traveller: Node) -> void:
-	# Show progress only for single-slot attractions (shared bar)
-	var show_progress := (capacity == 1)
-	queueIndicator.get_child(0).queue_free()
-	var rect = ColorRect.new()
-	rect.color = Color(0.2, 0.4, 1.0)  # cyan color
+	var my_epoch := _epoch  # capture the epoch when this service started
+
+	# Remove one from queue UI if present
+	if queueIndicator.get_child_count() > 0:
+		queueIndicator.get_child(0).queue_free()
+
+	# Create and add an active indicator for THIS traveller
+	var rect := ColorRect.new()
+	rect.color = Color(0.2, 0.4, 1.0)  # cyan
 	rect.custom_minimum_size = Vector2(10, 10)
 	activeIndicator.add_child(rect)
-	GanttHub.start_named("Serving", SimulationClock.now(), attractionName, Color8(52, 152, 219), "ATTRACTION")  # orange
+
+	GanttHub.start_named(
+		"Serving",
+		SimulationClock.now(),
+		attractionName,
+		Color8(52, 152, 219),
+		"ATTRACTION"
+	)
+
 	await _visit_for_sim_seconds(get_visit_duration())
+
+	# If the attraction has been reset while we were waiting, bail out
+	if my_epoch != _epoch:
+		# UI/state should already have been cleared by clear_all()
+		# so we do NOT touch active[], indicators, or emit signals.
+		return
+
 	GanttHub.finish_named(attractionName, SimulationClock.now())
 
 	emit_signal("visit_finished", traveller)
 	active.erase(traveller)
-	activeIndicator.get_child(0).queue_free()
+
+	# Remove this rect safely
+	if is_instance_valid(rect) and rect.get_parent() == activeIndicator:
+		rect.queue_free()
+	elif activeIndicator.get_child_count() > 0:
+		# Fallback safety
+		activeIndicator.get_child(0).queue_free()
 
 	# Clean up progress bar in single-slot case
 	if capacity == 1 and active.is_empty():
@@ -131,12 +156,6 @@ func _serve_one(traveller: Node) -> void:
 	# Start next in line if any
 	_pump_queue()
 
-
-
-
-	#await _visit_for_sim_seconds(visit_duration_seconds)
-	#print("attraction finished")
-	#emit_signal("visit_finished", traveller)
 	
 
 func _visit_for_sim_seconds(dur: float) -> void:

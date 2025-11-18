@@ -6,9 +6,4 @@ res://SimulationControls/simulation_controls.tscn
 res://Attraction/attraction.tscn
 res://Configuration/configuration.tscn
 res://GanttBar/GanttBar.tscn
-res://Attraction/attraction.gd
 res://GanttSplit/GanttSplit.tscn
-res://Singletons/GanttHub.gd
-res://Gantt/gantt.gd
-res://Enemy/enemy.gd
-res://World/world.gd

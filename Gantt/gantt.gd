@@ -1,6 +1,15 @@
 extends Control
 class_name BasicGantt
 
+# Auto-centering options
+@export var auto_follow_now: bool = false             # keep 'now' centered in view
+@export var follow_window_seconds: float = 60.0      # width of sliding window
+
+@export var auto_fit_domain_live: bool = true       # fit domain to all bars each frame
+@export var fit_padding_seconds: float = 2.0         # padding when auto-fitting
+@export var recalc_hz: float = 10.0                  # limit re-centering to avoid thrash
+
+
 # ── Time domain & horizontal zoom (works with a parent ScrollContainer) ───────
 @export var domain_min: float = 0.0
 @export var domain_max: float = 60.0
@@ -44,6 +53,10 @@ var _open_by_key: Dictionary = {}
 # Debug
 @export var debug_log: bool = false
 
+var _accum: float = 0.0
+
+
+
 # Stored events (typed)
 # Each: { label: String, start: float, end: float, row: int, color: Color }
 var _events: Array[Dictionary] = []
@@ -52,6 +65,50 @@ var _max_row: int = -1
 # Map row-key (e.g. traveller name) -> numeric row index
 var _row_key_to_index: Dictionary = {}
 var _row_index_to_key: Array[String] = []  # index -> key (for drawing labels)
+
+
+
+
+func _plot_width_available() -> float:
+	# Width inside the plot area (node width minus gutter/margins)
+	var w := size.x - (left_margin + right_margin + _gutter_width())
+	return max(1.0, w)
+
+func _fit_scale_to_viewport() -> void:
+	# Choose pixels_per_unit so the whole domain fits horizontally
+	var span : float= max(0.001, domain_max - domain_min)
+	var target_ppu :float= _plot_width_available() / span
+	# Clamp to your zoom limits
+	pixels_per_unit = clamp(target_ppu, zoom_min, zoom_max)
+	_update_content_metrics()
+
+
+func _effective_end(ev: Dictionary) -> float:
+	var e_raw := float(ev.get("end", NAN))
+	var is_open: bool = grow_open_events and ev.get("open", false) and not is_finite(e_raw)
+	return _now() if is_open else e_raw
+
+func _fit_domain_from_events(pad: float) -> void:
+	if _events.is_empty():
+		return
+	var lo := INF
+	var hi := -INF
+	for ev in _events:
+		var s := float(ev.get("start", NAN))
+		var e := _effective_end(ev)
+		if is_finite(s):
+			lo = min(lo, s)
+		if is_finite(e):
+			hi = max(hi, e)
+	if lo == INF or hi == -INF or hi <= lo:
+		return
+	domain_min = lo - pad
+	domain_max = hi + pad
+	_update_content_metrics()
+	if auto_fit_domain_live:
+		_fit_scale_to_viewport()   # <-- rescale to actually fit on screen
+
+
 
 # ── Row key helpers ───────────────────────────────────────────────────────────
 
@@ -168,19 +225,43 @@ func _now() -> float:
 
 		
 func _process(delta: float) -> void:
-	# Only repaint/follow time if we actually have open events.
-	if _open_by_key.is_empty():
-		return
+	_accum += delta
+	var needs_redraw := false
 
-	var now := _now()
+	# 1) Sliding window that follows 'now'
+	if auto_follow_now:
+		var half : float= max(0.001, follow_window_seconds * 0.5)
+		var now := _now()
+		var new_min : float= now - half
+		var new_max :float = now + half
+		# only update a few times per second to avoid layout thrash
+		if _accum >= (1.0 / max(1.0, recalc_hz)):
+			_accum = 0.0
+			if new_min != domain_min or new_max != domain_max:
+				domain_min = new_min
+				domain_max = new_max
+				_update_content_metrics()
+				needs_redraw = true
 
-	# Follow "now" so the right edge of the visible window keeps moving.
-	# This prevents e_clip = min(e, domain_max) from freezing growth.
-	if auto_grow_domain and now > domain_max:
-		domain_max = now
-		_update_content_metrics()
+	# 2) Otherwise, optional auto-fit to current data extent
+	elif auto_fit_domain_live and _accum >= (1.0 / max(1.0, recalc_hz)):
+		_accum = 0.0
+		_fit_domain_from_events(fit_padding_seconds)
+		needs_redraw = true
 
-	queue_redraw()
+	# 3) Legacy growth (keeps right edge moving when growing open events)
+	if auto_grow_domain and not auto_follow_now:
+		# Only repaint/follow time if we actually have open events.
+		if not _open_by_key.is_empty():
+			var now := _now()
+			if now > domain_max:
+				domain_max = now
+				_update_content_metrics()
+				needs_redraw = true
+
+	if needs_redraw:
+		queue_redraw()
+
 	
 func _on_hub_events_reset() -> void:
 	# Restore the initial viewport and wipe all local state
@@ -512,10 +593,6 @@ func _on_save_dialog_file_selected(path: String) -> void:
 		push_warning("Failed to export CSV to %s" % path)
 
 
-func _effective_end(ev: Dictionary) -> float:
-	var e_raw := float(ev.get("end", NAN))
-	var is_open: bool = grow_open_events and ev.get("open", false) and not is_finite(e_raw)
-	return _now() if is_open else e_raw
 
 
 # Core export function. Returns true on success.

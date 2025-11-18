@@ -23,15 +23,14 @@ scale = Vector2(0.0908203, 0.0917969)
 texture = ExtResource("2_acn2v")
 
 [node name="Tooltip" type="Control" parent="."]
-visible = false
 light_mask = 0
 visibility_layer = 0
 layout_mode = 3
 anchors_preset = 0
 offset_left = 3.0
 offset_top = 6.99999
-offset_right = 43.0
-offset_bottom = 47.0
+offset_right = 91.0
+offset_bottom = 76.0
 
 [node name="PanelContainer" type="PanelContainer" parent="Tooltip"]
 layout_mode = 0

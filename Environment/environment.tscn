@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://wddjhpik28bm"]
+[gd_scene load_steps=8 format=3 uid="uid://wddjhpik28bm"]
 
 [ext_resource type="PackedScene" uid="uid://bvw455jm0ejqy" path="res://Barrier/Barrier.tscn" id="1_jnhet"]
 [ext_resource type="Script" uid="uid://y2ko4rhx2ha8" path="res://Environment/environment.gd" id="1_k8tir"]
@@ -7,21 +7,12 @@
 [ext_resource type="Texture2D" uid="uid://cni5oe2nsaji" path="res://Environment/parkbackground.png" id="3_t03bx"]
 
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_cmany"]
-vertices = PackedVector2Array(580.508, 626, 841.797, 574.203, 865, 580.398, 768.703, 775, 568.25, 671.758, 679.617, 281, 666.148, 230.688, 834.141, 79.1016, 1118.47, 267.68, 905.203, 510.797, 888.203, 493.797, 911.398, 534, 1164.06, 763.313, 905.203, 557.203, 865, 487.602, 666.148, 331.313, 824.797, 557.203, 568.25, 580.242, 841.797, 493.797, 888.203, 574.203, 535.688, 775, 534.758, 705.25, 489, 717.508, 375.992, 784.977, 443.242, 705.25, 409.75, 671.758, 64.9063, 768.547, 126.148, 103.68, 397.492, 626, 824.797, 510.797, 629.313, 368.148, 579, 381.617, 818.602, 534, 534.758, 546.75, 629.313, 193.852, 409.75, 580.242, 443.242, 546.75, 528.688, 368.148, 489, 534.492, 491.852, 331.313, 478.383, 281, 491.852, 230.688, 528.688, 193.852, 579, 180.383)
-polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3, 4), PackedInt32Array(5, 6, 7, 8, 9, 10), PackedInt32Array(11, 8, 12, 13), PackedInt32Array(8, 11, 9), PackedInt32Array(5, 10, 14, 15), PackedInt32Array(16, 1, 0, 17), PackedInt32Array(15, 14, 18), PackedInt32Array(13, 12, 3, 19), PackedInt32Array(2, 19, 3), PackedInt32Array(4, 3, 20, 21), PackedInt32Array(22, 21, 20, 23), PackedInt32Array(24, 22, 23), PackedInt32Array(25, 23, 26, 27, 28), PackedInt32Array(15, 18, 29, 30), PackedInt32Array(31, 30, 32, 16, 17, 33), PackedInt32Array(7, 6, 34), PackedInt32Array(25, 24, 23), PackedInt32Array(35, 28, 27), PackedInt32Array(36, 35, 27), PackedInt32Array(37, 38, 36, 27, 39), PackedInt32Array(30, 29, 32), PackedInt32Array(37, 31, 33, 38), PackedInt32Array(40, 39, 27), PackedInt32Array(41, 40, 27), PackedInt32Array(42, 41, 27), PackedInt32Array(42, 27, 7, 43), PackedInt32Array(7, 34, 43)])
+vertices = PackedVector2Array(580.508, 626, 841.797, 574.203, 865, 580.398, 768.703, 775, 568.25, 671.758, 599, 308, 599, 268, 834.141, 79.1016, 1118.47, 267.68, 888.203, 493.797, 865, 487.602, 911.398, 534, 1164.06, 763.313, 905.203, 557.203, 126.148, 103.68, 559, 268, 905.203, 510.797, 824.797, 557.203, 568.25, 580.242, 888.203, 574.203, 535.688, 775, 534.758, 705.25, 64.9063, 768.547, 559, 308, 443.242, 546.75, 409.75, 580.242, 489, 717.508, 375.992, 784.977, 443.242, 705.25, 841.797, 493.797, 824.797, 510.797, 534.758, 546.75, 818.602, 534, 409.75, 671.758, 397.492, 626, 489, 534.492)
+polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3, 4), PackedInt32Array(5, 6, 7, 8, 9, 10), PackedInt32Array(11, 8, 12, 13), PackedInt32Array(14, 7, 6, 15), PackedInt32Array(8, 11, 16), PackedInt32Array(17, 1, 0, 18), PackedInt32Array(13, 12, 3, 19), PackedInt32Array(2, 19, 3), PackedInt32Array(4, 3, 20, 21), PackedInt32Array(22, 14, 15, 23, 24, 25), PackedInt32Array(26, 21, 20, 27), PackedInt32Array(28, 26, 27), PackedInt32Array(8, 16, 9), PackedInt32Array(5, 10, 29), PackedInt32Array(5, 29, 30, 18, 31, 23), PackedInt32Array(32, 17, 18), PackedInt32Array(33, 28, 27, 22), PackedInt32Array(34, 33, 22), PackedInt32Array(30, 32, 18), PackedInt32Array(23, 31, 35), PackedInt32Array(23, 35, 24), PackedInt32Array(22, 25, 34)])
 outlines = Array[PackedVector2Array]([PackedVector2Array(837, 69, 1128, 262, 1175, 773, 769, 785, 536, 785, 376, 795, 54, 778, 117, 94)])
-
-[sub_resource type="CircleShape2D" id="CircleShape2D_2r6fk"]
-radius = 90.2718
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_t03bx"]
 radius = 30.1496
-
-[sub_resource type="CircleShape2D" id="CircleShape2D_p5wda"]
-radius = 36.0555
-
-[sub_resource type="CircleShape2D" id="CircleShape2D_plw6p"]
-radius = 81.1542
 
 [node name="Environment" type="Control"]
 layout_mode = 3
@@ -58,10 +49,6 @@ position = Vector2(579, 288)
 
 [node name="StaticBody2D" type="StaticBody2D" parent="NavigationRegion2D"]
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="NavigationRegion2D/StaticBody2D"]
-position = Vector2(579, 281)
-shape = SubResource("CircleShape2D_2r6fk")
-
 [node name="StaticBody2D2" type="StaticBody2D" parent="NavigationRegion2D"]
 
 [node name="CollisionShape2D2" type="CollisionShape2D" parent="NavigationRegion2D/StaticBody2D2"]
@@ -71,28 +58,25 @@ disabled = true
 
 [node name="StaticBody2D3" type="StaticBody2D" parent="NavigationRegion2D"]
 
-[node name="CollisionShape2D2" type="CollisionShape2D" parent="NavigationRegion2D/StaticBody2D3"]
-position = Vector2(865, 534)
-shape = SubResource("CircleShape2D_p5wda")
-
 [node name="StaticBody2D4" type="StaticBody2D" parent="NavigationRegion2D"]
-
-[node name="CollisionShape2D2" type="CollisionShape2D" parent="NavigationRegion2D/StaticBody2D4"]
-position = Vector2(489, 626)
-shape = SubResource("CircleShape2D_plw6p")
 
 [node name="NavTargets" type="Node2D" parent="."]
 
 [node name="Attraction" parent="NavTargets" groups=["attractions"] instance=ExtResource("3_2r6fk")]
-position = Vector2(854, 295)
-visit_duration_seconds = 300.0
+position = Vector2(951, 254)
+visit_duration_seconds = 1000.0
+capacity = 1
 
 [node name="Attraction2" parent="NavTargets" groups=["attractions"] instance=ExtResource("3_2r6fk")]
-position = Vector2(472, 176)
+position = Vector2(378, 181)
+visit_duration_seconds = 1000.0
+capacity = 1
 attractionName = "second attraction"
 
 [node name="Attraction3" parent="NavTargets" groups=["attractions"] instance=ExtResource("3_2r6fk")]
 position = Vector2(182, 451)
+visit_duration_seconds = 1000.0
+capacity = 1
 attractionName = "3rd time lucky"
 
 [node name="Travellers" type="Node2D" parent="."]
@@ -104,3 +88,9 @@ position = Vector2(1050, 730)
 
 [node name="NavTarget2" type="Marker2D" parent="SpawnPoints"]
 position = Vector2(178, 723)
+
+[node name="OpenStatusLabel" type="Label" parent="."]
+layout_mode = 0
+offset_right = 190.0
+offset_bottom = 79.0
+text = "Open"

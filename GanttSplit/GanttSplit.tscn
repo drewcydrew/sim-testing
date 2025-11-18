@@ -9,9 +9,9 @@ offset_right = 40.0
 offset_bottom = 40.0
 
 [node name="GanttNew" parent="." instance=ExtResource("1_rstdo")]
-offset_bottom = 503.0
+offset_bottom = 203.0
 
 [node name="GanttNew2" parent="." instance=ExtResource("1_rstdo")]
-offset_top = 502.0
+offset_top = 237.0
 offset_bottom = 878.0
 display_type = "PERSON"
