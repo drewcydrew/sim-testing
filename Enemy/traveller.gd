@@ -17,6 +17,7 @@ var _env_is_open: bool = true
 var localEvents: Array = []
 var current_attraction: Node2D = null
 var is_visiting: bool = false
+var _tooltip_open: bool = false
 
 
 func set_traveller_name(n: String) -> void:
@@ -210,10 +211,31 @@ func _on_reached_exit() -> void:
 	_despawn_now()
 
 
-func _on_mouse_entered() -> void:
-	tooltip_label.text = _build_bbcode_from_local_events()
-	tooltip.visible = true
+#func _on_mouse_entered() -> void:
+#	tooltip_label.text = _build_bbcode_from_local_events()
+#	_toggle_tooltip()
 
 
-func _on_mouse_exited() -> void:
-	tooltip.visible = false
+#func _on_mouse_exited() -> void:
+#	_toggle_tooltip()
+
+
+func _on_input_event(viewport: Node, event: InputEvent, shape_idx: int) -> void:
+	if event is InputEventMouseButton:
+		if event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+			_toggle_tooltip()
+	# Touch tap (tablet/mobile)
+	elif event is InputEventScreenTouch:
+		if event.pressed:
+			_toggle_tooltip()
+
+
+
+func _toggle_tooltip() -> void:
+	_tooltip_open = not _tooltip_open
+
+	if _tooltip_open:
+		tooltip_label.text = _build_bbcode_from_local_events()
+		tooltip.visible = true
+	else:
+		tooltip.visible = false

@@ -48,6 +48,7 @@ theme_override_constants/line_spacing = 2
 text = "Details"
 
 [node name="Body" type="Label" parent="HoverPopup/Margin/VBox"]
+custom_minimum_size = Vector2(1, 1)
 layout_mode = 2
 text = "Coming soon…"
 autowrap_mode = 2

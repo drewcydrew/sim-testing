@@ -65,6 +65,11 @@ class_name BasicGantt
 @export var time_axis_height: float = 30.0
 
 
+var _tap_tooltip: PanelContainer = null
+var _tap_tooltip_label: Label = null
+
+
+
 var _open_by_key: Dictionary = {} 
 
 # Debug
@@ -525,34 +530,84 @@ func _draw_row_labels(plot: Rect2) -> void:
 
 
 # Tooltips for hovered bars
-func _get_tooltip(at_position: Vector2) -> String:
-	var plot: Rect2 = _plot_rect()
-	var scale: float = pixels_per_unit
+#func _get_tooltip(at_position: Vector2) -> String:
+#	var ev := _find_event_at(at_position)
+#	if ev.is_empty():
+#		return ""
+#	return _format_event_tooltip(ev)
 
-	for ev: Dictionary in _events:
-		var s: float = ev["start"]
-		var e: float = ev["end"]
-		var row: int = int(ev["row"])
-		if e <= s:
-			continue
+func _gui_input(event: InputEvent) -> void:
+	# Mouse click (desktop)
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		_handle_tap(event.position)
+		accept_event()
+		return
 
-		var s_clip: float = max(s, domain_min)
-		var e_clip: float = min(e, domain_max)
-		if e_clip <= s_clip:
-			continue
+	# Touch (mobile / tablet)
+	if event is InputEventScreenTouch and event.pressed:
+		_handle_tap(event.position)
+		accept_event()
+		return
 
-		var x0_px: int = int(floor(plot.position.x + (s_clip - domain_min) * scale))
-		var x1_px: int = int(floor(plot.position.x + (e_clip - domain_min) * scale))
-		if x1_px <= x0_px:
-			x1_px = x0_px + 1
-		var y_px: int = int(floor(plot.position.y + float(row) * (row_height + row_gap)))
-		var h_px: int = int(floor(row_height))
 
-		var r: Rect2 = Rect2(Vector2(float(x0_px), float(y_px)), Vector2(float(x1_px - x0_px), float(h_px)))
-		if r.has_point(at_position):
-			var dur: float = max(0.0, e - s)
-			return "%s\nStart: %.3f  End: %.3f\nDuration: %.3fs" % [ev["label"], s, e, dur]
-	return ""
+func _ensure_tap_tooltip() -> void:
+	if _tap_tooltip != null:
+		return
+
+	_tap_tooltip = PanelContainer.new()
+	_tap_tooltip.visible = false
+	_tap_tooltip.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_tap_tooltip.z_index = 100  # make sure it’s on top
+
+	_tap_tooltip_label = Label.new()
+	_tap_tooltip_label.autowrap_mode = TextServer.AUTOWRAP_WORD
+	_tap_tooltip_label.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	_tap_tooltip_label.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+
+	_tap_tooltip.add_child(_tap_tooltip_label)
+	add_child(_tap_tooltip)
+
+
+func _handle_tap(local_pos: Vector2) -> void:
+	var ev := _find_event_at(local_pos)
+
+	# No bar under this tap → hide tooltip if visible
+	if ev.is_empty():
+		_hide_tap_tooltip()
+		return
+
+	var text := _format_event_tooltip(ev)
+	_show_tap_tooltip(text, local_pos)
+
+
+func _show_tap_tooltip(text: String, local_pos: Vector2) -> void:
+	_ensure_tap_tooltip()
+
+	_tap_tooltip_label.text = text
+	_tap_tooltip.visible = true
+
+	# Force it to recalc its size before positioning
+	_tap_tooltip.reset_size()
+
+	var tooltip_size: Vector2 = _tap_tooltip.get_combined_minimum_size()
+
+	# Offset a little so we don’t cover the exact tap point
+	var x: float = local_pos.x + 8.0
+	var y: float = local_pos.y + 8.0
+
+	# Clamp so it stays on-screen inside the chart
+	x = clamp(x, 0.0, max(0.0, size.x - tooltip_size.x))
+	y = clamp(y, 0.0, max(0.0, size.y - tooltip_size.y))
+
+	_tap_tooltip.position = Vector2(x, y)
+
+
+func _hide_tap_tooltip() -> void:
+	if _tap_tooltip != null:
+		_tap_tooltip.visible = false
+
+
+
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -860,3 +915,48 @@ func _fit_domain_to_now(pad: float) -> void:
 
 	# Pick a zoom so [0 .. domain_max] fits the available width
 	_fit_scale_to_viewport()
+
+
+func _find_event_at(at_position: Vector2) -> Dictionary:
+	var plot: Rect2 = _plot_rect()
+	var scale: float = pixels_per_unit
+
+	for ev: Dictionary in _events:
+		var s: float = ev["start"]
+		var e: float = _effective_end(ev)
+		var row: int = int(ev["row"])
+
+		if e <= s:
+			continue
+
+		var s_clip: float = max(s, domain_min)
+		var e_clip: float = min(e, domain_max)
+		if e_clip <= s_clip:
+			continue
+
+		var x0_px: int = int(floor(plot.position.x + (s_clip - domain_min) * scale))
+		var x1_px: int = int(floor(plot.position.x + (e_clip - domain_min) * scale))
+		if x1_px <= x0_px:
+			x1_px = x0_px + 1
+
+		var y_px: int = int(floor(plot.position.y + float(row) * (row_height + row_gap)))
+		var h_px: int = int(floor(row_height))
+
+		var r: Rect2 = Rect2(
+			Vector2(float(x0_px), float(y_px)),
+			Vector2(float(x1_px - x0_px), float(h_px))
+		)
+
+		if r.has_point(at_position):
+			return ev
+
+	return {}    # empty dictionary = no hit
+
+
+func _format_event_tooltip(ev: Dictionary) -> String:
+	var s: float = float(ev.get("start", 0.0))
+	var e: float = _effective_end(ev)
+	var dur: float = max(0.0, e - s)
+	var label: String = str(ev.get("label", ""))
+
+	return "%s\nStart: %.3f  End: %.3f\nDuration: %.3fs" % [label, s, e, dur]
