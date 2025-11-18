@@ -1,7 +1,7 @@
 extends Control
 
 @export var traveller_scene: PackedScene
-@export var max_travellers: int = 20
+@export var max_travellers: int = 80
 @export var auto_spawn: bool = false
 @export var auto_spawn_interval_sec: float = 1000.0
 

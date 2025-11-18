@@ -8,10 +8,20 @@ anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
 
-[node name="GanttNew" parent="." instance=ExtResource("1_rstdo")]
-offset_bottom = 203.0
+[node name="ScrollContainer" type="ScrollContainer" parent="."]
+layout_mode = 0
+offset_right = 1260.0
+offset_bottom = 229.0
 
-[node name="GanttNew2" parent="." instance=ExtResource("1_rstdo")]
-offset_top = 237.0
-offset_bottom = 878.0
+[node name="GanttNew" parent="ScrollContainer" instance=ExtResource("1_rstdo")]
+layout_mode = 2
+
+[node name="ScrollContainer2" type="ScrollContainer" parent="."]
+layout_mode = 0
+offset_top = 289.0
+offset_right = 1260.0
+offset_bottom = 793.0
+
+[node name="GanttNew2" parent="ScrollContainer2" instance=ExtResource("1_rstdo")]
+layout_mode = 2
 display_type = "PERSON"

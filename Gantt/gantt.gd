@@ -12,16 +12,16 @@ class_name BasicGantt
 
 # ── Time domain & horizontal zoom (works with a parent ScrollContainer) ───────
 @export var domain_min: float = 0.0
-@export var domain_max: float = 60.0
+@export var domain_max: float = 100.0
 @export var pixels_per_unit: float = 10.0            # horizontal zoom
-@export var auto_grow_domain: bool = true            # expand as events arrive
+@export var auto_grow_domain: bool = false            # expand as events arrive
 
 # ── Layout ────────────────────────────────────────────────────────────────────
 @export var row_height: float = 18.0
 @export var row_gap: float = 6.0
 @export var left_margin: float = 0.0                 # keeps working as before
 @export var right_margin: float = 0.0
-@export var top_margin: float = 60.0
+@export var top_margin: float = 100.0
 @export var bottom_margin: float = 0.0
 
 # Labels **inside bars**
@@ -92,12 +92,30 @@ func _plot_width_available() -> float:
 	return max(1.0, w)
 
 func _fit_scale_to_viewport() -> void:
-	# Choose pixels_per_unit so the whole domain fits horizontally
-	var span : float= max(0.001, domain_max - domain_min)
-	var target_ppu :float= _plot_width_available() / span
-	# Clamp to your zoom limits
+	# Use the ScrollContainer's viewport width if we're inside one;
+	# fall back to our own size otherwise.
+	var viewport_width: float = size.x
+	var p := get_parent()
+	if p is ScrollContainer:
+		viewport_width = (p as ScrollContainer).size.x
+
+	# Match the same plot area logic as _draw_time_axis
+	var x0: float = row_label_gutter_width + left_margin
+	var x1: float = viewport_width - right_margin
+	var usable_w: float = max(1.0, x1 - x0)
+
+	# Time span we want to see
+	var span: float = max(0.001, domain_max - domain_min)
+
+	# Pixels per unit so that [domain_min .. domain_max] fills the plot width
+	var target_ppu: float = usable_w / span
+
+	# Clamp to zoom limits
 	pixels_per_unit = clamp(target_ppu, zoom_min, zoom_max)
+
 	_update_content_metrics()
+
+
 
 
 func _effective_end(ev: Dictionary) -> float:
@@ -108,22 +126,21 @@ func _effective_end(ev: Dictionary) -> float:
 func _fit_domain_from_events(pad: float) -> void:
 	if _events.is_empty():
 		return
-	var lo := INF
-	var hi := -INF
+
+	var hi: float = -INF
 	for ev in _events:
-		var s := float(ev.get("start", NAN))
-		var e := _effective_end(ev)
-		if is_finite(s):
-			lo = min(lo, s)
+		var e: float = _effective_end(ev)
 		if is_finite(e):
 			hi = max(hi, e)
-	if lo == INF or hi == -INF or hi <= lo:
+
+	if hi == -INF:
 		return
-	domain_min = lo - pad
-	domain_max = hi + pad
+
+	# Left edge stays fixed (usually 0). Only extend the right edge.
+	domain_max = max(domain_max, hi + pad)
+
+	# Just update scrollable size; DO NOT change pixels_per_unit here.
 	_update_content_metrics()
-	if auto_fit_domain_live:
-		_fit_scale_to_viewport()   # <-- rescale to actually fit on screen
 
 
 
@@ -260,11 +277,12 @@ func _process(delta: float) -> void:
 				_update_content_metrics()
 				needs_redraw = true
 
-	# 2) Otherwise, optional auto-fit to current data extent
+	# 2) Otherwise, optional auto-fit so [0 .. now] fills the view
 	elif auto_fit_domain_live and _accum >= (1.0 / max(1.0, recalc_hz)):
 		_accum = 0.0
-		_fit_domain_from_events(fit_padding_seconds)
+		_fit_domain_to_now(fit_padding_seconds)
 		needs_redraw = true
+
 
 	# 3) Legacy growth (keeps right edge moving when growing open events)
 	if auto_grow_domain and not auto_follow_now:
@@ -345,12 +363,8 @@ func record_event(label: String, start_time: float, end_time: float, row: int = 
 	_max_row = max(_max_row, row)
 
 	if auto_grow_domain:
-		if _events.size() == 1:
-			domain_min = s
-			domain_max = maxf(e, s + 0.001)
-		else:
-			domain_min = min(domain_min, s)
-			domain_max = max(domain_max, e)
+		domain_max = max(domain_max, e)
+
 
 	_update_content_metrics()
 	queue_redraw()
@@ -410,7 +424,8 @@ func fit_domain(pad_units: float = 0.0) -> void:
 	for ev: Dictionary in _events:
 		lo = min(lo, ev["start"])
 		hi = max(hi, ev["end"])
-	domain_min = lo - pad_units
+	#domain_min = lo - pad_units
+	domain_min = 0 - pad_units
 	domain_max = hi + pad_units
 	_update_content_metrics()
 	queue_redraw()
@@ -424,27 +439,19 @@ func _draw() -> void:
 	var plot: Rect2 = _plot_rect()
 	var span: float = domain_max - domain_min
 	var scale: float = pixels_per_unit
-	if _events.is_empty() or span <= 0.0:
-		return
-
+	var font := get_theme_default_font()
+	var font_size: int = int(get_theme_default_font_size())
 
 	# Draw row labels in the left gutter (even when there are no events)
 	if show_row_labels and _row_index_to_key.size() > 0:
 		_draw_row_labels(plot)
-
-	# If there are no events, we're done (labels may still be visible)
-	if _events.is_empty():
-		return
-
-	if span <= 0.0:
-		return
-
-	var font := get_theme_default_font()
-	var font_size: int = int(get_theme_default_font_size())
-	
+		
 	if show_time_axis:
 		_draw_time_axis()
 
+	# If there are no events, we're done (labels may still be visible)
+	#if (_events.is_empty()) or (span <= 0.):
+	#	return
 
 	for ev: Dictionary in _events:
 		var s: float = ev["start"]
@@ -568,9 +575,17 @@ func _content_rows_height() -> float:
 
 func _update_content_metrics() -> void:
 	# Set the size the ScrollContainer will use for scrollbars.
-	var content_w: float = left_margin + _gutter_width() + right_margin + max(1.0, (domain_max - domain_min) * pixels_per_unit)
-	var content_h: float = top_margin + bottom_margin + max(1.0, _content_rows_height())
+	var content_w: float = left_margin + _gutter_width() + right_margin \
+		+ max(1.0, (domain_max - domain_min) * pixels_per_unit)
+
+	var content_h: float = top_margin \
+		+ max(1.0, _content_rows_height()) \
+		+ time_axis_height \
+		+ bottom_margin
+
 	custom_minimum_size = Vector2(content_w, content_h)
+
+
 
 
 func _on_zoom_in_pressed() -> void:
@@ -794,23 +809,54 @@ func _draw_time_axis() -> void:
 			w
 		)
 
-		# Labels for each tick (or change to `if show_time_labels and is_major` for hourly-only)
 		if show_time_labels:
 			var label: String = "%02d:%02d" % [hours, minutes]
 
 			var ext: Vector2 = font.get_string_size(label, fs)
 			var lx: float = x - (ext.x * 0.5)
 
-			# Baseline a few pixels above the bottom margin
-			var baseline_y: float = height - bottom_margin - 4.0
-			var ly: float = baseline_y
+			# Font metrics
+			var fh: float = font.get_height(fs)
+			var ascent: float = font.get_ascent(fs)
 
+			# Bottom baseline: a few pixels above the bottom margin (as before)
+			var baseline_bottom_y: float = height - bottom_margin - 4.0
+
+			# Top baseline: center the label vertically inside [0 .. top_margin]
+			# so it sits in the header band above the first row of bars.
+			var baseline_top_y: float = (top_margin - fh) * 0.5 + ascent
+
+			# Bottom label
 			draw_string(
 				font,
-				Vector2(lx, ly),
+				Vector2(lx, baseline_bottom_y),
 				label,
 				HORIZONTAL_ALIGNMENT_CENTER,
 				-1,
 				fs,
 				time_label_color
 			)
+
+			# Top label (mirrored, in the top margin band)
+			draw_string(
+				font,
+				Vector2(lx, baseline_top_y),
+				label,
+				HORIZONTAL_ALIGNMENT_CENTER,
+				-1,
+				fs,
+				time_label_color
+			)
+
+
+func _fit_domain_to_now(pad: float) -> void:
+	var now: float = _now()
+	if not is_finite(now):
+		return
+
+	# Always show from 0 to "now + pad"
+	domain_min = 0.0
+	domain_max = max(now + pad, 1.0)
+
+	# Pick a zoom so [0 .. domain_max] fits the available width
+	_fit_scale_to_viewport()
