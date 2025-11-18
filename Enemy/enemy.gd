@@ -1,55 +1,44 @@
 extends CharacterBody2D
 
 @export var movement_speed: float = 0.5
-
-@export var movement_target: Node2D
 @export var navigation_agent: NavigationAgent2D
-@export var gantt_path: NodePath
+@export var max_visits: int = 5
 
-@onready var progress_bar: ProgressBar = $ProgressBar
 @onready var tooltip: Control = $Tooltip
 @onready var tooltip_label: RichTextLabel = $Tooltip/PanelContainer/MarginContainer/RichTextLabel
 
-
-
-
+var home_entry_point: Node2D = null
+var exit_target: Node2D = null
 var traveller_name: String = ""
-@export var max_visits: int = 5
 var visits_completed: int = 0
 var is_leaving: bool = false
-
 var _env: Node = null
 var _env_is_open: bool = true
-
-
 var localEvents: Array = []
-
-
 var current_attraction: Node2D = null
 var is_visiting: bool = false
-var travelStart: float = 0.0
-var travelFinish: float = 0.0
 
-const SPEED = 3000.0
-const JUMP_VELOCITY = -400.0
 
 func set_traveller_name(n: String) -> void:
 	traveller_name = n
-	
+
+
+func set_home_entry_point(p: Node2D) -> void:
+	home_entry_point = p
+
 
 func set_environment(env: Node) -> void:
 	_env = env
 	_env_is_open = env._is_open()
-	print("spwnign in park: ",_env_is_open)
+	print("spawning in park: ", _env_is_open)
 	env.workday_state_changed.connect(_on_workday_state_changed)
-		
+
 
 func _on_workday_state_changed(open: bool) -> void:
 	_env_is_open = open
 
 
-
-func _ready():
+func _ready() -> void:
 	# --- Physics layers: assume environment/obstacles = layer 1, travellers = layer 2 ---
 	# Put traveller on layer 2:
 	set_collision_layer_value(1, false) # not on world layer
@@ -58,138 +47,107 @@ func _ready():
 	# Collide only with world (layer 1), not with other travellers (layer 2):
 	set_collision_mask_value(1, true)   # collide with world/obstacles
 	set_collision_mask_value(2, false)  # ignore other travellers
-	
-	
-	#call_deferred("actor_setup")
+
 	_pick_and_go_to_next_attraction()
 
-#func actor_setup():
-#	pass
-
-func set_movement_target(movement_target: Vector2):
-	#GanttHub.record_named("Travelling", travelStart, travelFinish, traveller_name, Color8(52, 152, 219))
-	
-	navigation_agent.target_position = movement_target
-
-func visit_attraction(attraction: Node2D):
-	if is_visiting:
-		return
-	current_attraction = attraction
-	navigation_agent.target_position = attraction.global_position
-	travelStart = SimulationClock.now()
-	GanttHub.start_named("Travelling", SimulationClock.now(), traveller_name, Color8(52, 152, 219),  "PERSON") 
-	localEvents.append("moving to attraction")
 
 func _physics_process(delta: float) -> void:
-	#print("Park is: ", _env_is_open)
-	if is_visiting or navigation_agent.is_navigation_finished():
+	# If we’re in a visiting coroutine, movement is paused.
+	if is_visiting:
 		return
 
+	if navigation_agent == null:
+		return
 
 	var current_agent_position: Vector2 = global_position
 	var next_path_position: Vector2 = navigation_agent.get_next_path_position()
 
-	var direction: Vector2 = (next_path_position - current_agent_position).normalized()
-	velocity = direction * movement_speed
-	move_and_slide()
+	# If navigation is finished, we’re either:
+	#  - at an attraction, or
+	#  - at an exit target, or
+	#  - just "stuck" because there was no path.
+	var nav_finished: bool = navigation_agent.is_navigation_finished()
 
-	if current_attraction and global_position.distance_to(current_attraction.global_position) < 50.0:
-		#print("arrived")
-		start_visiting()
+	if not nav_finished:
+		var direction: Vector2 = (next_path_position - current_agent_position).normalized()
+		velocity = direction * movement_speed
+		move_and_slide()
+	else:
+		velocity = Vector2.ZERO
 
-func start_visiting():
+	# --- Arrival logic ---
+
+	# 1) If we’re in "leaving" mode, check for arrival at exit_target.
+	if is_leaving and exit_target:
+		if nav_finished or global_position.distance_to(exit_target.global_position) < 20.0:
+			_on_reached_exit()
+			return
+
+	# 2) Otherwise, normal "arrived at attraction" behaviour.
+	if (not is_leaving) and current_attraction:
+		if global_position.distance_to(current_attraction.global_position) < 50.0:
+			start_visiting()
+
+
+func visit_attraction(attraction: Node2D) -> void:
+	if is_visiting:
+		return
+	current_attraction = attraction
+	navigation_agent.target_position = attraction.global_position
+
+	GanttHub.start_named(
+		"Travelling",
+		SimulationClock.now(),
+		traveller_name,
+		Color8(52, 152, 219),
+		"PERSON"
+	)
+	localEvents.append("moving to attraction")
+
+
+func start_visiting() -> void:
 	is_visiting = true
 	velocity = Vector2.ZERO
 
-	travelFinish = SimulationClock.now()
+	# Close "Travelling"
 	GanttHub.finish_named(traveller_name, SimulationClock.now())
-	#print("Recording travel event from ", travelStart, " to ", travelFinish)
-	#GanttHub.record("Travelling", travelStart, travelFinish, 0, Color8(52, 152, 219))
-	#print ("recording for ", traveller_name)
-	#GanttHub.record_named("Travelling", travelStart, travelFinish, traveller_name, Color8(52, 152, 219))
-	
-	
-	
-	var requestStart = SimulationClock.now()
-	
-	
-		#print("Visiting attraction:", current_attraction.name)
-	var t1: float = SimulationClock.now()
-	#var visitDuration = _get_visit_duration_for(current_attraction)
-	#print(visitDuration)
-	#await _visit_for_sim_seconds(visitDuration)
 
+	# Request a visit and wait to enter queue/ride
 	current_attraction.emit_signal("visit_requested", self)
-	
-	GanttHub.start_named("Waiting", SimulationClock.now(), traveller_name, Color8(46, 204, 113), "PERSON")  # green
+	GanttHub.start_named("Waiting", SimulationClock.now(), traveller_name, Color8(46, 204, 113), "PERSON")
 
-
-	
-	#  Wait until this exact traveller is finished
+	# Wait until this exact traveller is started
 	while true:
-		var finished_traveller: Node= await current_attraction.visit_started
-		#print("traveller started")
-		if finished_traveller == self:
+		var started_traveller: Node = await current_attraction.visit_started
+		if started_traveller == self:
 			break
-			
-	
-	var t2: float = SimulationClock.now()
-	GanttHub.finish_named(traveller_name, SimulationClock.now())  # close Waiting
-	GanttHub.start_named(current_attraction.name, SimulationClock.now(), traveller_name, Color8(243, 156, 18),  "PERSON")  # orange
 
-	#GanttHub.record("Waiting", t1, t2, 0, Color8(46, 204, 113) )
-	#GanttHub.record_named("Waiting", t1, t2, traveller_name, Color8(46, 204, 113))
-	t1 = SimulationClock.now()
-			
-	#  Wait until this exact traveller is finished
+	# Close "Waiting", open attraction segment
+	GanttHub.finish_named(traveller_name, SimulationClock.now())
+	GanttHub.start_named(current_attraction.name, SimulationClock.now(), traveller_name, Color8(243, 156, 18), "PERSON")
+
+	# Wait until this exact traveller is finished
 	while true:
 		var finished_traveller: Node = await current_attraction.visit_finished
-		#print("traveller finished")
 		if finished_traveller == self:
 			break
-	
 
-
-
-	
+	# Close attraction segment
 	GanttHub.finish_named(traveller_name, SimulationClock.now())
-	#GanttHub.start_named("Travelling", SimulationClock.now(), traveller_name, Color8(52, 152, 219))  # orange
-	
-
-	t2 = SimulationClock.now()
-	#GanttHub.record(current_attraction.name, t1, t2, 0, Color8(243, 156, 18) )
-	#GanttHub.record_named(current_attraction.name, t1, t2, traveller_name, Color8(243, 156, 18))
-	
 	localEvents.append("finished at attraction")
-	
+
+	# If park is closed, force this to be the final visit
 	if not _env_is_open:
 		visits_completed = max_visits
 
-	
-	
 	visits_completed += 1
+
+	is_visiting = false
 	if visits_completed >= max_visits:
-		is_visiting = false
 		_begin_leaving()
 	else:
-		is_visiting = false
 		_pick_and_go_to_next_attraction()
 
-
-# Helper: wait for a duration in simulation time
-func _visit_for_sim_seconds(dur: float) -> void:
-	progress_bar.visible = true
-	progress_bar.value = 0
-	var start_t: float = SimulationClock.now()
-	var end_t: float = start_t + dur
-
-	while SimulationClock.now() < end_t:
-		var frac: float = clamp((SimulationClock.now() - start_t) / dur, 0.0, 1.0)
-		progress_bar.value = frac * 100.0
-		await get_tree().process_frame
-
-	progress_bar.value = 100.0
-	progress_bar.visible = false
 
 func _pick_and_go_to_next_attraction() -> void:
 	var all := get_tree().get_nodes_in_group("attractions")
@@ -204,11 +162,11 @@ func _pick_and_go_to_next_attraction() -> void:
 	var choice: Node2D = all[randi() % all.size()] if candidates.is_empty() else candidates[randi() % candidates.size()]
 	visit_attraction(choice)
 
+
 func _build_bbcode_from_local_events() -> String:
 	if localEvents.is_empty():
 		return "[b]%s[/b]\n[i]No events yet[/i]" % (traveller_name if traveller_name != "" else "Traveller")
 
-	var now_t: float = SimulationClock.now()
 	var lines: Array[String] = []
 	lines.append("[b]%s[/b]" % (traveller_name if traveller_name != "" else "Traveller"))
 	lines.append("[i]Events so far[/i]")
@@ -217,51 +175,45 @@ func _build_bbcode_from_local_events() -> String:
 		lines.append(ev)
 
 	return "\n".join(lines)
-	
+
 
 func _begin_leaving() -> void:
 	is_leaving = true
 	is_visiting = false
 	current_attraction = null
+
+	# Close any active segment (e.g. last attraction)
 	GanttHub.finish_named(traveller_name, SimulationClock.now())
-	
-	#print("Leaving")
-	_despawn_now()
+
+	# Decide where to go: prefer the "home" entry point
+	var target_point: Node2D = home_entry_point
+
+	if target_point:
+		exit_target = target_point
+		navigation_agent.target_position = target_point.global_position
+
+		GanttHub.start_named("Leaving", SimulationClock.now(), traveller_name, Color8(155, 89, 182), "PERSON")
+		localEvents.append("heading to exit")
+	else:
+		# No exit point available – fall back to immediate despawn.
+		_despawn_now()
 
 
 func _despawn_now() -> void:
-	# close any open 'Leaving' segment
 	queue_free()
 
-func _leave() -> void:
-	# close any open 'Leaving' segment
-	#navigation_agent.target_position = attraction.global_position
-	travelStart = SimulationClock.now()
-	localEvents.append("moving to attraction")
-	
-	
-func _get_visit_duration_for(a: Node) -> float:
-	if a == null:
-		return 120.0
-	# If the attraction exposes a method, let it decide (supports dynamic durations)
-	if a.has_method("get_visit_duration"):
-		var dur := float(a.call("get_visit_duration"))
-		return max(dur, 0.0)
-	# Fallback default
-	return 120.0
 
-
-
+func _on_reached_exit() -> void:
+	# Finish the "Leaving" segment if we started one
+	GanttHub.finish_named(traveller_name, SimulationClock.now())
+	localEvents.append("left the park")
+	_despawn_now()
 
 
 func _on_mouse_entered() -> void:
-	#print("entered")
 	tooltip_label.text = _build_bbcode_from_local_events()
 	tooltip.visible = true
-	
-
 
 
 func _on_mouse_exited() -> void:
-	#print("exited")
 	tooltip.visible = false

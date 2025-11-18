@@ -6,6 +6,7 @@ extends Control
 @export var auto_spawn_interval_sec: float = 1000.0
 
 @onready var _spawn_points: Node = $SpawnPoints
+@onready var _test_point: Node = $SpawnPoints/NavTarget
 @onready var _targets_root: Node = $NavTargets
 @onready var _travellers_root: Node = $Travellers
 @onready var _open_status_label: Label = $OpenStatusLabel
@@ -124,6 +125,7 @@ func spawn_one() -> Node2D:
 	inst.set_traveller_name(name_str)
 	_travellers_root.add_child(inst)
 	inst.set_environment(self)
+	inst.set_home_entry_point(_test_point)
 		
 	inst.tree_exited.connect(func():
 		if is_instance_valid(_travellers_root):
