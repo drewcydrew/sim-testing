@@ -7,3 +7,6 @@ res://Attraction/attraction.tscn
 res://Configuration/configuration.tscn
 res://GanttBar/GanttBar.tscn
 res://GanttSplit/GanttSplit.tscn
+res://Enemy/enemy.gd
+res://Environment/environment.gd
+res://Enemy/Traveller.tscn

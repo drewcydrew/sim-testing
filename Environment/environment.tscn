@@ -2,7 +2,7 @@
 
 [ext_resource type="PackedScene" uid="uid://bvw455jm0ejqy" path="res://Barrier/Barrier.tscn" id="1_jnhet"]
 [ext_resource type="Script" uid="uid://y2ko4rhx2ha8" path="res://Environment/environment.gd" id="1_k8tir"]
-[ext_resource type="PackedScene" uid="uid://dl1vcfb7hqylb" path="res://Enemy/Enemy.tscn" id="2_k8tir"]
+[ext_resource type="PackedScene" uid="uid://dl1vcfb7hqylb" path="res://Enemy/Traveller.tscn" id="2_k8tir"]
 [ext_resource type="PackedScene" uid="uid://f621ws6wfyog" path="res://Attraction/attraction.tscn" id="3_2r6fk"]
 [ext_resource type="Texture2D" uid="uid://cni5oe2nsaji" path="res://Environment/parkbackground.png" id="3_t03bx"]
 
