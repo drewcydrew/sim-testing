@@ -3,11 +3,13 @@
 importer="csv_translation"
 type="Translation"
 uid="uid://c3vdh6gmwgay0"
-valid=false
 
 [deps]
 
+files=["res://gantt_export_2025-11-10_151245.row.translation", "res://gantt_export_2025-11-10_151245.label.translation", "res://gantt_export_2025-11-10_151245.start.translation", "res://gantt_export_2025-11-10_151245.end.translation", "res://gantt_export_2025-11-10_151245.duration.translation", "res://gantt_export_2025-11-10_151245.color.translation"]
+
 source_file="res://gantt_export_2025-11-10_151245.csv"
+dest_files=["res://gantt_export_2025-11-10_151245.row.translation", "res://gantt_export_2025-11-10_151245.label.translation", "res://gantt_export_2025-11-10_151245.start.translation", "res://gantt_export_2025-11-10_151245.end.translation", "res://gantt_export_2025-11-10_151245.duration.translation", "res://gantt_export_2025-11-10_151245.color.translation"]
 
 [params]
 
