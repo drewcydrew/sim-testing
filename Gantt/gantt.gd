@@ -48,6 +48,23 @@ class_name BasicGantt
 
 @export var display_type: String = ""
 
+# ── Time Axis / Tick Marks ───────────────────────────────────────────────────
+@export var show_time_axis: bool = true
+@export var tick_interval_seconds: float = 10.0       # spacing between vertical ticks
+@export var major_tick_every: int = 6                 # e.g. every 6 minor ticks = major tick (1 min when interval=10s)
+@export var tick_color: Color = Color(0.5, 0.5, 0.5, 0.4)
+@export var major_tick_color: Color = Color(0.8, 0.8, 0.8, 0.7)
+@export var tick_width: float = 1.0
+@export var major_tick_width: float = 2.0
+
+@export var show_time_labels: bool = true
+@export var time_label_font: Font
+@export var time_label_font_size: int = 14
+@export var time_label_color: Color = Color(0.9, 0.9, 0.9, 1)
+
+@export var time_axis_height: float = 30.0
+
+
 var _open_by_key: Dictionary = {} 
 
 # Debug
@@ -424,6 +441,10 @@ func _draw() -> void:
 
 	var font := get_theme_default_font()
 	var font_size: int = int(get_theme_default_font_size())
+	
+	if show_time_axis:
+		_draw_time_axis()
+
 
 	for ev: Dictionary in _events:
 		var s: float = ev["start"]
@@ -674,3 +695,122 @@ func _join(parts: Array[String], sep: String) -> String:
 			s += sep
 		s += p
 	return s
+
+func _draw_time_axis() -> void:
+	if pixels_per_unit <= 0.0:
+		return
+
+	var width: float = size.x
+	var height: float = size.y
+
+	# Render area offset (don’t draw in the row label gutter)
+	var x0: float = row_label_gutter_width + left_margin
+	var x1: float = width - right_margin
+	var usable_w: float = x1 - x0
+	if usable_w <= 0.0:
+		return
+
+	var time_span: float = domain_max - domain_min
+	if time_span <= 0.0:
+		return
+
+	# ---- Font + approximate label width (for overlap avoidance) ----
+	var font: Font = time_label_font
+	if font == null:
+		font = get_theme_default_font()
+
+	var fs: int = time_label_font_size
+	if fs <= 0:
+		fs = get_theme_default_font_size()
+
+	# Approximate width of a typical time label like "09:30"
+	var sample_text: String = "09:30"
+	var label_size: Vector2 = font.get_string_size(sample_text, fs)
+	var label_px_width: float = label_size.x
+
+	# How many pixels we want between labels to avoid overlap
+	var min_label_gap_px: float = label_px_width * 1.6
+
+	# Convert that into an "ideal" time step in seconds (before snapping to a nice value)
+	var ideal_step_sec: float = min_label_gap_px / pixels_per_unit
+	if ideal_step_sec <= 0.0:
+		ideal_step_sec = 60.0
+
+	# ---- Choose a "nice" step size (in seconds) close to ideal ----
+	var nice_steps: Array[float] = [
+		60.0,      # 1 min
+		120.0,     # 2 min
+		300.0,     # 5 min
+		600.0,     # 10 min
+		900.0,     # 15 min
+		1800.0,    # 30 min
+		3600.0,    # 1 hour
+		7200.0     # 2 hours
+	]
+
+	var step_sec: float = nice_steps[nice_steps.size() - 1]
+	for s in nice_steps:
+		if s >= ideal_step_sec:
+			step_sec = s
+			break
+
+	# Optional horizontal axis line across the bottom of the chart area
+	draw_line(
+		Vector2(x0, height - bottom_margin),
+		Vector2(x1, height - bottom_margin),
+		Color(1, 1, 1, 0.4),
+		1.5
+	)
+
+	# First & last tick indices within the current time domain
+	var tick_start: int = int(floor(domain_min / step_sec))
+	var tick_end: int = int(ceil(domain_max / step_sec))
+
+	for i in range(tick_start, tick_end + 1):
+		var t: float = float(i) * step_sec
+
+		# Convert time → x coordinate
+		var x: float = x0 + (t - domain_min) * pixels_per_unit
+		if x < x0 or x > x1:
+			continue
+
+		# Convert simulation seconds to a time of day, starting at 9:00 AM
+		var base_seconds: int = 9 * 3600  # 9:00 AM
+		var total_sec: int = base_seconds + int(t)
+		var hours: int = int(total_sec / 3600) % 24
+		var minutes: int = int((total_sec % 3600) / 60)
+
+		# Major tick at the top of the hour (e.g. 10:00, 11:00, ...)
+		var is_major: bool = (minutes == 0)
+
+		var col: Color = major_tick_color if is_major else tick_color
+		var w: float = major_tick_width if is_major else tick_width
+
+		# Full-height vertical tick line
+		draw_line(
+			Vector2(x, top_margin),
+			Vector2(x, height - bottom_margin),
+			col,
+			w
+		)
+
+		# Labels for each tick (or change to `if show_time_labels and is_major` for hourly-only)
+		if show_time_labels:
+			var label: String = "%02d:%02d" % [hours, minutes]
+
+			var ext: Vector2 = font.get_string_size(label, fs)
+			var lx: float = x - (ext.x * 0.5)
+
+			# Baseline a few pixels above the bottom margin
+			var baseline_y: float = height - bottom_margin - 4.0
+			var ly: float = baseline_y
+
+			draw_string(
+				font,
+				Vector2(lx, ly),
+				label,
+				HORIZONTAL_ALIGNMENT_CENTER,
+				-1,
+				fs,
+				time_label_color
+			)
