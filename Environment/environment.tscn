@@ -28,15 +28,6 @@ scale = Vector2(1.09276, 1.36484)
 color = Color(1, 0.321569, 1, 1)
 polygon = PackedVector2Array(56.9813, 546.622, 46, 45, 297, 44, 337.92, 345.866, 476.102, 331.213, 529.178, 59.3864, 909.864, 71.842, 909, 455, 1046, 463, 1038, 76, 1121, 82, 1124, 605, 744.229, 578.128, 697.559, 145.111, 629.84, 151.705, 652.718, 583.989, 199.739, 571.533, 226, 107, 105, 96, 105.482, 552.484)
 
-[node name="Background" type="TextureRect" parent="."]
-layout_mode = 0
-offset_left = 3.0
-offset_top = 4.0
-offset_right = 1279.0
-offset_bottom = 810.0
-texture = ExtResource("3_t03bx")
-expand_mode = 1
-
 [node name="NavigationRegion2D" type="NavigationRegion2D" parent="."]
 position = Vector2(5, 9)
 navigation_polygon = SubResource("NavigationPolygon_cmany")
@@ -59,6 +50,16 @@ disabled = true
 [node name="StaticBody2D3" type="StaticBody2D" parent="NavigationRegion2D"]
 
 [node name="StaticBody2D4" type="StaticBody2D" parent="NavigationRegion2D"]
+
+[node name="Background" type="TextureRect" parent="."]
+layout_mode = 0
+offset_left = 3.0
+offset_top = 4.0
+offset_right = 1279.0
+offset_bottom = 810.0
+mouse_filter = 2
+texture = ExtResource("3_t03bx")
+expand_mode = 1
 
 [node name="NavTargets" type="Node2D" parent="."]
 

@@ -1,16 +1,20 @@
-[gd_scene load_steps=4 format=3 uid="uid://f621ws6wfyog"]
+[gd_scene load_steps=6 format=3 uid="uid://f621ws6wfyog"]
 
 [ext_resource type="Script" uid="uid://t7fse4mstp33" path="res://Attraction/attraction.gd" id="1_f3ipd"]
 [ext_resource type="Texture2D" uid="uid://cppavw05cmbhn" path="res://Attraction/attraction.png" id="2_acn2v"]
+[ext_resource type="PackedScene" uid="uid://bq2f60waqtgbb" path="res://Tooltip/tooltip.tscn" id="2_hn5fc"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_f3ipd"]
 size = Vector2(13, 6)
 
+[sub_resource type="CircleShape2D" id="CircleShape2D_hn5fc"]
+radius = 67.42
+
 [node name="Attraction" type="Area2D"]
 collision_layer = 0
 collision_mask = 0
-input_pickable = false
 script = ExtResource("1_f3ipd")
+tooltip_scene = ExtResource("2_hn5fc")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(-35.5, -31)
@@ -21,21 +25,6 @@ disabled = true
 position = Vector2(3, 6.99999)
 scale = Vector2(0.0908203, 0.0917969)
 texture = ExtResource("2_acn2v")
-
-[node name="Tooltip" type="Control" parent="."]
-light_mask = 0
-visibility_layer = 0
-layout_mode = 3
-anchors_preset = 0
-offset_left = 3.0
-offset_top = 6.99999
-offset_right = 91.0
-offset_bottom = 76.0
-
-[node name="PanelContainer" type="PanelContainer" parent="Tooltip"]
-layout_mode = 0
-offset_right = 260.0
-offset_bottom = 294.0
 
 [node name="ProgressBar" type="ProgressBar" parent="."]
 visible = false
@@ -51,5 +40,10 @@ offset_top = 51.0
 offset_right = 161.0
 offset_bottom = 101.0
 
+[node name="TapButton" type="TouchScreenButton" parent="."]
+shape = SubResource("CircleShape2D_hn5fc")
+
+[connection signal="input_event" from="." to="." method="_input_event"]
+[connection signal="input_event" from="." to="." method="_on_input_event"]
 [connection signal="mouse_entered" from="." to="." method="_on_mouse_entered"]
 [connection signal="mouse_exited" from="." to="." method="_on_mouse_exited"]
