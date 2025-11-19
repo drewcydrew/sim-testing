@@ -7,6 +7,9 @@ extends CharacterBody2D
 @onready var tooltip: Control = $Tooltip
 @onready var tooltip_label: RichTextLabel = $Tooltip/PanelContainer/MarginContainer/RichTextLabel
 
+@onready var tap_button: TouchScreenButton = $TapButton
+
+
 var home_entry_point: Node2D = null
 var exit_target: Node2D = null
 var traveller_name: String = ""
@@ -48,6 +51,9 @@ func _ready() -> void:
 	# Collide only with world (layer 1), not with other travellers (layer 2):
 	set_collision_mask_value(1, true)   # collide with world/obstacles
 	set_collision_mask_value(2, false)  # ignore other travellers
+	
+	tap_button.pressed.connect(_on_tap_button_pressed)
+
 
 	_pick_and_go_to_next_attraction()
 
@@ -220,14 +226,14 @@ func _on_reached_exit() -> void:
 #	_toggle_tooltip()
 
 
-func _on_input_event(viewport: Node, event: InputEvent, shape_idx: int) -> void:
-	if event is InputEventMouseButton:
-		if event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
-			_toggle_tooltip()
-	# Touch tap (tablet/mobile)
-	elif event is InputEventScreenTouch:
-		if event.pressed:
-			_toggle_tooltip()
+#func _on_input_event(viewport: Node, event: InputEvent, shape_idx: int) -> void:
+#	if event is InputEventMouseButton:
+#		if event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+#			_toggle_tooltip()
+#	# Touch tap (tablet/mobile)
+#	elif event is InputEventScreenTouch:
+#		if event.pressed:
+#			_toggle_tooltip()
 
 
 
@@ -239,3 +245,7 @@ func _toggle_tooltip() -> void:
 		tooltip.visible = true
 	else:
 		tooltip.visible = false
+
+
+func _on_tap_button_pressed() -> void:
+	_toggle_tooltip()
