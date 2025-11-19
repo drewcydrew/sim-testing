@@ -4,8 +4,12 @@ extends CharacterBody2D
 @export var navigation_agent: NavigationAgent2D
 @export var max_visits: int = 5
 
-@onready var tooltip: Control = $Tooltip
-@onready var tooltip_label: RichTextLabel = $Tooltip/PanelContainer/MarginContainer/RichTextLabel
+
+@export var tooltip_scene: PackedScene
+
+var tooltip_instance: Control = null
+var _tooltip_open: bool = false
+
 
 @onready var tap_button: TouchScreenButton = $TapButton
 
@@ -20,7 +24,6 @@ var _env_is_open: bool = true
 var localEvents: Array = []
 var current_attraction: Node2D = null
 var is_visiting: bool = false
-var _tooltip_open: bool = false
 
 
 func set_traveller_name(n: String) -> void:
@@ -238,13 +241,36 @@ func _on_reached_exit() -> void:
 
 
 func _toggle_tooltip() -> void:
-	_tooltip_open = not _tooltip_open
+	# If tooltip is currently open, close and free it
+	print("Touch registered")
+	if tooltip_instance and is_instance_valid(tooltip_instance):
+		tooltip_instance.queue_free()
+		tooltip_instance = null
+		_tooltip_open = false
+		return
 
-	if _tooltip_open:
-		tooltip_label.text = _build_bbcode_from_local_events()
-		tooltip.visible = true
-	else:
-		tooltip.visible = false
+	# Otherwise, create and show a new one
+	if tooltip_scene == null:
+		push_warning("Traveller has no tooltip_scene assigned.")
+		return
+
+	tooltip_instance = tooltip_scene.instantiate()
+	add_child(tooltip_instance)
+
+	# Position it relative to the traveller (tweak as desired)
+	tooltip_instance.position = Vector2(0, -60)
+
+
+	# Populate the text via API if available
+	if tooltip_instance is Tooltip:
+		tooltip_instance.show_tooltip(_build_bbcode_from_local_events())
+	elif tooltip_instance.has_method("show_tooltip"):
+		tooltip_instance.call("show_tooltip", _build_bbcode_from_local_events())
+	elif tooltip_instance.has_method("set_text"):
+		tooltip_instance.call("set_text", _build_bbcode_from_local_events())
+
+	_tooltip_open = true
+
 
 
 func _on_tap_button_pressed() -> void:

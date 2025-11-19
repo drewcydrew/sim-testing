@@ -9,6 +9,8 @@ class_name BasicGantt
 @export var fit_padding_seconds: float = 2.0         # padding when auto-fitting
 @export var recalc_hz: float = 10.0                  # limit re-centering to avoid thrash
 
+@export var tooltip_scene: PackedScene
+
 
 # ── Time domain & horizontal zoom (works with a parent ScrollContainer) ───────
 @export var domain_min: float = 0.0
@@ -65,8 +67,8 @@ class_name BasicGantt
 @export var time_axis_height: float = 30.0
 
 
-var _tap_tooltip: PanelContainer = null
-var _tap_tooltip_label: Label = null
+var _tap_tooltip: Control = null
+
 
 
 
@@ -550,22 +552,50 @@ func _gui_input(event: InputEvent) -> void:
 		return
 
 
-func _ensure_tap_tooltip() -> void:
-	if _tap_tooltip != null:
+func _hide_tap_tooltip() -> void:
+	if _tap_tooltip != null and is_instance_valid(_tap_tooltip):
+		_tap_tooltip.queue_free()
+		_tap_tooltip = null
+
+
+func _show_tap_tooltip(text: String, local_pos: Vector2) -> void:
+	# Make sure any existing tooltip is removed first
+	_hide_tap_tooltip()
+
+	if tooltip_scene == null:
+		push_warning("BasicGantt has no tooltip_scene assigned.")
 		return
 
-	_tap_tooltip = PanelContainer.new()
-	_tap_tooltip.visible = false
-	_tap_tooltip.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_tap_tooltip.z_index = 100  # make sure it’s on top
-
-	_tap_tooltip_label = Label.new()
-	_tap_tooltip_label.autowrap_mode = TextServer.AUTOWRAP_WORD
-	_tap_tooltip_label.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-	_tap_tooltip_label.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-
-	_tap_tooltip.add_child(_tap_tooltip_label)
+	# Instantiate the shared tooltip scene
+	_tap_tooltip = tooltip_scene.instantiate() as Control
 	add_child(_tap_tooltip)
+
+	# Populate text using the tooltip API
+	if _tap_tooltip.has_method("show_tooltip"):
+		_tap_tooltip.call("show_tooltip", text)
+	elif _tap_tooltip.has_method("set_text"):
+		_tap_tooltip.call("set_text", text)
+
+	# If your tooltip script doesn't auto-show, ensure it's visible
+	_tap_tooltip.visible = true
+
+	# Let it compute its minimum size, so we can clamp correctly
+	_tap_tooltip.reset_size()
+	var tooltip_size: Vector2 = _tap_tooltip.get_combined_minimum_size()
+
+	# Offset a little so we don’t cover the exact tap point
+	var x: float = local_pos.x + 8.0
+	var y: float = local_pos.y + 8.0
+
+	# Clamp so it stays inside the chart control
+	x = clamp(x, 0.0, max(0.0, size.x - tooltip_size.x))
+	y = clamp(y, 0.0, max(0.0, size.y - tooltip_size.y))
+
+	_tap_tooltip.position = Vector2(x, y)
+
+	# Optional: avoid the tooltip eating later clicks
+	_tap_tooltip.mouse_filter = Control.MOUSE_FILTER_IGNORE
+
 
 
 func _handle_tap(local_pos: Vector2) -> void:
@@ -580,31 +610,9 @@ func _handle_tap(local_pos: Vector2) -> void:
 	_show_tap_tooltip(text, local_pos)
 
 
-func _show_tap_tooltip(text: String, local_pos: Vector2) -> void:
-	_ensure_tap_tooltip()
-
-	_tap_tooltip_label.text = text
-	_tap_tooltip.visible = true
-
-	# Force it to recalc its size before positioning
-	_tap_tooltip.reset_size()
-
-	var tooltip_size: Vector2 = _tap_tooltip.get_combined_minimum_size()
-
-	# Offset a little so we don’t cover the exact tap point
-	var x: float = local_pos.x + 8.0
-	var y: float = local_pos.y + 8.0
-
-	# Clamp so it stays on-screen inside the chart
-	x = clamp(x, 0.0, max(0.0, size.x - tooltip_size.x))
-	y = clamp(y, 0.0, max(0.0, size.y - tooltip_size.y))
-
-	_tap_tooltip.position = Vector2(x, y)
 
 
-func _hide_tap_tooltip() -> void:
-	if _tap_tooltip != null:
-		_tap_tooltip.visible = false
+
 
 
 
