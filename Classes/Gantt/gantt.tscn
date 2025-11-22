@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://co5uy51mo4xql"]
 
-[ext_resource type="Script" uid="uid://dinpiqmeh8odr" path="res://Gantt/gantt.gd" id="1_udaaf"]
-[ext_resource type="PackedScene" uid="uid://bq2f60waqtgbb" path="res://Tooltip/tooltip.tscn" id="2_o4jcv"]
+[ext_resource type="Script" uid="uid://dinpiqmeh8odr" path="res://Classes/Gantt/gantt.gd" id="1_udaaf"]
+[ext_resource type="PackedScene" uid="uid://bq2f60waqtgbb" path="res://Classes/Tooltip/tooltip.tscn" id="2_o4jcv"]
 
 [node name="GanttNew" type="Control"]
 layout_mode = 3

@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://bq2f60waqtgbb"]
 
-[ext_resource type="Script" uid="uid://c1mtrx65q556v" path="res://Tooltip/tooltip.gd" id="1_pi0nk"]
+[ext_resource type="Script" uid="uid://c1mtrx65q556v" path="res://Classes/Tooltip/tooltip.gd" id="1_pi0nk"]
 
 [node name="Tooltip" type="Control"]
 layout_mode = 3
@@ -11,7 +11,7 @@ script = ExtResource("1_pi0nk")
 
 [node name="PanelContainer" type="PanelContainer" parent="."]
 layout_mode = 0
-offset_right = 266.0
+offset_right = 504.0
 offset_bottom = 394.0
 
 [node name="MarginContainer" type="MarginContainer" parent="PanelContainer"]

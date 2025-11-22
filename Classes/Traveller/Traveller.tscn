@@ -1,8 +1,8 @@
 [gd_scene load_steps=6 format=3 uid="uid://dl1vcfb7hqylb"]
 
-[ext_resource type="Script" uid="uid://dp4k7iqb4y56x" path="res://Enemy/traveller.gd" id="1_8agda"]
-[ext_resource type="PackedScene" uid="uid://bq2f60waqtgbb" path="res://Tooltip/tooltip.tscn" id="2_xtyal"]
-[ext_resource type="Texture2D" uid="uid://duty2ee10687k" path="res://Enemy/traveller.png" id="2_yorsp"]
+[ext_resource type="Script" uid="uid://dp4k7iqb4y56x" path="res://Classes/Traveller/traveller.gd" id="1_8agda"]
+[ext_resource type="PackedScene" uid="uid://bq2f60waqtgbb" path="res://Classes/Tooltip/tooltip.tscn" id="2_xtyal"]
+[ext_resource type="Texture2D" uid="uid://duty2ee10687k" path="res://Classes/Traveller/traveller.png" id="2_yorsp"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_8agda"]
 radius = 29.14

@@ -1,11 +1,12 @@
+TouchScreenButton
+RichTextLabel
+MarginContainer
+PanelContainer
+Control
 ScrollContainer
 Label
-Control
-RichTextLabel
 HBoxContainer
 ProgressBar
-PanelContainer
-MarginContainer
 CollisionShape2D
 StaticBody2D
 TextureRect

@@ -1,10 +1,10 @@
 [gd_scene load_steps=7 format=3 uid="uid://bkjo27tus16cr"]
 
-[ext_resource type="Script" uid="uid://ci23ngthgce8j" path="res://World/world.gd" id="1_2dftf"]
-[ext_resource type="PackedScene" uid="uid://wddjhpik28bm" path="res://Environment/environment.tscn" id="2_il6x7"]
+[ext_resource type="Script" uid="uid://ci23ngthgce8j" path="res://Classes/World/world.gd" id="1_2dftf"]
+[ext_resource type="PackedScene" uid="uid://wddjhpik28bm" path="res://Classes/Environment/environment.tscn" id="2_il6x7"]
 [ext_resource type="PackedScene" uid="uid://w5wpn02l2m0v" path="res://Configuration/configuration.tscn" id="4_o14yy"]
 [ext_resource type="PackedScene" uid="uid://elq1pdceokih" path="res://GanttSplit/GanttSplit.tscn" id="5_04mge"]
-[ext_resource type="PackedScene" uid="uid://co5uy51mo4xql" path="res://Gantt/gantt.tscn" id="6_04mge"]
+[ext_resource type="PackedScene" uid="uid://co5uy51mo4xql" path="res://Classes/Gantt/gantt.tscn" id="6_04mge"]
 [ext_resource type="PackedScene" uid="uid://geysmsrle8io" path="res://SimulationControls/simulation_controls.tscn" id="6_eue43"]
 
 [node name="World" type="Node2D"]

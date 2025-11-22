@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://elq1pdceokih"]
 
-[ext_resource type="PackedScene" uid="uid://co5uy51mo4xql" path="res://Gantt/gantt.tscn" id="1_rstdo"]
+[ext_resource type="PackedScene" uid="uid://co5uy51mo4xql" path="res://Classes/Gantt/gantt.tscn" id="1_rstdo"]
 
 [node name="Control" type="Control"]
 layout_mode = 3

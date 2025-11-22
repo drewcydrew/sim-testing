@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://duty2ee10687k"
-path="res://.godot/imported/traveller.png-3784765742118becf42d8faf2b65aae6.ctex"
+uid="uid://cppavw05cmbhn"
+path="res://.godot/imported/attraction.png-612762d83de6ac031dbe6c4522d00b6c.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Enemy/traveller.png"
-dest_files=["res://.godot/imported/traveller.png-3784765742118becf42d8faf2b65aae6.ctex"]
+source_file="res://Classes/Attraction/attraction.png"
+dest_files=["res://.godot/imported/attraction.png-612762d83de6ac031dbe6c4522d00b6c.ctex"]
 
 [params]
 

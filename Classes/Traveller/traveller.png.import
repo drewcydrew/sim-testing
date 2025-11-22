@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cni5oe2nsaji"
-path="res://.godot/imported/parkbackground.png-c8d9f65cc0e3e0f4341780b9f594f374.ctex"
+uid="uid://duty2ee10687k"
+path="res://.godot/imported/traveller.png-0a213f6d0eca63f3070d9ae72d69e89d.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Environment/parkbackground.png"
-dest_files=["res://.godot/imported/parkbackground.png-c8d9f65cc0e3e0f4341780b9f594f374.ctex"]
+source_file="res://Classes/Traveller/traveller.png"
+dest_files=["res://.godot/imported/traveller.png-0a213f6d0eca63f3070d9ae72d69e89d.ctex"]
 
 [params]
 

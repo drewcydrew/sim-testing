@@ -1,10 +1,10 @@
 [gd_scene load_steps=8 format=3 uid="uid://wddjhpik28bm"]
 
 [ext_resource type="PackedScene" uid="uid://bvw455jm0ejqy" path="res://Barrier/Barrier.tscn" id="1_jnhet"]
-[ext_resource type="Script" uid="uid://y2ko4rhx2ha8" path="res://Environment/environment.gd" id="1_k8tir"]
-[ext_resource type="PackedScene" uid="uid://dl1vcfb7hqylb" path="res://Enemy/Traveller.tscn" id="2_k8tir"]
-[ext_resource type="PackedScene" uid="uid://f621ws6wfyog" path="res://Attraction/attraction.tscn" id="3_2r6fk"]
-[ext_resource type="Texture2D" uid="uid://cni5oe2nsaji" path="res://Environment/parkbackground.png" id="3_t03bx"]
+[ext_resource type="Script" uid="uid://y2ko4rhx2ha8" path="res://Classes/Environment/environment.gd" id="1_k8tir"]
+[ext_resource type="PackedScene" uid="uid://dl1vcfb7hqylb" path="res://Classes/Traveller/Traveller.tscn" id="2_k8tir"]
+[ext_resource type="PackedScene" uid="uid://f621ws6wfyog" path="res://Classes/Attraction/attraction.tscn" id="3_2r6fk"]
+[ext_resource type="Texture2D" uid="uid://cni5oe2nsaji" path="res://Classes/Environment/parkbackground.png" id="3_t03bx"]
 
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_cmany"]
 vertices = PackedVector2Array(580.508, 626, 841.797, 574.203, 865, 580.398, 768.703, 775, 568.25, 671.758, 599, 308, 599, 268, 834.141, 79.1016, 1118.47, 267.68, 888.203, 493.797, 865, 487.602, 911.398, 534, 1164.06, 763.313, 905.203, 557.203, 126.148, 103.68, 559, 268, 905.203, 510.797, 824.797, 557.203, 568.25, 580.242, 888.203, 574.203, 535.688, 775, 534.758, 705.25, 64.9063, 768.547, 559, 308, 443.242, 546.75, 409.75, 580.242, 489, 717.508, 375.992, 784.977, 443.242, 705.25, 841.797, 493.797, 824.797, 510.797, 534.758, 546.75, 818.602, 534, 409.75, 671.758, 397.492, 626, 489, 534.492)
