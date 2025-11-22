@@ -187,26 +187,27 @@ func _show_tooltip() -> void:
 		push_warning("Attraction has no tooltip_scene assigned.")
 		return
 
+	# Already visible? Just bring to front
 	if tooltip_instance != null and is_instance_valid(tooltip_instance):
-		# Just refresh text if already there
-		if tooltip_instance.has_method("show_tooltip"):
-			tooltip_instance.call("show_tooltip", _build_tooltip_text())
-		elif tooltip_instance.has_method("set_text"):
-			tooltip_instance.call("set_text", _build_tooltip_text())
+		tooltip_instance.raise()
+		tooltip_instance.visible = true
 		return
 
+	# Create fresh instance
 	tooltip_instance = tooltip_scene.instantiate() as Control
 	add_child(tooltip_instance)
 
+	# Position it above the attraction
 	tooltip_instance.position = Vector2(0, -60)
-
-	if tooltip_instance.has_method("show_tooltip"):
-		tooltip_instance.call("show_tooltip", _build_tooltip_text())
-	elif tooltip_instance.has_method("set_text"):
-		tooltip_instance.call("set_text", _build_tooltip_text())
-
 	tooltip_instance.visible = true
 	tooltip_instance.mouse_filter = Control.MOUSE_FILTER_IGNORE
+
+	# IMPORTANT: set row_key so it tracks this attraction
+	if tooltip_instance.has_method("set_row_key"):
+		tooltip_instance.call("set_row_key", attractionName)
+	else:
+		push_warning("Tooltip scene has no set_row_key() method.")
+
 
 
 func _hide_tooltip() -> void:

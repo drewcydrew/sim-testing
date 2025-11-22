@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://t7fse4mstp33" path="res://Classes/Attraction/attraction.gd" id="1_f3ipd"]
 [ext_resource type="Texture2D" uid="uid://cppavw05cmbhn" path="res://Classes/Attraction/attraction.png" id="2_acn2v"]
-[ext_resource type="PackedScene" uid="uid://bq2f60waqtgbb" path="res://Classes/Tooltip/tooltip.tscn" id="2_hn5fc"]
+[ext_resource type="PackedScene" uid="uid://cljag0qwfarjg" path="res://Classes/EventTooltip/event_tooltip.tscn" id="2_f63p6"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_f3ipd"]
 size = Vector2(13, 6)
@@ -14,7 +14,7 @@ radius = 67.42
 collision_layer = 0
 collision_mask = 0
 script = ExtResource("1_f3ipd")
-tooltip_scene = ExtResource("2_hn5fc")
+tooltip_scene = ExtResource("2_f63p6")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(-35.5, -31)

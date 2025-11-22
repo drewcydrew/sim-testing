@@ -177,37 +177,29 @@ func _refresh_text() -> void:
 	if _label == null:
 		return
 
+	# Always refresh from GanttHub so we see the latest open/closed state
+	_load_initial_events_for_row()
+
 	var name: String = row_key if row_key != "" else "Entity"
 
 	if _closed_events.is_empty() and _open_event.is_empty():
-		_label.text = "%s\n[i]No events yet[/i]" % name
+		_label.text = "%s\nNo events yet" % name
 		return
 
 	var lines: Array[String] = []
 	lines.append("%s" % name)
 
-	# Current event: prefer open, else last closed
-	var current_ev: Dictionary = {}
-	if not _open_event.is_empty():
-		current_ev = _open_event
-	elif _closed_events.size() > 0:
-		current_ev = _closed_events[_closed_events.size() - 1]
-
+	# ── Current event: ONLY show if there is an open event ─────────
 	lines.append("Current event")
-	if current_ev.is_empty():
-		lines.append("[i]None[/i]")
+	if _open_event.is_empty():
+		lines.append("None")
 	else:
-		lines.append(_format_event_line(current_ev, true))
+		lines.append(_format_event_line(_open_event, true))
 
-	# Previous events: closed ones in reverse order (skip the one used as current)
+	# ── Previous events: all closed events, newest first ───────────
 	var has_previous: bool = false
 	for i in range(_closed_events.size() - 1, -1, -1):
 		var ev: Dictionary = _closed_events[i]
-
-		# If this is the same object we used as current (when no open event),
-		# skip it here.
-		if not current_ev.is_empty() and ev == current_ev:
-			continue
 
 		if _is_zero_duration_event(ev):
 			continue
