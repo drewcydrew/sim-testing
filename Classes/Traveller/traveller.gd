@@ -161,8 +161,6 @@ func _finish_event(note: String = "") -> void:
 
 func _physics_process(delta: float) -> void:
 	# If we’re in a visiting coroutine, movement is paused.
-	if _tooltip_open:
-		_refresh_tooltip_text()
 		
 	if is_visiting:
 		return
@@ -255,86 +253,6 @@ func start_visiting() -> void:
 		_pick_and_go_to_next_attraction()
 
 
-
-func _build_bbcode_from_event_log() -> String:
-	var name: String = traveller_name if traveller_name != "" else "Traveller"
-
-	if event_log.is_empty():
-		return "%s[\n[i]No events yet[/i]" % name
-
-	var lines: Array[String] = []
-	lines.append("%s" % name)
-
-	# ── Current event = latest event in log ─────────────────────────
-	var current_idx: int = event_log.size() - 1
-	var current_ev: Dictionary = event_log[current_idx]
-
-	#lines.append(_current_event_label)
-	lines.append(_format_event_line(current_ev, true))
-
-	# ── Previous events: all earlier entries, newest first ──────────
-	var has_previous := false
-	for i in range(event_log.size() - 2, -1, -1):
-		var ev: Dictionary = event_log[i]
-
-		# Hide zero-duration events from the "previous" list
-		if _is_zero_duration_event(ev):
-			continue
-
-		if not has_previous:
-			lines.append("")  # blank line between current & previous
-			lines.append("Previous events")
-			has_previous = true
-
-		lines.append(_format_event_line(ev, false))
-
-	return "\n".join(lines)
-
-
-
-func _is_zero_duration_event(ev: Dictionary) -> bool:
-	var start: float = ev.get("start", 0.0)
-	var end: float = ev.get("end", -1.0)
-
-	# Only consider finished events; ongoing events (end < 0) should still show.
-	if end < 0.0:
-		return false
-
-	# "Zero duration" = start and end practically identical
-	return abs(end - start) < 0.0001
-
-
-
-func _format_event_line(ev: Dictionary, is_current: bool) -> String:
-	var label: String = ev.get("label", "")
-	var start: float = ev.get("start", 0.0)
-	var end: float = ev.get("end", -1.0)
-	var note: String = ev.get("note", "")
-
-	var time_str := _format_event_time_range(start, end)
-
-	var prefix := "• "
-	if is_current:
-		prefix = "→ "  # visually highlight current event
-
-	var line := "%s%s %s" % [prefix, label, time_str]
-	if note != "":
-		line += " — " + note
-
-	return line
-
-
-
-func _format_event_time_range(start: float, end: float) -> String:
-	# You can swap this to use your SimulationClock’s pretty formatter if you have one.
-	if end < 0.0:
-		return "(from %.1fs, ongoing)" % start
-	else:
-		return "(%.1fs → %.1fs)" % [start, end]
-
-
-
-
 func _begin_leaving() -> void:
 	is_leaving = true
 	is_visiting = false
@@ -389,25 +307,11 @@ func _on_reached_exit() -> void:
 #		if event.pressed:
 #			_toggle_tooltip()
 
-func _refresh_tooltip_text() -> void:
-	if not _tooltip_open:
-		return
-	if tooltip_instance == null or not is_instance_valid(tooltip_instance):
-		return
-
-	var text := _build_bbcode_from_event_log()  # or _build_bbcode_from_local_events()
-
-	if tooltip_instance is Tooltip:
-		tooltip_instance.show_tooltip(text)
-	elif tooltip_instance.has_method("show_tooltip"):
-		tooltip_instance.call("show_tooltip", text)
-	elif tooltip_instance.has_method("set_text"):
-		tooltip_instance.call("set_text", text)
 
 
 func _toggle_tooltip() -> void:
-	# If tooltip is currently open, close and free it
 	print("Touch registered")
+	# If tooltip is currently open, close and free it
 	if tooltip_instance and is_instance_valid(tooltip_instance):
 		tooltip_instance.queue_free()
 		tooltip_instance = null
@@ -425,10 +329,18 @@ func _toggle_tooltip() -> void:
 	# Position it relative to the traveller (tweak as desired)
 	tooltip_instance.position = Vector2(0, -60)
 
+	# Tell the tooltip which row_key/entity to follow
+	if tooltip_instance.has_method("set_row_key"):
+		tooltip_instance.call("set_row_key", traveller_name)
+	elif "row_key" in tooltip_instance:
+		tooltip_instance.row_key = traveller_name
+
+	# Optional: if your tooltip has display_type and you only want PERSON events
+	if "display_type" in tooltip_instance:
+		tooltip_instance.display_type = "PERSON"
+
 	_tooltip_open = true
 
-	# Initial populate
-	_refresh_tooltip_text()
 
 
 

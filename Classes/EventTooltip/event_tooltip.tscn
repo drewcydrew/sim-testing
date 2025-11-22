@@ -1,0 +1,21 @@
+[gd_scene load_steps=2 format=3 uid="uid://cljag0qwfarjg"]
+
+[ext_resource type="Script" uid="uid://bto6ncc0b2lyl" path="res://Classes/EventTooltip/event_tooltip.gd" id="1_t71dv"]
+
+[node name="EventTooltip" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 640.0
+offset_bottom = 454.0
+script = ExtResource("1_t71dv")
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+layout_mode = 0
+offset_right = 642.0
+offset_bottom = 448.0
+
+[node name="MarginContainer" type="MarginContainer" parent="PanelContainer"]
+layout_mode = 2
+
+[node name="RichTextLabel" type="RichTextLabel" parent="PanelContainer/MarginContainer"]
+layout_mode = 2

@@ -1,8 +1,8 @@
-TouchScreenButton
 RichTextLabel
 MarginContainer
 PanelContainer
 Control
+TouchScreenButton
 ScrollContainer
 Label
 HBoxContainer
@@ -12,4 +12,3 @@ StaticBody2D
 TextureRect
 FileDialog
 Button
-HSlider

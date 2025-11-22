@@ -16,3 +16,5 @@ res://Classes/Gantt/gantt.tscn
 res://Classes/Traveller/Traveller.tscn
 res://Classes/Attraction/attraction.tscn
 res://Classes/Tooltip/tooltip.tscn
+res://Classes/EventTooltip/event_tooltip.tscn
+res://Classes/EventTooltip/event_tooltip.gd
