@@ -9,5 +9,4 @@ res://GanttBar/GanttBar.tscn
 res://GanttSplit/GanttSplit.tscn
 res://Classes/Tooltip/tooltip.tscn
 res://Classes/EventTooltip/event_tooltip.tscn
-res://Classes/EventTooltip/event_tooltip.gd
 res://Classes/Attraction/attraction.gd

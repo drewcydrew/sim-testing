@@ -13,6 +13,7 @@ config_version=5
 config/name="pathfindingnew"
 run/main_scene="uid://bkjo27tus16cr"
 config/features=PackedStringArray("4.4", "GL Compatibility")
+boot_splash/image="uid://cq80rwyvp4bkc"
 config/icon="res://icon.svg"
 
 [autoload]

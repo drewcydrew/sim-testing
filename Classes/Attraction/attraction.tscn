@@ -15,6 +15,7 @@ collision_layer = 0
 collision_mask = 0
 script = ExtResource("1_f3ipd")
 tooltip_scene = ExtResource("2_f63p6")
+sprite_texture = ExtResource("2_acn2v")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(-35.5, -31)

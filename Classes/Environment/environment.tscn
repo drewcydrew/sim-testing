@@ -1,15 +1,18 @@
-[gd_scene load_steps=8 format=3 uid="uid://wddjhpik28bm"]
+[gd_scene load_steps=11 format=3 uid="uid://wddjhpik28bm"]
 
-[ext_resource type="PackedScene" uid="uid://bvw455jm0ejqy" path="res://Barrier/Barrier.tscn" id="1_jnhet"]
 [ext_resource type="Script" uid="uid://y2ko4rhx2ha8" path="res://Classes/Environment/environment.gd" id="1_k8tir"]
 [ext_resource type="PackedScene" uid="uid://dl1vcfb7hqylb" path="res://Classes/Traveller/Traveller.tscn" id="2_k8tir"]
 [ext_resource type="PackedScene" uid="uid://f621ws6wfyog" path="res://Classes/Attraction/attraction.tscn" id="3_2r6fk"]
 [ext_resource type="Texture2D" uid="uid://cni5oe2nsaji" path="res://Classes/Environment/parkbackground.png" id="3_t03bx"]
+[ext_resource type="Texture2D" uid="uid://ccsedlu1n4qpg" path="res://media/attraction.png" id="5_8xvn8"]
+[ext_resource type="Texture2D" uid="uid://bcqftyhaf8dlu" path="res://media/attraction2.png" id="5_bygm8"]
+[ext_resource type="Texture2D" uid="uid://dxhpbtb0fptey" path="res://media/attraction3.png" id="6_7235i"]
+[ext_resource type="Texture2D" uid="uid://ditbn68e1h6bq" path="res://media/attraction4.png" id="8_bpe1d"]
 
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_cmany"]
-vertices = PackedVector2Array(580.508, 626, 841.797, 574.203, 865, 580.398, 768.703, 775, 568.25, 671.758, 599, 308, 599, 268, 834.141, 79.1016, 1118.47, 267.68, 888.203, 493.797, 865, 487.602, 911.398, 534, 1164.06, 763.313, 905.203, 557.203, 126.148, 103.68, 559, 268, 905.203, 510.797, 824.797, 557.203, 568.25, 580.242, 888.203, 574.203, 535.688, 775, 534.758, 705.25, 64.9063, 768.547, 559, 308, 443.242, 546.75, 409.75, 580.242, 489, 717.508, 375.992, 784.977, 443.242, 705.25, 841.797, 493.797, 824.797, 510.797, 534.758, 546.75, 818.602, 534, 409.75, 671.758, 397.492, 626, 489, 534.492)
-polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3, 4), PackedInt32Array(5, 6, 7, 8, 9, 10), PackedInt32Array(11, 8, 12, 13), PackedInt32Array(14, 7, 6, 15), PackedInt32Array(8, 11, 16), PackedInt32Array(17, 1, 0, 18), PackedInt32Array(13, 12, 3, 19), PackedInt32Array(2, 19, 3), PackedInt32Array(4, 3, 20, 21), PackedInt32Array(22, 14, 15, 23, 24, 25), PackedInt32Array(26, 21, 20, 27), PackedInt32Array(28, 26, 27), PackedInt32Array(8, 16, 9), PackedInt32Array(5, 10, 29), PackedInt32Array(5, 29, 30, 18, 31, 23), PackedInt32Array(32, 17, 18), PackedInt32Array(33, 28, 27, 22), PackedInt32Array(34, 33, 22), PackedInt32Array(30, 32, 18), PackedInt32Array(23, 31, 35), PackedInt32Array(23, 35, 24), PackedInt32Array(22, 25, 34)])
-outlines = Array[PackedVector2Array]([PackedVector2Array(837, 69, 1128, 262, 1175, 773, 769, 785, 536, 785, 376, 795, 54, 778, 117, 94)])
+vertices = PackedVector2Array(375.992, 784.977, 29.9297, 766.508, 25.0625, 27.1719, 839.922, 41, 535.688, 775, 1233.89, 774.023, 768.977, 775, 1226.11, 41)
+polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3, 4), PackedInt32Array(5, 6, 4, 3, 7)])
+outlines = Array[PackedVector2Array]([PackedVector2Array(840, 31, 1236, 31, 1244, 784, 769, 785, 536, 785, 376, 795, 20, 776, 15, 17)])
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_t03bx"]
 radius = 30.1496
@@ -31,12 +34,6 @@ polygon = PackedVector2Array(56.9813, 546.622, 46, 45, 297, 44, 337.92, 345.866,
 [node name="NavigationRegion2D" type="NavigationRegion2D" parent="."]
 position = Vector2(5, 9)
 navigation_polygon = SubResource("NavigationPolygon_cmany")
-
-[node name="Barrier2" parent="NavigationRegion2D" instance=ExtResource("1_jnhet")]
-position = Vector2(491, 630)
-
-[node name="Barrier" parent="NavigationRegion2D" instance=ExtResource("1_jnhet")]
-position = Vector2(579, 288)
 
 [node name="StaticBody2D" type="StaticBody2D" parent="NavigationRegion2D"]
 
@@ -63,22 +60,31 @@ expand_mode = 1
 
 [node name="NavTargets" type="Node2D" parent="."]
 
-[node name="Attraction" parent="NavTargets" groups=["attractions"] instance=ExtResource("3_2r6fk")]
-position = Vector2(951, 254)
-visit_duration_seconds = 1000.0
-capacity = 1
-
 [node name="Attraction2" parent="NavTargets" groups=["attractions"] instance=ExtResource("3_2r6fk")]
-position = Vector2(378, 181)
+position = Vector2(148, 154)
 visit_duration_seconds = 1000.0
-capacity = 1
-attractionName = "second attraction"
+attractionName = "Big Dipper"
+sprite_texture = ExtResource("5_bygm8")
 
 [node name="Attraction3" parent="NavTargets" groups=["attractions"] instance=ExtResource("3_2r6fk")]
-position = Vector2(182, 451)
+position = Vector2(800, 548)
+visit_duration_seconds = 2000.0
+capacity = 3
+attractionName = "Boat Ride"
+sprite_texture = ExtResource("6_7235i")
+
+[node name="Attraction4" parent="NavTargets" groups=["attractions"] instance=ExtResource("3_2r6fk")]
+position = Vector2(176, 541)
 visit_duration_seconds = 1000.0
 capacity = 1
-attractionName = "3rd time lucky"
+attractionName = "Fourth Ride"
+sprite_texture = ExtResource("8_bpe1d")
+
+[node name="Attraction" parent="NavTargets" groups=["attractions"] instance=ExtResource("3_2r6fk")]
+position = Vector2(1089, 145)
+visit_duration_seconds = 1000.0
+capacity = 1
+sprite_texture = ExtResource("5_8xvn8")
 
 [node name="Travellers" type="Node2D" parent="."]
 
@@ -88,7 +94,7 @@ attractionName = "3rd time lucky"
 position = Vector2(1050, 730)
 
 [node name="NavTarget2" type="Marker2D" parent="SpawnPoints"]
-position = Vector2(178, 723)
+position = Vector2(172, 711)
 
 [node name="OpenStatusLabel" type="Label" parent="."]
 layout_mode = 0
