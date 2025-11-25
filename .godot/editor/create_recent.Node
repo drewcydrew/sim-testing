@@ -1,3 +1,5 @@
+Marker2D
+Node2D
 RichTextLabel
 MarginContainer
 PanelContainer
@@ -11,4 +13,3 @@ CollisionShape2D
 StaticBody2D
 TextureRect
 FileDialog
-Button
