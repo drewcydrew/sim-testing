@@ -5,10 +5,10 @@
 [ext_resource type="PackedScene" uid="uid://cljag0qwfarjg" path="res://Classes/EventTooltip/event_tooltip.tscn" id="2_f63p6"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_f3ipd"]
-size = Vector2(13, 6)
+size = Vector2(94, 88)
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_hn5fc"]
-radius = 67.42
+radius = 62.82
 
 [node name="Attraction" type="Area2D"]
 collision_layer = 0
@@ -18,7 +18,7 @@ tooltip_scene = ExtResource("2_f63p6")
 sprite_texture = ExtResource("2_acn2v")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(-35.5, -31)
+position = Vector2(5, 10)
 shape = SubResource("RectangleShape2D_f3ipd")
 disabled = true
 
@@ -48,3 +48,5 @@ shape = SubResource("CircleShape2D_hn5fc")
 [connection signal="input_event" from="." to="." method="_on_input_event"]
 [connection signal="mouse_entered" from="." to="." method="_on_mouse_entered"]
 [connection signal="mouse_exited" from="." to="." method="_on_mouse_exited"]
+[connection signal="visit_requested" from="." to="." method="_on_visit_requested"]
+[connection signal="pressed" from="TapButton" to="." method="_on_tap_button_pressed"]
