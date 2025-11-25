@@ -12,10 +12,13 @@ signal visit_started(traveller: Node)
 signal visit_finished(traveller: Node)
 
 @onready var progress_bar: ProgressBar = $ProgressBar
-@onready var queueIndicator: HBoxContainer = $QueueIndicator
-@onready var activeIndicator: HBoxContainer = $ActiveIndicator
+#@onready var queueIndicator: HBoxContainer = $QueueIndicator
+#@onready var activeIndicator: HBoxContainer = $ActiveIndicator
 @onready var tap_button: TouchScreenButton = $TapButton   # NEW
 @onready var sprite_node: Sprite2D = $Sprite2D
+
+@onready var queue_slots_root: Node2D = $QueueSlots
+@onready var service_slots_root: Node2D = $ServiceSlots
 
 var queue: Array[Node] = []
 var active: Array[Node] = [] 
@@ -25,6 +28,10 @@ var _epoch: int = 0   # increments on reset to cancel in-flight awaits
 
 var tooltip_instance: Control = null   # shared Tooltip scene instance
 
+var queue_slots: Array[Node2D] = []
+var service_slots: Array[Node2D] = []
+
+
 
 func _ready():
 	print("initialised")
@@ -33,6 +40,21 @@ func _ready():
 	sprite_node.texture = sprite_texture
 
 	GanttHub.connect("events_reset", Callable(self, "_clear_all"))
+	
+	queue_slots = []
+	for child in queue_slots_root.get_children():
+		if child is Marker2D:
+			queue_slots.append(child)
+
+	service_slots = []
+	for child in service_slots_root.get_children():
+		if child is Marker2D:
+			service_slots.append(child)
+
+
+	# Ensure capacity never exceeds number of service slots
+	capacity = min(capacity, service_slots.size())
+
 
 
 func _clear_all() -> void:
@@ -43,8 +65,8 @@ func _clear_all() -> void:
 	queue.clear()
 	active.clear()
 	_pumping = false
-	clear_container_children(queueIndicator)
-	clear_container_children(activeIndicator)
+	#clear_container_children(queueIndicator)
+	#clear_container_children(activeIndicator)
 	progress_bar.visible = false
 	progress_bar.value = 0.0
 
@@ -63,19 +85,30 @@ func _on_tap_button_pressed() -> void:
 		show_tooltip()
 
 func _on_visit_requested(traveller: Node) -> void:
-	#Check Traveller isn't already in queue
+	# Check Traveller isn't already in queue
 	if active.has(traveller) or queue.has(traveller):
 		return
-		
-	#Add to queue, do neccessary visual processing
-	queue.append(traveller)
-	var rect = ColorRect.new()
-	rect.color = Color(0.2, 0.8, 1.0)  # cyan color
-	rect.custom_minimum_size = Vector2(10, 10)
-	queueIndicator.add_child(rect)
 
-	#Pump queue, will move traveller into active if possible
+	# Add to queue
+	queue.append(traveller)
+
+	# TELEPORT to queue slot (if we have one for this index)
+	var idx := queue.size() - 1
+	if idx < queue_slots.size():
+		var slot := queue_slots[idx]
+		if slot != null and traveller is Node2D:
+			var t2d := traveller as Node2D
+			t2d.global_position = slot.global_position
+
+	# Optional: keep your debug indicator bar UI
+	#var rect := ColorRect.new()
+	#rect.color = Color(0.2, 0.8, 1.0)  # cyan color
+	#rect.custom_minimum_size = Vector2(10, 10)
+	#queueIndicator.add_child(rect)
+
+	# Pump queue, will move traveller into active if possible
 	pump_queue()
+
 
 func pump_queue() -> void:
 	# Only start a new session if there is NO current session running.
@@ -94,16 +127,29 @@ func pump_queue() -> void:
 			continue
 
 		active.append(next)
+
+		# TELEPORT to service slot
+		var s_idx := active.size() - 1
+		if s_idx < service_slots.size() and next is Node2D:
+			var slot := service_slots[s_idx]
+			if slot != null:
+				var t2d := next as Node2D
+				t2d.global_position = slot.global_position
+
 		call_deferred("emit_visit_started", next)
 
+		# Existing visual indicators
 		sync_indicators()
-		var rect := ColorRect.new()
-		rect.color = Color(0.2, 0.4, 1.0)  # darker blue for active riders
-		rect.custom_minimum_size = Vector2(10, 10)
-		activeIndicator.add_child(rect)
+		#var rect := ColorRect.new()
+		#rect.color = Color(0.2, 0.4, 1.0)  # darker blue for active riders
+		#rect.custom_minimum_size = Vector2(10, 10)
+		#activeIndicator.add_child(rect)
 
 	# Kick off a single session for this batch
 	serve_batch(my_epoch)
+
+
+
 
 func serve_batch(my_epoch: int) -> void:
 	# One Gantt event per session, not per traveller
@@ -133,7 +179,7 @@ func serve_batch(my_epoch: int) -> void:
 	active.clear()
 
 	# Clear all active indicators
-	clear_container_children(activeIndicator)
+	#clear_container_children(activeIndicator)
 
 	# Progress bar is controlled by _visit_for_sim_seconds,
 	# but making sure it's hidden/zeroed doesn't hurt:
@@ -160,13 +206,23 @@ func visit_for_sim_seconds(dur: float) -> void:
 	progress_bar.visible = false
 
 func sync_indicators() -> void:
-	# Rebuild queueIndicator from `queue`
-	clear_container_children(queueIndicator)
+	# TELEPORT: re-seat all queued travellers into queue slots
 	for i in range(queue.size()):
-		var rect := ColorRect.new()
-		rect.color = Color(0.2, 0.8, 1.0)  # cyan for waiting
-		rect.custom_minimum_size = Vector2(10, 10)
-		queueIndicator.add_child(rect)
+		if i < queue_slots.size():
+			var slot := queue_slots[i]
+			var trav := queue[i]
+			if is_instance_valid(trav) and trav is Node2D and slot != null:
+				var t2d := trav as Node2D
+				t2d.global_position = slot.global_position
+
+	# Rebuild queueIndicator from `queue` (debug UI)
+	#clear_container_children(queueIndicator)
+	#for i in range(queue.size()):
+	#	var rect := ColorRect.new()
+	#	rect.color = Color(0.2, 0.8, 1.0)  # cyan for waiting
+	#	rect.custom_minimum_size = Vector2(10, 10)
+	#	queueIndicator.add_child(rect)
+
 
 func show_tooltip() -> void:
 	#Gaurd against missing tooltip scene

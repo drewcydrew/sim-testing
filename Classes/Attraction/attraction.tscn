@@ -44,6 +44,86 @@ offset_bottom = 101.0
 [node name="TapButton" type="TouchScreenButton" parent="."]
 shape = SubResource("CircleShape2D_hn5fc")
 
+[node name="QueueSlots" type="Node2D" parent="."]
+position = Vector2(11, -89)
+
+[node name="Slot1" type="Marker2D" parent="QueueSlots"]
+position = Vector2(-94, 139)
+
+[node name="Slot2" type="Marker2D" parent="QueueSlots"]
+position = Vector2(-93, 109)
+
+[node name="Slot3" type="Marker2D" parent="QueueSlots"]
+position = Vector2(-93, 85)
+
+[node name="Slot4" type="Marker2D" parent="QueueSlots"]
+position = Vector2(-94, 56)
+
+[node name="Slot5" type="Marker2D" parent="QueueSlots"]
+position = Vector2(-91, 29)
+
+[node name="Slot6" type="Marker2D" parent="QueueSlots"]
+position = Vector2(-22, -12)
+
+[node name="Slot7" type="Marker2D" parent="QueueSlots"]
+position = Vector2(-14, -12)
+
+[node name="Slot8" type="Marker2D" parent="QueueSlots"]
+position = Vector2(-4, -11)
+
+[node name="Slot9" type="Marker2D" parent="QueueSlots"]
+position = Vector2(6, -11)
+
+[node name="Slot10" type="Marker2D" parent="QueueSlots"]
+position = Vector2(18, -10)
+
+[node name="Slot11" type="Marker2D" parent="QueueSlots"]
+position = Vector2(-22, 4)
+
+[node name="Slot12" type="Marker2D" parent="QueueSlots"]
+position = Vector2(-14, 4)
+
+[node name="Slot13" type="Marker2D" parent="QueueSlots"]
+position = Vector2(-4, 5)
+
+[node name="Slot14" type="Marker2D" parent="QueueSlots"]
+position = Vector2(6, 5)
+
+[node name="Slot15" type="Marker2D" parent="QueueSlots"]
+position = Vector2(18, 6)
+
+[node name="Slot16" type="Marker2D" parent="QueueSlots"]
+position = Vector2(-23, 22)
+
+[node name="Slot17" type="Marker2D" parent="QueueSlots"]
+position = Vector2(-15, 22)
+
+[node name="Slot18" type="Marker2D" parent="QueueSlots"]
+position = Vector2(-5, 23)
+
+[node name="Slot19" type="Marker2D" parent="QueueSlots"]
+position = Vector2(5, 23)
+
+[node name="Slot20" type="Marker2D" parent="QueueSlots"]
+position = Vector2(17, 24)
+
+[node name="ServiceSlots" type="Node2D" parent="."]
+
+[node name="Slot1" type="Marker2D" parent="ServiceSlots"]
+position = Vector2(8, -5)
+
+[node name="Slot2" type="Marker2D" parent="ServiceSlots"]
+position = Vector2(31, -6)
+
+[node name="Slot3" type="Marker2D" parent="ServiceSlots"]
+position = Vector2(52, -6)
+
+[node name="Slot4" type="Marker2D" parent="ServiceSlots"]
+position = Vector2(76, -6)
+
+[node name="Slot5" type="Marker2D" parent="ServiceSlots"]
+position = Vector2(104, -6)
+
 [connection signal="input_event" from="." to="." method="_input_event"]
 [connection signal="input_event" from="." to="." method="_on_input_event"]
 [connection signal="mouse_entered" from="." to="." method="_on_mouse_entered"]
