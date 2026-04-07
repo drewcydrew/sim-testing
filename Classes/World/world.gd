@@ -1,27 +1,22 @@
 extends Node2D
 
 
-
-
 # Remember the last non-zero speed so we can resume to it.
 var _last_nonzero_speed: float = 0.0
 
 
-const START_OF_DAY_SECONDS: int = 9 * 3600  # 9:00 AM
+const START_OF_DAY_SECONDS: int = 9 * 3600 # 9:00 AM
 
 @onready var _time_label: Label = $SimulationControls/SimTimeLabel
 
 
-@onready var _sim_controls: Node = $SimulationControls
 @onready var _play_pause_btn: Button = $SimulationControls/PlayPause
 @onready var _config: Node = $TabContainer/Configuration
 @onready var _env: Node = $TabContainer/Environment
-@onready var _chk_auto_spawn: BaseButton = $SimulationControls/AutoSpawn if has_node("SimulationControls/AutoSpawn") else null
 @onready var _gantt: BasicGantt = $TabContainer/Data/ScrollContainer/GanttNew
 
 
 func _ready() -> void:
-	
 	_config.spawn_rate_changed.connect(_env.set_spawn_rate_per_hour)
 	_config.auto_spawn_toggled.connect(func(on):
 		_env.set_spawn_rate_per_hour(_config.get_displayed_rate() if on else 0.0)
@@ -41,17 +36,14 @@ func _process(_delta: float) -> void:
 	_update_time_label()
 
 	
-
 func _on_simulation_controls_sim_speed_changed(value: float) -> void:
 	# Drive the entire sim with Engine.time_scale via SimClock
-	
 	SimulationClock.set_rate(value)
 	# Track the last non-zero so we can resume properly
 	if value > 0.0:
 		_last_nonzero_speed = value
 
 func _on_play_pause_pressed() -> void:
-	
 	var current: float = Engine.time_scale
 	if current > 0.0:
 		# Pause
@@ -68,7 +60,6 @@ func _on_rate_changed(rate: float) -> void:
 
 
 func _on_reset_pressed() -> void:
-
 	# Clear all travellers
 	if is_instance_valid(_env) and _env.has_method("clear_all"):
 		_env.clear_all()
@@ -98,7 +89,6 @@ func _on_spawn_pressed() -> void:
 		
 		
 func _update_time_label() -> void:
-	
 	if not is_instance_valid(_time_label):
 		return
 
@@ -110,8 +100,8 @@ func _format_time_of_day(total_seconds: float) -> String:
 	# Floor to whole seconds, then do all-int math (3.x: avoid //)
 	var secs: int = int(total_seconds)
 
-	var hours: int = int(secs / 3600) % 24
-	var minutes: int = int((secs % 3600) / 60)
+	var hours: int = (secs / 3600) % 24
+	var minutes: int = (secs % 3600) / 60
 	var seconds: int = secs % 60
 
 	var is_am: bool = hours < 12

@@ -434,8 +434,8 @@ func _on_resized() -> void:
 
 func _draw() -> void:
 	var plot: Rect2 = _plot_rect()
-	var span: float = domain_max - domain_min
-	var scale: float = pixels_per_unit
+	var _span: float = domain_max - domain_min
+	var ppu: float = pixels_per_unit
 	var font := get_theme_default_font()
 	var font_size: int = int(get_theme_default_font_size())
 
@@ -470,8 +470,8 @@ func _draw() -> void:
 			continue
 
 		# Map to integer pixels in *plot* space
-		var x0_px: int = int(floor(plot.position.x + (s_clip - domain_min) * scale))
-		var x1_px: int = int(floor(plot.position.x + (e_clip - domain_min) * scale))
+		var x0_px: int = int(floor(plot.position.x + (s_clip - domain_min) * ppu))
+		var x1_px: int = int(floor(plot.position.x + (e_clip - domain_min) * ppu))
 		if x1_px <= x0_px:
 			x1_px = x0_px + 1
 		var w_px: int = x1_px - x0_px
@@ -833,8 +833,8 @@ func _draw_time_axis() -> void:
 		# Convert simulation seconds to a time of day, starting at 9:00 AM
 		var base_seconds: int = 9 * 3600 # 9:00 AM
 		var total_sec: int = base_seconds + int(t)
-		var hours: int = int(total_sec / 3600) % 24
-		var minutes: int = int((total_sec % 3600) / 60)
+		var hours: int = int(total_sec / 3600.0) % 24
+		var minutes: int = int((total_sec % 3600) / 60.0)
 
 		# Major tick at the top of the hour (e.g. 10:00, 11:00, ...)
 		var is_major: bool = (minutes == 0)
@@ -905,7 +905,7 @@ func _fit_domain_to_now(pad: float) -> void:
 
 func _find_event_at(at_position: Vector2) -> Dictionary:
 	var plot: Rect2 = _plot_rect()
-	var scale: float = pixels_per_unit
+	var ppu: float = pixels_per_unit
 
 	for ev: Dictionary in _events:
 		var s: float = ev["start"]
@@ -920,8 +920,8 @@ func _find_event_at(at_position: Vector2) -> Dictionary:
 		if e_clip <= s_clip:
 			continue
 
-		var x0_px: int = int(floor(plot.position.x + (s_clip - domain_min) * scale))
-		var x1_px: int = int(floor(plot.position.x + (e_clip - domain_min) * scale))
+		var x0_px: int = int(floor(plot.position.x + (s_clip - domain_min) * ppu))
+		var x1_px: int = int(floor(plot.position.x + (e_clip - domain_min) * ppu))
 		if x1_px <= x0_px:
 			x1_px = x0_px + 1
 
@@ -941,8 +941,8 @@ func _find_event_at(at_position: Vector2) -> Dictionary:
 
 func _format_sim_time_ampm(sim_sec: float) -> String:
 	var total: int = _DISPLAY_DAY_START_SEC + int(sim_sec)
-	var hours: int = int(total / 3600) % 24
-	var minutes: int = int((total % 3600) / 60)
+	var hours: int = int(total / 3600.0) % 24
+	var minutes: int = int((total % 3600) / 60.0)
 	var seconds: int = total % 60
 	var is_am: bool = hours < 12
 	var h12: int = hours % 12
@@ -954,8 +954,8 @@ func _format_sim_time_ampm(sim_sec: float) -> String:
 
 func _format_duration(dur_sec: float) -> String:
 	var s: int = int(dur_sec)
-	var h: int = s / 3600
-	var m: int = (s % 3600) / 60
+	var h: int = int(s / 3600.0)
+	var m: int = int((s % 3600) / 60.0)
 	var sec: int = s % 60
 	if h > 0:
 		return "%dh %02dm %02ds" % [h, m, sec]

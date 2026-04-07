@@ -30,7 +30,6 @@ var _sim_accum: float = 0.0
 var _seconds_per_spawn: float = 1000.0
 
 signal traveller_spawned(node: Node2D)
-signal traveller_despawned(node: Node2D)
 signal count_changed(count: int)
 
 func _ready() -> void:
@@ -50,7 +49,7 @@ func _ready() -> void:
 	# Listen to SimulationClock reset if available
 	if typeof(SimulationClock) != TYPE_NIL:
 		if SimulationClock.has_signal("reset"):
-			SimulationClock.connect("reset", Callable(self, "_on_sim_clock_reset"))
+			SimulationClock.connect("reset", Callable(self , "_on_sim_clock_reset"))
 
 func _process(_delta: float) -> void:
 	var now := _sim_now()
@@ -124,7 +123,7 @@ func spawn_one() -> Node2D:
 	inst.name = name_str
 	inst.set_traveller_name(name_str)
 	_travellers_root.add_child(inst)
-	inst.set_environment(self)
+	inst.set_environment(self )
 	inst.set_home_entry_point(_test_point)
 		
 	inst.tree_exited.connect(func():
