@@ -65,7 +65,7 @@ func _on_tap_button_pressed() -> void:
 func _on_workday_state_changed(open: bool) -> void:
 	_env_is_open = open
 	
-func _physics_process(delta: float) -> void:
+func _physics_process(_delta: float) -> void:
 	# If we’re in a visiting coroutine, movement is paused.
 	if is_visiting:
 		return
