@@ -1,5 +1,5 @@
 # Godot-specific
-.godot/ #godot working files
+.godot/
 /.godot/editor
 .import/               # Auto-generated import files for assets
 export.cfg             # Per-user export presets (unless you need to share!)
