@@ -1,5 +1,7 @@
 extends CharacterBody2D
 
+const TrailOverlayScript = preload("res://Classes/TrailOverlay/trail_overlay.gd")
+
 @export var movement_speed: float = 0.5
 @export var navigation_agent: NavigationAgent2D
 @export var max_visits: int = 5
@@ -17,7 +19,6 @@ var _has_open_event: bool = false
 var _current_event_label: String = ""
 
 
-
 var home_entry_point: Node2D = null
 var exit_target: Node2D = null
 var traveller_name: String = ""
@@ -26,24 +27,35 @@ var is_leaving: bool = false
 var _env: Node = null
 var _env_is_open: bool = true
 # Per-traveller event log, mirroring what we send to GanttHub
-var event_log: Array = []   # each entry: { "label", "start", "end", "color", "category", "note" }
+var event_log: Array = [] # each entry: { "label", "start", "end", "color", "category", "note" }
 var _current_event_index: int = -1
 
 var current_attraction: Node2D = null
 var is_visiting: bool = false
 
+# --- Trail / heatmap ---
+@export var trail_sample_distance: float = 6.0 # world pixels between path samples
+var _trail_overlay: Node2D = null
+var _trail_visible: bool = true
+var _last_sample_pos: Vector2 = Vector2.ZERO
+
 func _ready() -> void:
 	# --- Physics layers: assume environment/obstacles = layer 1, travellers = layer 2 ---
 	# Put traveller on layer 2:
 	set_collision_layer_value(1, false) # not on world layer
-	set_collision_layer_value(2, true)  # on travellers layer
+	set_collision_layer_value(2, true) # on travellers layer
 
 	# Collide only with world (layer 1), not with other travellers (layer 2):
-	set_collision_mask_value(1, true)   # collide with world/obstacles
-	set_collision_mask_value(2, false)  # ignore other travellers
+	set_collision_mask_value(1, true) # collide with world/obstacles
+	set_collision_mask_value(2, false) # ignore other travellers
 	
 	#tap_button.pressed.connect(_on_tap_button_pressed)
 
+	_trail_overlay = Node2D.new()
+	_trail_overlay.set_script(TrailOverlayScript)
+	add_child(_trail_overlay)
+	_trail_overlay.visible = true
+	_last_sample_pos = global_position
 
 	pick_and_go_to_next_attraction()
 	
@@ -55,7 +67,6 @@ func _on_workday_state_changed(open: bool) -> void:
 	
 func _physics_process(delta: float) -> void:
 	# If we’re in a visiting coroutine, movement is paused.
-		
 	if is_visiting:
 		return
 
@@ -75,6 +86,9 @@ func _physics_process(delta: float) -> void:
 		var direction: Vector2 = (next_path_position - current_agent_position).normalized()
 		velocity = direction * movement_speed
 		move_and_slide()
+		if _trail_overlay != null and global_position.distance_to(_last_sample_pos) >= trail_sample_distance:
+			_trail_overlay.add_point(global_position)
+			_last_sample_pos = global_position
 	else:
 		velocity = Vector2.ZERO
 
@@ -123,7 +137,7 @@ func start_visiting() -> void:
 
 	# We don't manually finish "Travelling" here; _start_event("Waiting")
 	# will auto-close it for us.
-	current_attraction.emit_signal("visit_requested", self)
+	current_attraction.emit_signal("visit_requested", self )
 
 	start_event(
 		"Waiting",
@@ -227,7 +241,7 @@ func start_event(
 	var ev := {
 		"label": label,
 		"start": now,
-		"end": -1.0,  # -1 = still open
+		"end": - 1.0, # -1 = still open
 		"color": color,
 		"category": category,
 		"note": ""
@@ -236,7 +250,6 @@ func start_event(
 	_current_event_index = event_log.size() - 1
 	_current_event_label = label
 	_has_open_event = true
-
 
 
 func finish_event(note: String = "") -> void:
@@ -304,3 +317,8 @@ func toggle_tooltip() -> void:
 		tooltip_instance.display_type = "PERSON"
 
 	_tooltip_open = true
+
+func toggle_trail() -> void:
+	_trail_visible = not _trail_visible
+	if _trail_overlay != null:
+		_trail_overlay.visible = _trail_visible

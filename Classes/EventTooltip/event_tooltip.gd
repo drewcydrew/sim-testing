@@ -9,9 +9,10 @@ class_name GanttEntityTooltip
 @export var display_type: String = ""
 
 ## Path to the RichTextLabel that will display the text
-@export var label_path: NodePath = "PanelContainer/MarginContainer/RichTextLabel"
+@export var label_path: NodePath = "PanelContainer/MarginContainer/VBoxContainer/RichTextLabel"
 
 var _label: RichTextLabel = null
+@onready var _heatmap_btn: Button = $PanelContainer/MarginContainer/VBoxContainer/HeatmapToggleButton
 
 # Closed events for this entity: { label, start_time, end_time, color, row_key, type }
 var _closed_events: Array[Dictionary] = []
@@ -33,14 +34,14 @@ func _ready() -> void:
 
 	# Subscribe to live updates from GanttHub (autoload singleton)
 	if typeof(GanttHub) != TYPE_NIL:
-		if not GanttHub.is_connected("event_recorded", Callable(self, "_on_hub_event_recorded")):
-			GanttHub.connect("event_recorded", Callable(self, "_on_hub_event_recorded"))
-		if not GanttHub.is_connected("event_opened", Callable(self, "_on_hub_event_opened")):
-			GanttHub.connect("event_opened", Callable(self, "_on_hub_event_opened"))
-		if not GanttHub.is_connected("event_finished", Callable(self, "_on_hub_event_finished")):
-			GanttHub.connect("event_finished", Callable(self, "_on_hub_event_finished"))
-		if GanttHub.has_signal("events_reset") and not GanttHub.is_connected("events_reset", Callable(self, "_on_hub_events_reset")):
-			GanttHub.connect("events_reset", Callable(self, "_on_hub_events_reset"))
+		if not GanttHub.is_connected("event_recorded", Callable(self , "_on_hub_event_recorded")):
+			GanttHub.connect("event_recorded", Callable(self , "_on_hub_event_recorded"))
+		if not GanttHub.is_connected("event_opened", Callable(self , "_on_hub_event_opened")):
+			GanttHub.connect("event_opened", Callable(self , "_on_hub_event_opened"))
+		if not GanttHub.is_connected("event_finished", Callable(self , "_on_hub_event_finished")):
+			GanttHub.connect("event_finished", Callable(self , "_on_hub_event_finished"))
+		if GanttHub.has_signal("events_reset") and not GanttHub.is_connected("events_reset", Callable(self , "_on_hub_events_reset")):
+			GanttHub.connect("events_reset", Callable(self , "_on_hub_events_reset"))
 
 	_rebuild_dirty = true
 	set_process(true)
@@ -86,7 +87,7 @@ func _load_initial_events_for_row() -> void:
 				_open_event = {
 					"label": o.get("label", ""),
 					"start_time": float(o.get("start_time", 0.0)),
-					"end_time": -1.0,  # sentinel for open
+					"end_time": - 1.0, # sentinel for open
 					"color": o.get("color", Color.WHITE),
 					"type": o.get("type", ""),
 					"row_key": row_key
@@ -131,7 +132,7 @@ func _on_hub_event_opened(ev_row_key: String, payload: Dictionary) -> void:
 	_open_event = {
 		"label": payload.get("label", ""),
 		"start_time": float(payload.get("start_time", 0.0)),
-		"end_time": -1.0,
+		"end_time": - 1.0,
 		"color": payload.get("color", Color.WHITE),
 		"type": payload.get("type", ""),
 		"row_key": ev_row_key
@@ -262,3 +263,12 @@ func _now() -> float:
 	if typeof(SimulationClock) != TYPE_NIL and SimulationClock.has_method("now"):
 		return float(SimulationClock.now())
 	return float(Time.get_ticks_msec()) / 1000.0
+
+
+func _on_heatmap_toggle_pressed() -> void:
+	var traveller: Node = get_parent()
+	if traveller == null or not traveller.has_method("toggle_trail"):
+		return
+	traveller.toggle_trail()
+	if is_instance_valid(_heatmap_btn):
+		_heatmap_btn.text = "Hide path heatmap" if traveller._trail_visible else "Show path heatmap"
