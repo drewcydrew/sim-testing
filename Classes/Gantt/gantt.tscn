@@ -1,7 +1,47 @@
-[gd_scene load_steps=3 format=3 uid="uid://co5uy51mo4xql"]
+[gd_scene load_steps=7 format=3 uid="uid://co5uy51mo4xql"]
 
 [ext_resource type="Script" uid="uid://dinpiqmeh8odr" path="res://Classes/Gantt/gantt.gd" id="1_udaaf"]
 [ext_resource type="PackedScene" uid="uid://bq2f60waqtgbb" path="res://Classes/Tooltip/tooltip.tscn" id="2_o4jcv"]
+[ext_resource type="PackedScene" uid="uid://dm3p1bv6e5yrt" path="res://Classes/GanttScrubber/gantt_scrubber.tscn" id="3_scrbr"]
+
+[sub_resource type="StyleBoxFlat" id="BtnHover"]
+content_margin_left = 14.0
+content_margin_top = 5.0
+content_margin_right = 14.0
+content_margin_bottom = 5.0
+bg_color = Color(0.25, 0.52, 0.88, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+shadow_color = Color(0, 0, 0, 0.45)
+shadow_size = 3
+shadow_offset = Vector2(1, 2)
+
+[sub_resource type="StyleBoxFlat" id="BtnPressed"]
+content_margin_left = 14.0
+content_margin_top = 5.0
+content_margin_right = 14.0
+content_margin_bottom = 5.0
+bg_color = Color(0.12, 0.28, 0.55, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="BtnNormal"]
+content_margin_left = 14.0
+content_margin_top = 5.0
+content_margin_right = 14.0
+content_margin_bottom = 5.0
+bg_color = Color(0.18, 0.4, 0.72, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+shadow_color = Color(0, 0, 0, 0.45)
+shadow_size = 3
+shadow_offset = Vector2(1, 2)
 
 [node name="GanttNew" type="Control"]
 layout_mode = 3
@@ -10,36 +50,32 @@ offset_right = 1280.0
 offset_bottom = 900.0
 script = ExtResource("1_udaaf")
 tooltip_scene = ExtResource("2_o4jcv")
+bottom_margin = 44.0
 show_labels = true
 display_type = "ATTRACTION"
 
-[node name="ZoomIn" type="Button" parent="."]
-layout_mode = 0
-offset_left = 3.0
-offset_top = 4.0
-offset_right = 189.0
-offset_bottom = 48.0
-text = "Zoom In"
-
-[node name="ZoomOut" type="Button" parent="."]
-layout_mode = 0
-offset_left = 207.0
-offset_top = 4.0
-offset_right = 404.0
-offset_bottom = 43.0
-text = "Zoom Out"
+[node name="GanttScrubber" parent="." instance=ExtResource("3_scrbr")]
+anchors_preset = 0
+offset_top = 862.0
+offset_right = 1280.0
+offset_bottom = 898.0
 
 [node name="SaveDialog" type="FileDialog" parent="."]
 
 [node name="ExportCSV" type="Button" parent="."]
 layout_mode = 0
-offset_left = 414.0
-offset_top = 4.0
-offset_right = 611.0
-offset_bottom = 47.0
-text = "Export"
+offset_left = 6.0
+offset_top = 6.0
+offset_right = 160.0
+offset_bottom = 36.0
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_pressed_color = Color(0.85, 0.92, 1, 1)
+theme_override_font_sizes/font_size = 13
+theme_override_styles/hover = SubResource("BtnHover")
+theme_override_styles/pressed = SubResource("BtnPressed")
+theme_override_styles/normal = SubResource("BtnNormal")
+text = "Export CSV"
 
-[connection signal="pressed" from="ZoomIn" to="." method="_on_zoom_in_pressed"]
-[connection signal="pressed" from="ZoomOut" to="." method="_on_zoom_out_pressed"]
 [connection signal="file_selected" from="SaveDialog" to="." method="_on_save_dialog_file_selected"]
 [connection signal="pressed" from="ExportCSV" to="." method="_on_export_csv_pressed"]

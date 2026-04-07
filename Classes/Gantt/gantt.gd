@@ -2,12 +2,12 @@ extends Control
 class_name BasicGantt
 
 # Auto-centering options
-@export var auto_follow_now: bool = false             # keep 'now' centered in view
-@export var follow_window_seconds: float = 60.0      # width of sliding window
+@export var auto_follow_now: bool = false # keep 'now' centered in view
+@export var follow_window_seconds: float = 60.0 # width of sliding window
 
-@export var auto_fit_domain_live: bool = true       # fit domain to all bars each frame
-@export var fit_padding_seconds: float = 2.0         # padding when auto-fitting
-@export var recalc_hz: float = 10.0                  # limit re-centering to avoid thrash
+@export var auto_fit_domain_live: bool = true # fit domain to all bars each frame
+@export var fit_padding_seconds: float = 2.0 # padding when auto-fitting
+@export var recalc_hz: float = 10.0 # limit re-centering to avoid thrash
 
 @export var tooltip_scene: PackedScene
 
@@ -15,13 +15,13 @@ class_name BasicGantt
 # ── Time domain & horizontal zoom (works with a parent ScrollContainer) ───────
 @export var domain_min: float = 0.0
 @export var domain_max: float = 100.0
-@export var pixels_per_unit: float = 10.0            # horizontal zoom
-@export var auto_grow_domain: bool = false            # expand as events arrive
+@export var pixels_per_unit: float = 10.0 # horizontal zoom
+@export var auto_grow_domain: bool = false # expand as events arrive
 
 # ── Layout ────────────────────────────────────────────────────────────────────
 @export var row_height: float = 18.0
 @export var row_gap: float = 6.0
-@export var left_margin: float = 0.0                 # keeps working as before
+@export var left_margin: float = 0.0 # keeps working as before
 @export var right_margin: float = 0.0
 @export var top_margin: float = 100.0
 @export var bottom_margin: float = 0.0
@@ -38,7 +38,7 @@ class_name BasicGantt
 @export var row_label_pad_left: float = 8.0
 @export var row_label_color: Color = Color(0.92, 0.92, 0.92, 1.0)
 @export var row_label_font: Font
-@export var row_label_font_size: int = 0            # 0 = use theme default
+@export var row_label_font_size: int = 0 # 0 = use theme default
 
 # ── Zoom/Pan controls ─────────────────────────────────────────────────────────
 @export var zoom_min: float = 0.01
@@ -52,8 +52,8 @@ class_name BasicGantt
 
 # ── Time Axis / Tick Marks ───────────────────────────────────────────────────
 @export var show_time_axis: bool = true
-@export var tick_interval_seconds: float = 10.0       # spacing between vertical ticks
-@export var major_tick_every: int = 6                 # e.g. every 6 minor ticks = major tick (1 min when interval=10s)
+@export var tick_interval_seconds: float = 10.0 # spacing between vertical ticks
+@export var major_tick_every: int = 6 # e.g. every 6 minor ticks = major tick (1 min when interval=10s)
 @export var tick_color: Color = Color(0.5, 0.5, 0.5, 0.4)
 @export var major_tick_color: Color = Color(0.8, 0.8, 0.8, 0.7)
 @export var tick_width: float = 1.0
@@ -69,16 +69,14 @@ class_name BasicGantt
 
 var _tap_tooltip: Control = null
 
+const _DISPLAY_DAY_START_SEC: int = 9 * 3600
 
-
-
-var _open_by_key: Dictionary = {} 
+var _open_by_key: Dictionary = {}
 
 # Debug
 @export var debug_log: bool = false
 
 var _accum: float = 0.0
-
 
 
 # Stored events (typed)
@@ -88,9 +86,7 @@ var _max_row: int = -1
 
 # Map row-key (e.g. traveller name) -> numeric row index
 var _row_key_to_index: Dictionary = {}
-var _row_index_to_key: Array[String] = []  # index -> key (for drawing labels)
-
-
+var _row_index_to_key: Array[String] = [] # index -> key (for drawing labels)
 
 
 func _plot_width_available() -> float:
@@ -123,8 +119,6 @@ func _fit_scale_to_viewport() -> void:
 	_update_content_metrics()
 
 
-
-
 func _effective_end(ev: Dictionary) -> float:
 	var e_raw := float(ev.get("end", NAN))
 	var is_open: bool = grow_open_events and ev.get("open", false) and not is_finite(e_raw)
@@ -134,7 +128,7 @@ func _fit_domain_from_events(pad: float) -> void:
 	if _events.is_empty():
 		return
 
-	var hi: float = -INF
+	var hi: float = - INF
 	for ev in _events:
 		var e: float = _effective_end(ev)
 		if is_finite(e):
@@ -150,7 +144,6 @@ func _fit_domain_from_events(pad: float) -> void:
 	_update_content_metrics()
 
 
-
 # ── Row key helpers ───────────────────────────────────────────────────────────
 
 func _get_row_index_for(key: String) -> int:
@@ -161,7 +154,7 @@ func _get_row_index_for(key: String) -> int:
 	var idx := _max_row
 	_row_key_to_index[key] = idx
 	_row_index_to_key.append(key)
-	_update_content_metrics()  # content height may grow
+	_update_content_metrics() # content height may grow
 	queue_redraw()
 	return idx
 
@@ -211,12 +204,11 @@ func _row_key_from_open_map_key(k: String) -> String:
 	return String(parts[1]) if parts.size() == 2 else String(k)
 
 
-
 func _ready() -> void:
-	size = Vector2(1600, 600) 
+	size = Vector2(1600, 600)
 	set_process(true)
 	mouse_filter = Control.MOUSE_FILTER_STOP
-	resized.connect(Callable(self, "_on_resized"))
+	resized.connect(Callable(self , "_on_resized"))
 	_update_content_metrics()
 	# Register with hub (optional)
 	#if typeof(GanttHub) != TYPE_NIL:
@@ -248,14 +240,14 @@ func _ready() -> void:
 
 
 		# 3) Subscribe to live updates
-		if not GanttHub.is_connected("event_recorded", Callable(self, "_on_hub_event_recorded")):
-			GanttHub.connect("event_recorded", Callable(self, "_on_hub_event_recorded"))
-		if not GanttHub.is_connected("event_opened", Callable(self, "_on_hub_event_opened")):
-			GanttHub.connect("event_opened", Callable(self, "_on_hub_event_opened"))
-		if not GanttHub.is_connected("event_finished", Callable(self, "_on_hub_event_finished")):
-			GanttHub.connect("event_finished", Callable(self, "_on_hub_event_finished"))
-		if GanttHub.has_signal("events_reset") and not GanttHub.is_connected("events_reset", Callable(self, "_on_hub_events_reset")):
-			GanttHub.connect("events_reset", Callable(self, "_on_hub_events_reset"))
+		if not GanttHub.is_connected("event_recorded", Callable(self , "_on_hub_event_recorded")):
+			GanttHub.connect("event_recorded", Callable(self , "_on_hub_event_recorded"))
+		if not GanttHub.is_connected("event_opened", Callable(self , "_on_hub_event_opened")):
+			GanttHub.connect("event_opened", Callable(self , "_on_hub_event_opened"))
+		if not GanttHub.is_connected("event_finished", Callable(self , "_on_hub_event_finished")):
+			GanttHub.connect("event_finished", Callable(self , "_on_hub_event_finished"))
+		if GanttHub.has_signal("events_reset") and not GanttHub.is_connected("events_reset", Callable(self , "_on_hub_events_reset")):
+			GanttHub.connect("events_reset", Callable(self , "_on_hub_events_reset"))
 
 
 func _now() -> float:
@@ -271,10 +263,10 @@ func _process(delta: float) -> void:
 
 	# 1) Sliding window that follows 'now'
 	if auto_follow_now:
-		var half : float= max(0.001, follow_window_seconds * 0.5)
+		var half: float = max(0.001, follow_window_seconds * 0.5)
 		var now := _now()
-		var new_min : float= now - half
-		var new_max :float = now + half
+		var new_min: float = now - half
+		var new_max: float = now + half
 		# only update a few times per second to avoid layout thrash
 		if _accum >= (1.0 / max(1.0, recalc_hz)):
 			_accum = 0.0
@@ -307,8 +299,7 @@ func _process(delta: float) -> void:
 	
 func _on_hub_events_reset() -> void:
 	# Restore the initial viewport and wipe all local state
-	clear()  # will now also clear open events
-
+	clear() # will now also clear open events
 
 
 func _exit_tree() -> void:
@@ -323,7 +314,7 @@ func open_event_by_key(label: String, start_time: float, row_key: String, color:
 	_events.append({
 		"label": label,
 		"start": s,
-		"end": INF,         # sentinel: draw up to now
+		"end": INF, # sentinel: draw up to now
 		"row": row,
 		"color": color,
 		"open": true,
@@ -377,7 +368,6 @@ func record_event(label: String, start_time: float, end_time: float, row: int = 
 	queue_redraw()
 	
 func zoom_in(factor: float = 1.2) -> void:
-	print("calling zoom in: ", factor)
 	var new_zoom = pixels_per_unit * factor
 	pixels_per_unit = clamp(new_zoom, zoom_min, zoom_max)
 	_update_content_metrics()
@@ -391,7 +381,7 @@ func zoom_out(factor: float = 1.2) -> void:
 
 func clear():
 	_events.clear()
-	_open_by_key.clear()   
+	_open_by_key.clear()
 	_max_row = -1
 	_row_key_to_index.clear()
 	_row_index_to_key.clear()
@@ -528,7 +518,7 @@ func _draw_row_labels(plot: Rect2) -> void:
 	# Optional separator line between gutter and plot
 	var sep_x: float = left_margin + _gutter_width() - 1.0
 	if sep_x > 0.0:
-		draw_line(Vector2(sep_x, 0.0), Vector2(sep_x, size.y), row_label_color * Color(1,1,1,0.35), 1.0)
+		draw_line(Vector2(sep_x, 0.0), Vector2(sep_x, size.y), row_label_color * Color(1, 1, 1, 0.35), 1.0)
 
 
 # Tooltips for hovered bars
@@ -597,7 +587,6 @@ func _show_tap_tooltip(text: String, local_pos: Vector2) -> void:
 	_tap_tooltip.mouse_filter = Control.MOUSE_FILTER_IGNORE
 
 
-
 func _handle_tap(local_pos: Vector2) -> void:
 	var ev := _find_event_at(local_pos)
 
@@ -610,13 +599,6 @@ func _handle_tap(local_pos: Vector2) -> void:
 	_show_tap_tooltip(text, local_pos)
 
 
-
-
-
-
-
-
-
 # ── Helpers ───────────────────────────────────────────────────────────────────
 
 func _gutter_width() -> float:
@@ -624,7 +606,7 @@ func _gutter_width() -> float:
 
 func _plot_rect() -> Rect2:
 	# The content (and thus scrollable width/height) is determined by domain span and rows.
-	var x0: float = left_margin + _gutter_width()    # reserve gutter without mutating left_margin
+	var x0: float = left_margin + _gutter_width() # reserve gutter without mutating left_margin
 	var y0: float = top_margin
 	var content_w: float = max(1.0, (domain_max - domain_min) * pixels_per_unit)
 	var content_h: float = max(1.0, _content_rows_height())
@@ -647,8 +629,6 @@ func _update_content_metrics() -> void:
 		+ bottom_margin
 
 	custom_minimum_size = Vector2(content_w, content_h)
-
-
 
 
 func _on_zoom_in_pressed() -> void:
@@ -692,8 +672,6 @@ func _on_save_dialog_file_selected(path: String) -> void:
 		push_warning("Failed to export CSV to %s" % path)
 
 
-
-
 # Core export function. Returns true on success.
 func export_csv(path: String) -> bool:
 	# Header
@@ -719,7 +697,7 @@ func export_csv(path: String) -> bool:
 
 		var label: String = str(e.get("label", ""))
 		var start := float(e.get("start", 0.0))
-		var end := _effective_end(e)  # <-- resolve INF/open to now
+		var end := _effective_end(e) # <-- resolve INF/open to now
 		#var end := float(e.get("end", start))
 		var duration := end - start
 		var color: Color = e.get("color", Color.WHITE)
@@ -816,14 +794,14 @@ func _draw_time_axis() -> void:
 
 	# ---- Choose a "nice" step size (in seconds) close to ideal ----
 	var nice_steps: Array[float] = [
-		60.0,      # 1 min
-		120.0,     # 2 min
-		300.0,     # 5 min
-		600.0,     # 10 min
-		900.0,     # 15 min
-		1800.0,    # 30 min
-		3600.0,    # 1 hour
-		7200.0     # 2 hours
+		60.0, # 1 min
+		120.0, # 2 min
+		300.0, # 5 min
+		600.0, # 10 min
+		900.0, # 15 min
+		1800.0, # 30 min
+		3600.0, # 1 hour
+		7200.0 # 2 hours
 	]
 
 	var step_sec: float = nice_steps[nice_steps.size() - 1]
@@ -853,7 +831,7 @@ func _draw_time_axis() -> void:
 			continue
 
 		# Convert simulation seconds to a time of day, starting at 9:00 AM
-		var base_seconds: int = 9 * 3600  # 9:00 AM
+		var base_seconds: int = 9 * 3600 # 9:00 AM
 		var total_sec: int = base_seconds + int(t)
 		var hours: int = int(total_sec / 3600) % 24
 		var minutes: int = int((total_sec % 3600) / 60)
@@ -958,7 +936,32 @@ func _find_event_at(at_position: Vector2) -> Dictionary:
 		if r.has_point(at_position):
 			return ev
 
-	return {}    # empty dictionary = no hit
+	return {} # empty dictionary = no hit
+
+
+func _format_sim_time_ampm(sim_sec: float) -> String:
+	var total: int = _DISPLAY_DAY_START_SEC + int(sim_sec)
+	var hours: int = int(total / 3600) % 24
+	var minutes: int = int((total % 3600) / 60)
+	var seconds: int = total % 60
+	var is_am: bool = hours < 12
+	var h12: int = hours % 12
+	if h12 == 0:
+		h12 = 12
+	var meridiem: String = "AM" if is_am else "PM"
+	return "%d:%02d:%02d %s" % [h12, minutes, seconds, meridiem]
+
+
+func _format_duration(dur_sec: float) -> String:
+	var s: int = int(dur_sec)
+	var h: int = s / 3600
+	var m: int = (s % 3600) / 60
+	var sec: int = s % 60
+	if h > 0:
+		return "%dh %02dm %02ds" % [h, m, sec]
+	if m > 0:
+		return "%dm %02ds" % [m, sec]
+	return "%ds" % sec
 
 
 func _format_event_tooltip(ev: Dictionary) -> String:
@@ -966,5 +969,9 @@ func _format_event_tooltip(ev: Dictionary) -> String:
 	var e: float = _effective_end(ev)
 	var dur: float = max(0.0, e - s)
 	var label: String = str(ev.get("label", ""))
-
-	return "%s\nStart: %.3f  End: %.3f\nDuration: %.3fs" % [label, s, e, dur]
+	return "%s\nStart: %s   End: %s\nDuration: %s" % [
+		label,
+		_format_sim_time_ampm(s),
+		_format_sim_time_ampm(e),
+		_format_duration(dur)
+	]

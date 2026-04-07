@@ -1,0 +1,9 @@
+[gd_scene load_steps=2 format=3 uid="uid://dm3p1bv6e5yrt"]
+
+[ext_resource type="Script" uid="uid://csxg4tjm7n0rq" path="res://Classes/GanttScrubber/gantt_scrubber.gd" id="1_scrbr"]
+
+[node name="GanttScrubber" type="Control"]
+layout_mode = 0
+custom_minimum_size = Vector2(0, 36)
+mouse_filter = 0
+script = ExtResource("1_scrbr")
