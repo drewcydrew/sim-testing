@@ -13,6 +13,8 @@ class_name GanttEntityTooltip
 
 var _label: RichTextLabel = null
 @onready var _heatmap_btn: Button = $PanelContainer/MarginContainer/VBoxContainer/HeatmapToggleButton
+@onready var _panel: PanelContainer = $PanelContainer
+@onready var _resize_handle: Control = $ResizeHandle
 
 # Closed events for this entity: { label, start_time, end_time, color, row_key, type }
 var _closed_events: Array[Dictionary] = []
@@ -21,6 +23,12 @@ var _closed_events: Array[Dictionary] = []
 var _open_event: Dictionary = {}
 
 var _rebuild_dirty: bool = true
+
+# ── Drag / resize state ──────────────────────────────────────────────────────
+var _dragging: bool = false
+var _resizing: bool = false
+var _panel_size_at_resize_start: Vector2 = Vector2.ZERO
+var _resize_mouse_start: Vector2 = Vector2.ZERO
 
 
 func _ready() -> void:
@@ -163,6 +171,10 @@ func _on_hub_events_reset() -> void:
 # ───────────────────── Process: live updating ────────────────────
 
 func _process(delta: float) -> void:
+	# Keep resize handle anchored to the bottom-right corner of the panel
+	if is_instance_valid(_resize_handle) and is_instance_valid(_panel):
+		_resize_handle.position = _panel.position + _panel.size - Vector2(16.0, 16.0)
+
 	# If there's an open event, we want durations / end marker to tick
 	if not _open_event.is_empty():
 		_rebuild_dirty = true
@@ -232,10 +244,10 @@ func _format_time_range(s: float, e: float) -> String:
 	if e < 0.0:
 		var now: float = _now()
 		var dur: float = max(0.0, now - s)
-		return "(%.3f → %.3f, %.3fs, ongoing)" % [s, now, dur]
+		return "(%s → %s, %s, ongoing)" % [_format_sim_time_ampm(s), _format_sim_time_ampm(now), _format_duration(dur)]
 	else:
 		var dur2: float = max(0.0, e - s)
-		return "(%.3f → %.3f, %.3fs)" % [s, e, dur2]
+		return "(%s → %s, %s)" % [_format_sim_time_ampm(s), _format_sim_time_ampm(e), _format_duration(dur2)]
 
 
 func _is_zero_duration_event(ev: Dictionary) -> bool:
@@ -247,6 +259,33 @@ func _is_zero_duration_event(ev: Dictionary) -> bool:
 
 
 # ───────────────────── Matching & time helpers ───────────────────
+
+const _DISPLAY_DAY_START_SEC: int = 9 * 3600
+
+func _format_sim_time_ampm(sim_sec: float) -> String:
+	var total: int = _DISPLAY_DAY_START_SEC + int(sim_sec)
+	var hours: int = int(total / 3600.0) % 24
+	var minutes: int = int((total % 3600) / 60.0)
+	var seconds: int = total % 60
+	var is_am: bool = hours < 12
+	var h12: int = hours % 12
+	if h12 == 0:
+		h12 = 12
+	var meridiem: String = "AM" if is_am else "PM"
+	return "%d:%02d:%02d %s" % [h12, minutes, seconds, meridiem]
+
+
+func _format_duration(dur_sec: float) -> String:
+	var s: int = int(dur_sec)
+	var h: int = int(s / 3600.0)
+	var m: int = int((s % 3600) / 60.0)
+	var sec: int = s % 60
+	if h > 0:
+		return "%dh %02dm %02ds" % [h, m, sec]
+	if m > 0:
+		return "%dm %02ds" % [m, sec]
+	return "%ds" % sec
+
 
 func _norm(s: String) -> String:
 	return String(s).strip_edges().to_lower()
@@ -272,3 +311,43 @@ func _on_heatmap_toggle_pressed() -> void:
 	traveller.toggle_trail()
 	if is_instance_valid(_heatmap_btn):
 		_heatmap_btn.text = "Hide path heatmap" if traveller._trail_visible else "Show path heatmap"
+
+
+# ── Drag & resize input ───────────────────────────────────────────────────────
+
+func _input(event: InputEvent) -> void:
+	if event is InputEventMouseButton:
+		var mb := event as InputEventMouseButton
+		if mb.button_index == MOUSE_BUTTON_LEFT and not mb.pressed:
+			_dragging = false
+			_resizing = false
+	elif event is InputEventMouseMotion:
+		if _dragging:
+			position += event.relative
+			accept_event()
+		elif _resizing:
+			var delta: Vector2 = event.global_position - _resize_mouse_start
+			var new_size: Vector2 = (_panel_size_at_resize_start + delta).max(Vector2(80.0, 50.0))
+			_panel.size = new_size
+			accept_event()
+
+
+func _on_drag_header_gui_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton:
+		var mb := event as InputEventMouseButton
+		if mb.button_index == MOUSE_BUTTON_LEFT:
+			_dragging = mb.pressed
+			accept_event()
+
+
+func _on_resize_handle_gui_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton:
+		var mb := event as InputEventMouseButton
+		if mb.button_index == MOUSE_BUTTON_LEFT:
+			if mb.pressed:
+				_resizing = true
+				_panel_size_at_resize_start = _panel.size
+				_resize_mouse_start = mb.global_position
+			else:
+				_resizing = false
+			accept_event()

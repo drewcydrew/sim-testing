@@ -302,6 +302,7 @@ func toggle_tooltip() -> void:
 
 	tooltip_instance = tooltip_scene.instantiate()
 	add_child(tooltip_instance)
+	tooltip_instance.add_to_group("active_traveller_tooltips")
 
 	# Position it relative to the traveller (tweak as desired)
 	tooltip_instance.position = Vector2(0, -60)

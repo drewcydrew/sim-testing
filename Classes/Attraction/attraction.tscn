@@ -124,8 +124,8 @@ position = Vector2(76, -6)
 [node name="Slot5" type="Marker2D" parent="ServiceSlots"]
 position = Vector2(104, -6)
 
-[connection signal="input_event" from="." to="." method="_input_event"]
 [connection signal="input_event" from="." to="." method="_on_input_event"]
+[connection signal="input_event" from="." to="." method="_input_event"]
 [connection signal="mouse_entered" from="." to="." method="_on_mouse_entered"]
 [connection signal="mouse_exited" from="." to="." method="_on_mouse_exited"]
 [connection signal="visit_requested" from="." to="." method="_on_visit_requested"]

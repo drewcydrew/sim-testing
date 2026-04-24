@@ -11,6 +11,7 @@ const START_OF_DAY_SECONDS: int = 9 * 3600 # 9:00 AM
 
 
 @onready var _play_pause_btn: Button = $SimulationControls/PlayPause
+@onready var _hide_tooltips_btn: Button = $HideTooltipsButton
 @onready var _config: Node = $TabContainer/Configuration
 @onready var _env: Node = $TabContainer/Environment
 @onready var _gantt: BasicGantt = $TabContainer/Data/ScrollContainer/GanttNew
@@ -34,6 +35,9 @@ func _ready() -> void:
 	
 func _process(_delta: float) -> void:
 	_update_time_label()
+	var tooltip_count: int = get_tree().get_nodes_in_group("active_traveller_tooltips").size()
+	if is_instance_valid(_hide_tooltips_btn):
+		_hide_tooltips_btn.visible = tooltip_count > 0
 
 	
 func _on_simulation_controls_sim_speed_changed(value: float) -> void:
@@ -86,6 +90,11 @@ func _on_reset_pressed() -> void:
 func _on_spawn_pressed() -> void:
 	if is_instance_valid(_env) and _env.has_method("spawn_one"):
 		_env.spawn_one()
+
+
+func _on_hide_tooltips_pressed() -> void:
+	for tooltip in get_tree().get_nodes_in_group("active_traveller_tooltips"):
+		tooltip.queue_free()
 		
 		
 func _update_time_label() -> void:

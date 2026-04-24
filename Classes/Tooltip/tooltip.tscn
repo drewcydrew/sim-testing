@@ -25,8 +25,8 @@ script = ExtResource("1_pi0nk")
 
 [node name="PanelContainer" type="PanelContainer" parent="."]
 layout_mode = 0
-offset_right = 504.0
-offset_bottom = 394.0
+offset_right = 200.0
+offset_bottom = 200.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_1")
 
 [node name="MarginContainer" type="MarginContainer" parent="PanelContainer"]

@@ -17,7 +17,6 @@ navigation_agent = NodePath("NavigationAgent2D")
 tooltip_scene = ExtResource("2_bu2do")
 
 [node name="TapButton" type="TouchScreenButton" parent="."]
-position = Vector2(1, -1)
 shape = SubResource("CircleShape2D_8agda")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
